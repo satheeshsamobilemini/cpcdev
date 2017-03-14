@@ -1,0 +1,18 @@
+<apex:page controller="ViewWeeklyBranchSnapshotController">
+    
+    <script>
+         var branchSnapShotid = '{!weeklyBranchSnapshotId}';
+         if(branchSnapShotid != null && branchSnapShotid != ''){
+            window.location.href = '/'+branchSnapShotid //+'?retURL='+'{!$CurrentPage.parameters.retURL}';
+        }
+    </script>
+    <br/><br/>
+    <apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockButtons location="top" >
+            <apex:commandButton value="Back" action="{!back}" /> 
+        </apex:pageBlockButtons>
+        <apex:outputLabel value="No Branch Snapshoot is available for {!servicingBranch} servicing Branch." rendered="{!ISNULL(weeklyBranchSnapshotId)}" />
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

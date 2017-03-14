@@ -1,0 +1,187 @@
+<apex:page StandardController="Lead" Extensions="LeadDuplicateCheckBeforeQuoteClass" tabStyle="Lead" id="pg">
+<apex:sectionHeader Title="Lead" subtitle="Duplicates" description=""></apex:sectionHeader>
+<apex:pageMessages />
+<apex:form id="frm">
+ <apex:pageblock id="pbSearch">
+    <apex:pageBlockButtons >
+      <apex:commandButton value="Search" id="btnSearch" action="{!customSearch}"></apex:commandButton>
+      <apex:commandButton value="Create Quick Quote" id="btnCreateQuickQuote" action="{!redirectToQuote}" disabled="{!IF(isValidSearch = true,false,true)}" rendered="{!IF( qType == 'qq' , true, false)}"></apex:commandButton>
+      <apex:commandButton value="Create Full Quote" id="btnCreateFullQuote" action="{!redirectToQuote}" disabled="{!IF(isValidSearch = true,false,true)}" rendered="{!IF( qType == 'fq' , true, false)}"></apex:commandButton>
+      <!-- <input type="button"  value="{!IF( qType == 'fq' , 'Create Full Quote' , 'Create Quick Quote')}"/> -->
+      <apex:commandButton value="Cancel" id="btnCancel" action="{!Cancel}"></apex:commandButton>
+    </apex:pageBlockButtons>
+   
+     <apex:outputpanel id="pnlSearch">
+         <table cellspacing="0" cellpadding="0" border="0" class="detailList">
+              <tbody> 
+                 <tr>
+                    <td class="labelCol">First Name</td>
+                    <td colspan="3" class="data2Col">
+                        <!-- <apex:inputcheckbox value="{!chkBoxFirstName}"  /> -->
+                        <apex:inputText value="{!FirstName}" disabled="true" />
+                    </td> 
+                  </tr>
+                  <tr>
+                     <td class="labelCol">Last Name</td>
+                     <td colspan="3" class="data2Col">
+                       <!-- <apex:inputcheckbox value="{!chkBoxLastName}"  /> -->
+                       <apex:inputText value="{!LastName}" disabled="true" />
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="labelCol">Company</td>
+                     <td colspan="3" class="data2Col">
+                        <!-- <apex:inputcheckbox value="{!chkBoxCompany}"  /> -->
+                        <apex:inputText value="{!Company}" disabled="true" />
+                     </td>
+                  </tr>
+
+                  <tr>
+                    <td class="labelCol">Phone</td>
+                    <td colspan="3" class="data2Col">
+                       <!-- <apex:inputcheckbox value="{!chkBoxPhone}"  /> -->
+                       <apex:inputText value="{!Phone}" disabled="true" />
+                    </td>
+                  </tr>
+                  <!-- <tr>
+                    <td class="labelCol last">DNIS</td>
+                    <td colspan="3" class="data2Col last">
+                    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:inputText value="{!dnis}" disabled="true" />
+                    </td>
+                  </tr> -->
+               </tbody>
+           </table>
+    </apex:outputpanel>
+</apex:pageblock>
+
+<apex:pageblock title="Matching Lead">
+  <apex:outputpanel rendered="{!IF( countLead > 0 , false , true)}">
+      No Matching Leads Found
+  </apex:outputpanel>
+ <apex:outputpanel rendered="{!IF( countLead > 0 , true , false)}" >
+  <apex:pageblocktable value="{!listLead}"  var="lead">
+    <apex:column >
+       <apex:facet name="header">Name</apex:facet>
+       <apex:outputLink value="/{!lead.Id}" target="_blank">{!lead.Name}</apex:outputLink>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">BranchId</apex:facet>
+       <apex:outputText value="{!lead.Branch__c}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Title</apex:facet>
+       <apex:outputText value="{!lead.title}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Phone</apex:facet>
+       <apex:outputText value="{!lead.Phone}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Company</apex:facet>
+       <apex:outputText value="{!lead.Company}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Email</apex:facet>
+       <apex:outputText value="{!lead.email}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Lead Status</apex:facet>
+       <apex:outputText value="{!lead.status}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Owner</apex:facet>
+       
+      <apex:outputLink value="/{!lead.OwnerId}" target="_blank">{!lead.owner.Name}</apex:outputLink>
+    </apex:column>
+  </apex:pageblocktable>
+  </apex:outputpanel>
+</apex:pageblock>
+
+<apex:pageblock title="Matching Contact">
+  <apex:outputpanel rendered="{!IF( countContact > 0 , false , true)}">
+      No Matching Contacts Found
+  </apex:outputpanel>
+  <apex:outputpanel rendered="{!IF(countContact > 0 , true , false )}">
+  
+  <apex:pageblocktable value="{!listContact}"  var="contact">
+    <apex:column >
+       <apex:facet name="header">Name</apex:facet>
+       <apex:outputLink value="/{!contact.Id}" target="_blank">{!contact.Name}</apex:outputLink>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">BranchId</apex:facet>
+       <apex:outputText value="{!contact.Branch__c}" escape="false"/>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Account Name</apex:facet>
+       <apex:outputLink value="/{!contact.AccountId}" target="_blank">{!contact.Account.Name}</apex:outputLink>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Phone</apex:facet>
+       <apex:outputText value="{!contact.Phone}" escape="false"/>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Fax</apex:facet>
+       <apex:outputText value="{!contact.Fax}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Email</apex:facet>
+       <apex:outputText value="{!contact.email}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Owner</apex:facet>
+       <apex:outputLink value="/{!contact.ownerId}" target="_blank">{!contact.owner.Name}</apex:outputLink>
+    </apex:column>
+  </apex:pageblocktable>
+  </apex:outputpanel>
+</apex:pageblock>
+
+<apex:pageblock title="Matching Account">
+  <apex:outputpanel rendered="{!IF(countAccount > 0 , false , true)}">
+      No Matching Accounts Found
+  </apex:outputpanel>
+  <apex:outputpanel rendered="{!IF( countAccount > 0 , true , false )}">
+  <apex:pageblocktable value="{!listAccount}"  var="account">
+    <apex:column >
+       <apex:facet name="header">Account Name</apex:facet>
+      <apex:outputLink value="/{!account.Id}" target="_blank">{!account.Name}</apex:outputLink>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">BranchId</apex:facet>
+       <apex:outputText value="{!account.Branch__c}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Result Id</apex:facet>
+       <apex:outputText value="{!account.Result_Id__c}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Phone</apex:facet>
+       <apex:outputText value="{!account.Phone}" escape="false" />
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Billing City</apex:facet>
+       <apex:outputText value="{!account.billingcity}" escape="false"/>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Billing State/Province</apex:facet>
+       <apex:outputText value="{!account.billingstate}" escape="false"/>
+    </apex:column>
+    <apex:column >
+       <apex:facet name="header">Parent Account</apex:facet>
+       <apex:outputLink value="/{!account.parent.Id}" target="_blank">{!account.Parent.Name}</apex:outputLink>
+    </apex:column>
+    
+    <apex:column >
+       <apex:facet name="header">Owner</apex:facet>
+       <apex:outputLink value="/{!account.ownerId}" target="_blank">{!account.owner.Name}</apex:outputLink>
+    </apex:column>
+  </apex:pageblocktable>
+ </apex:outputpanel>
+</apex:pageblock>
+
+</apex:form>
+
+
+
+
+</apex:page>

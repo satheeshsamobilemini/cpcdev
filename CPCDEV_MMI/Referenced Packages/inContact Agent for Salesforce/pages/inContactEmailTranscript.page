@@ -1,0 +1,253 @@
+<apex:page controller="icAgentConsole.incEmailTranscriptController" title="{!$Label.icagentconsole__sfAgentEmailTranscript}">
+    <apex:includeScript value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp, 'js/lib/FileSaver.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp, 'js/lib/jquery-1.10.2.min.js')}"/>
+
+    <apex:outputPanel rendered="{! $User.UIThemeDisplayed == 'Theme4d' }">
+        <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/salesforce-lightning-design-system-vf.min.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/inContactAgentLightning.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/inContactEmailTranscriptLightning.css')}"/>
+        <!-- <script>
+sfMode = 'Lightning';
+</script> -->
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{! $User.UIThemeDisplayed == 'Theme3' }">
+        <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/inContactEmailTranscript.css')}"/>
+        <!-- <script>
+if (sforce.console.isInConsole()) {
+    isSccView = true;
+}
+</script>-->
+    </apex:outputPanel>
+
+    <div class="icAgentconsole">
+
+        <!--Authentication Component -->
+        <apex:outputPanel layout="block"  rendered="{! !IsTokenAvailable}">
+            <c:inContactAuthentication ></c:inContactAuthentication>
+        </apex:outputPanel>
+
+        <!-- Transcript View -->
+        <apex:form id="emailTranscript">
+            <apex:outputPanel id="transcriptPanel" layout="block" rendered="{!IsTokenAvailable}">
+                <apex:outputPanel id="transcript">
+
+                    <!-- Header -->
+                    <div class="header" >
+                        <div class="floating" >
+                            <div class="title-panel">
+                                <div class="title">
+                                    <div class="primary">
+                                        <label>{!$Label.icagentconsole__sfAgentEmailTranscript}</label>
+                                    </div>
+                                    <!--<div class="secondary">
+<label>{!$Label.icagentconsole__sfAgentEmailTranscript}{!$Label.salesforceAgent}</label>
+</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="email_pageBlock" class="forceRelatedListCardDesktop content bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette remove-border">
+
+                        <!-- Action Status -->
+                        <apex:actionStatus id="status">
+                            <apex:facet name="start" >
+                                <div class="slds-spinner_container">
+                                    <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                                        <span class="slds-assistive-text"></span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="loading-layer" />
+                                    <div class="loading-panel">
+                                        <span class="loading-icn"></span>
+                                        <span class="loading-txt">{!$Label.processing}...</span>
+                                    </div>
+                                </div>
+                            </apex:facet>
+                            <apex:facet name="stop"/>
+                        </apex:actionStatus>
+
+                        <!-- Error Block for Transcript-->
+                        <div id="transcripterror" class="transcriptError" style="display:none"/>
+
+                        <table class="emailDetails">
+                            <apex:repeat value="{! Transcript.emails}" var="email">
+                                <tr style="height:350px;">
+                                    <td style="width:30%">
+                                        <div class="">
+                                            <h3>
+                                                <span class="header-label">{!email.emailActionName}</span>
+                                            </h3>
+                                        </div>
+                                        <table name="emailSubjectDiv" class='emailmetaData' style="display:none" >
+                                            <tr>
+                                                <td class="keys" >{!$Label.date}</td>
+                                                <td class="values">{!email.formattedSentDate}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="keys">{!$Label.from}</td>
+                                                <td class="values">{!email.fromAddress}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="keys">{!$Label.to}</td>
+                                                <td class="values">{!email.toAddress}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="keys">{!$Label.cc}</td>
+                                                <td class="values">{!email.ccAddress}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="keys">{!$Label.subject}</td>
+                                                <td>{!email.subject}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="width:50%">
+                                        <div class="emailContainer" >
+                                            <div class="scrollContainer" style="height: 300px;">
+                                                <div name='emailBodyDiv' class="slds-scrollable--y">
+                                                    {!email.bodyHtml}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="width:20%">
+                                        <div class="attachments" style="padding-left:30px;">
+                                            <h3>
+                                                <span class="header-label">{!$Label.attachments}</span>
+                                            </h3>
+                                            <apex:outputPanel style="height:250px;overflow:auto"  layout="block">
+                                                <div name='emailAttachmentsDiv' style="display:none" >
+                                                    <apex:repeat value="{! email.Attachments  }" var="attachment">
+                                                        <div id='emailAttachmentLink' data-fileName='{!attachment.FileName }'
+                                                             data-serverPath="{!attachment.attachmentName}"
+                                                             title="{!$Label.clicktodownload} {!attachment.FileName}">
+                                                            <div class='image'></div>
+                                                            <span style="white-space: nowrap;">{!attachment.FileName}</span>
+                                                            <script type='text/javascript'>
+                                                                jQ("div#emailAttachmentLink").off('click').click(downloadFile);
+                                                            </script>
+                                                        </div>
+                                                    </apex:repeat>
+                                                </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Action Fnctions -->
+            <apex:actionfunction name="loggedIn" action="{!loggedIn}"></apex:actionfunction>
+            <apex:actionFunction name="loadEmailTranscript" status="status" reRender="status,loginPanel,transcript" action="{!loadEmailTranscript}" oncomplete="loadEmailTranscriptCompleted({! hasTranscript})"/>
+        </apex:form>
+
+
+        <apex:outputPanel rendered="{!IsTokenAvailable}">
+            <script type='text/javascript'>
+                loadEmailTranscript();
+            </script>
+        </apex:outputPanel>
+    </div>
+
+    <script type='text/javascript'>
+        function onLoginSuccess() {
+        loggedIn();
+        }
+
+        // we must call jQuery.noConflict() otherwise the softphone will not get loaded.
+        var jQ =jQuery.noConflict(),
+        spinImage="{!URLFOR($Resource.AgentConsoleApp,'css/images/spinner.gif')}",
+        downloadedImage="{!URLFOR($Resource.AgentConsoleApp,'css/images/bumber-workitem-drop.png')}",
+        IC_emailTransLocal = {
+        noTranscript:"{!JSENCODE($Label.noTranscript)}"
+        };
+
+        function loadEmailTranscriptCompleted(hasTranscript){
+        if(hasTranscript==false) {
+        jQ("#transcripterror").show();
+        jQ("#transcripterror").text(IC_emailTransLocal.noTranscript);
+        }
+        else{
+        jQ("#transcripterror").hide()
+        updateLayout();
+        }
+        }
+
+        function updateLayout(){
+        // render the text as HTML
+        var emailBodyDivDivs=jQ("[Name='emailBodyDiv']"),
+        attachmentsDivs=jQ("[Name='emailAttachmentsDiv']"),
+        emailSubjectElement=jQ('[Name="emailSubjectDiv"]'),
+        element=null;
+
+        // adjust the elements widths and then show those elements
+        var emailBodyWidth= document.getElementById('email_pageBlock').offsetWidth;
+            for(var idx=0,length=emailBodyDivDivs.length;idx<length;idx++) {
+                element=jQ(emailBodyDivDivs[idx]);
+                element.html(getHTMLData(element.text())).css({display:'block','width':(emailBodyWidth*.45)+'px'});
+                jQ( emailSubjectElement[idx]).css({display:'block',width:(emailBodyWidth*.25)+'px'});
+                jQ(attachmentsDivs[idx]).css({display:'block', width:(emailBodyWidth*.15)+'px'});
+            }
+            
+            // convert the Email Body data as HTML
+        function getHTMLData(encodedData) {
+        try {
+        var temp = JSON.parse('{ "key":"' + encodedData + '"}');
+        return temp.key;
+        }catch (err) {
+        return encodedData;
+        }
+        }
+        }
+
+        // get the file content from the Server
+        function downloadFile(){
+        var element=jQ(this),
+        serverpath=element.attr('data-serverPath');
+        element.off('click');
+        var statusImage= jQ('.image',element).css('background-image', "url("+spinImage+")");
+
+        // Set timeout at page level
+        Visualforce.remoting.timeout = 120000;
+        Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.incEmailTranscriptController.getFileContent}',
+        serverpath,
+        function(result, event){
+        if(event.statusCode==200 && result) {
+        var data=JSON.parse(event.result);
+        saveFile(data.files.fileName,data.files.file);
+        statusImage.css('background-image',"url("+downloadedImage+")");
+        }
+        else {
+        statusImage.hide();
+        console.error('getFileContent status code '+event.statusCode+' error detail '+event.result);
+        }
+        element.on('click',downloadFile);
+        },
+        {escape:false}
+        );
+        }
+
+        // save the file  in the client machine
+        function saveFile(fileName,fileContent){
+        var byteString = atob(fileContent),
+        ab = new ArrayBuffer(byteString.length),
+        ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        var blob = new Blob([ia] ,{ type: "application/octet-stream" });
+        saveAs(blob, fileName); 
+    }
+    </script>
+</apex:page>

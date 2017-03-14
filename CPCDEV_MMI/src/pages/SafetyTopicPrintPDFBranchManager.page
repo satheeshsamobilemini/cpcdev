@@ -1,0 +1,1304 @@
+<apex:page standardController="Safety_Topic__c"  renderAs="PDF" standardStyleSheets="false">
+<head>
+<style type="text/css">
+ @page { 
+    size: letter portrait;
+    margin-top: 50px;
+    margin-bottom: 57px;
+    }
+</style>
+</head>
+<body>
+    <table align="center" width="110%" style="background-color:#BDBDBD;">
+        <tr>
+            <td align="center" style="font-size:22px;font-weight:bold">Monthly Branch Safety Inspection </td>   
+        </tr>
+        <tr>
+            <td style="font-size:22px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date: ___________________ Time: ___________________</td>
+        </tr>
+        <tr>
+            <td style="font-size:22px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Branch: __________________________________________ </td>
+        </tr>
+        <tr>
+            <td style="font-size:22px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Inspected by: ________________Signature:________________ </td>
+        </tr>
+        <tr>
+            <td style="font-size:20px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;Place an "X" in the applicable box &nbsp;&nbsp;&nbsp; Y = Yes &nbsp;&nbsp;&nbsp; N = No &nbsp;&nbsp;&nbsp; X = Not Applicable</td>
+        </tr>
+    </table>
+    
+    <table border="1" cellspacing="0" cellpadding="0" width="101%">
+        <tr style="background-color:#BDBDBD;">
+            <th style="border:1px solid black;" width="3%" align="center">A</th>
+            <th width="67%" align="center">GENERAL SAFETY</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Safe housekeeping procedures are maintained throughout the work day, work areas being cleared and organized
+throughout day.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">5S procedures are implemented for storage areas</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">Emergency first aid kit supplies are available</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">First aid kits are inspected monthly? Where supplies are expired, they are discarded and refills completed?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">A first aid tracking sheet is maintained and readily available confirming monthly inspections are occurring</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">All required labor postings are present including emergency contact information?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Refrigerators are free of old food and cleaned regularly?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">All work areas are adequately lighted? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">All tools, supplies and equipment properly stowed when not in use? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Employees are protected from extreme conditions (hot, cold, humid, dry, wind, etc.)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">All confined spaces are properly labeled and/or permitted? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">12</td>
+            <td style="font-size:14px;">Cool fresh drinking water available?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">13</td>
+            <td style="font-size:14px;">All work areas are properly ventilated (no buildup of CO)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">14</td>
+            <td style="font-size:14px;">Other?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">B</th>
+            <th width="67%" align="center">CHEMICAL SAFETY</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Emergency eye wash station that flushes for 15 minutes is available?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">Eye wash not blocked, properly maintained and inspected monthly?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">SDSs available for all chemicals? Location of nearest SDSs, ______________________________?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">An annual audit has been performed?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">Employees free from exposure to spilled or leaking chemicals? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">Labels present on all chemical containers (Primary and Secondary)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">  Waste chemical containers properly disposed of? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Spill kits, tools and supplies are available? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Hazardous chemicals are stored and segregated with proper signage and spill containment? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Waste oils are stored and segregated with proper signage and spill containment?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">Other? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">C</th>
+            <th width="67%" align="center">FIRE SAFETY</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Portable Fire Extinguishers are present and serviced annually by an outside vendor? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">Fire Extinguisher properly marked with a sign, not blocked and inspected monthly by signing and 
+dating the annual service tag? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">The fire sprinkler systems is properly maintained (monthly, quarterly, annual service by outside vendor)?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">A location specific Fire Prevention Plan (FPP) is maintained?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">Materials not stored within 18" below a fire sprinkler head? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">All flammable liquids properly stored (Metal Safety Cans with self-closing lid and spark arrestor, Flammable Storage Cabinets)?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">No combustibles, debris or waste (rags, wood, cardboard, etc.) stored in flammable cabinets?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Proper bonding and grounding in use for transferring flammable liquids?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Smoking is prohibited near flammable materials (signs posted)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">All open flame heat sources are clear of combustible or flammable materials? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">Other? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center"><br/></td>
+            <td style="font-size:14px;"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+       </table>
+       
+      <table border="1" cellspacing="0" cellpadding="0" width="101%">
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">D</th>
+            <th width="67%" align="center">EMERGENCY EVACUATION</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Emergency evacuation maps are current and posted in all work locations?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">A location specific Emergency Action Plan (EAP) is maintained?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">All emergency exits and exit routes are properly marked with illuminated signs?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">All Emergency exit paths and doors are kept clear and unblocked?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">All emergency egress lighting is working properly (backup batteries are tested regularly)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">Annual evacuation drills are conducted (records maintained and available for review)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Other? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">E</th>
+            <th width="67%" align="center">ELECTRICAL SAFETY</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">All electrical cords free from cuts, frays and exposed wiring? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">All cords and equipment are properly grounded with a 3rd prong plug? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">All electrical panels and emergency disconnects have 3ft. of clear access? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">All live electrical wires are properly guarded (wall plate, knockouts, junction boxes, etc.) </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">All electrical circuit are properly labeled (breakers, fuses, etc.)?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">No temporary extension cords being used in place of fixed wiring? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Lockout Tagout used where applicable</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">A GFCI is used on all outside cords or when wet conditions are present? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">All electrical boxes and tools have cord strain relief installed? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Sheathing on flexible extension cords is intact?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">Any electrical device used outdoor is designed and properly rated for outdoor use?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">F</th>
+            <th width="67%" align="center">WELDING SAFETY</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Gas and oxygen cylinders properly chained, capped and properly secured? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">Acetylene and oxygen cylinders properly separated by at least 20’? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">Welding Personal Protective Equipment is worn during welding operations in accordance with PPE Matrix </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">When not in use >24 hours, regulators are removed from gas cylinders </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">Gauges used on cylinders are not damaged and glass/plastic gauge covers are intact.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">Flashback/spark arrestors are installed in torch cutting equipment </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Check valves are installed in torch cutting equipment to prevent gas travel upstream of handle</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Workers working near to welding/hot work areas are protected. </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Flammable and combustibles are removed and maintained clear from hot work area (>35’) </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">For client sites, a hot work permit is implemented </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">A fire watch is maintained for at least 30 minutes after hot work stops</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">G</th>
+            <th width="67%" align="center">WALKING AND WORKING SURFACES</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">All ladders are in proper working condition (labels are present and readable, no cracks, broken, 
+missing hardware or other defects)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">All ladders are used safely (extend 36" above landing, setup with a 1-4 ratio)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">All stairs are in good condition (have standard railing, slip resistant treads, not used for storage)?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">All scaffolding is in good condition (have standard railing or fall protection is used over 6ft)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">All floor holes and openings are properly guarded or barricaded?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">All open sided floors are guarded over 4ft high? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">All walkways are clear of debris, water, ice, etc.?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Any tripping hazards are eliminated (cords, hoses, lines, ropes, chains, etc.)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Trash and debris is picked up and disposed of in the proper receptacles or containers? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Any protruding storage, clutter, falling of supplies or equipment has been removed? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">All scaffolding have lockable wheels or casters? </td>
+            <td></td>
+            <td></td>
+            <td></td>         
+        </tr> 
+        <tr> 
+            <td align="center">12</td>
+            <td style="font-size:14px;">Where possible, all elevated work is done from guarded platforms, ladders, rolling platforms and/or 
+rolling scaffolds? No access to the roof area of container, security offices, or mobile office is 
+performed without fall protection? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">13</td>
+            <td style="font-size:14px;">Engineered Fall Protection systems are used for fall protection and employees remain 100% tied 
+during elevated work?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">14</td>
+            <td style="font-size:14px;">Employees wear approved harnesses any time they are tied off to and using an engineered system?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">15</td>
+            <td style="font-size:14px;">Where no engineered system is available or installed, a “U” shaped fall protection format is used.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">16</td>
+            <td style="font-size:14px;">Other?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">H</th>
+            <th width="67%" align="center">POWER EQUIPMENT AND MACHINE GUARDING</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">All moving machine parts, power tools and equipment are properly guarded?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">All fixed power tool are properly secured to a fixed surface? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">Grinder guards properly adjusted (tongue guard 1/4" max, work rest 1/8" max)? 
+</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">All power tools and equipment are in good working order and inspected before use (no home-made tools)? 
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">All unused power tools and equipment is properly stowed when not being used?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">All wires, cords, hoses etc. are arranged and organized neatly and safety? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Other?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    
+    <table border="1" cellspacing="0" cellpadding="0" width="101%">    
+         <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">I</th>
+            <th width="67%" align="center">POWERED INDUSTRIAL TRUCKS / FORKLIFT</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">All operators properly trained/certified every 3 years? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">All equipment lights intact and functional? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">Brakes in good condition? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">All tires in good condition?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">All horns and flashers in working condition? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">All fluids contained (no leaks)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Hydraulics checked for possible leaks? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Daily pre-use inspection sheets completed and documented properly? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Daily pre-use checks are stored in branch files for at least 90 consecutive days </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Back-up alarm is functional when in reverse and heard above ambient noise of work area?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">Seat belts are in good condition and are they being used?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">12</td>
+            <td style="font-size:14px;">Data plate is present and readable </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">13</td>
+            <td style="font-size:14px;">Owners manual of forklift is present </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+            
+         <tr style="background-color:#BDBDBD;">
+            <th width="3%" align="center">J</th>
+            <th width="67%" align="center">PERSONAL PROTECTIVE EQUIPMENT</th>
+            <th width="3%" align="center">Y</th>
+            <th width="3%" align="center">N</th>
+            <th width="3%" align="center">X</th>
+        </tr>
+        <tr>
+            <td align="center">1</td>
+            <td style="font-size:14px;">Hard hats being worn as to manufacturer’s specs?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">2</td>
+            <td style="font-size:14px;">Glasses, hoods, shields, goggles being worn as required? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">3</td>
+            <td style="font-size:14px;">Respirators being worn as required? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">4</td>
+            <td style="font-size:14px;">Annual fit test has been completed and is timely for those wearing respirators?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">5</td>
+            <td style="font-size:14px;">Employees have completed annual training on respiratory hazards and wearing of the respirator – 
+training is documented in Mobile Mini University for each user?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">6</td>
+            <td style="font-size:14px;">Respirators are stored in clean/non-production painting environment? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">7</td>
+            <td style="font-size:14px;">Proper gloves being worn for task at hand? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">8</td>
+            <td style="font-size:14px;">Flash / flame resistant clothing (FR rated) worn as required?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">9</td>
+            <td style="font-size:14px;">Proper safety shoes being worn for task at hand? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">10</td>
+            <td style="font-size:14px;">Harness / Lanyard show current inspection tag? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">11</td>
+            <td style="font-size:14px;">Unused harness / lanyard hung up (off ground)? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">12</td>
+            <td style="font-size:14px;">Are all respirator users physically qualified to wear them?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">13</td>
+            <td style="font-size:14px;">Required hearing protection is being used? </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">14</td>
+            <td style="font-size:14px;">All required welding protective equipment is being used during welding/cutting operations?</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td align="center">15</td>
+            <td style="font-size:14px;">Other?  </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    
+    <DIV style="page-break-after:always"></DIV> 
+    
+    <table border="1" cellspacing="0" cellpadding="0" width="100%">
+        <tr style="background-color:#BDBDBD;">
+            <th align="center" style="font-size:24px;" colspan="6">ACTION ITEMS</th>
+        </tr>
+        <tr style="background-color:#BDBDBD;">
+            <th align="center" colspan="2">Ref <br/> #</th>
+            <th align="center">IMPROVEMENT OPPORTUNITY </th>
+            <th align="center" width="13%">RESP.</th>
+            <th align="center" width="13%">TARGET</th>
+            <th align="center" width="13%">ACTUAL</th>
+        </tr>
+        <tr>
+            <td  align="center" width="3%" style="font-size:14px;">1</td>
+            <td  align="center" width="3%" style="font-size:14px;">4</td>
+            <td  align="center" style="font-size:14px;">EXAMPLE: Employee not wearing proper gloves… warned and issued new pair. </td>
+            <td  align="center" style="font-size:14px;">First &amp; last name</td>
+            <td  align="center" style="font-size:14px;">By when?</td>
+            <td  align="center" style="font-size:14px;">Finished! </td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+    </table>
+    
+    </body>
+</apex:page>

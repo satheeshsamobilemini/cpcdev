@@ -1,0 +1,606 @@
+<apex:page id="pgId" controller="SelectContactPopupControllerUK" showHeader="false" sidebar="false">
+
+    <apex:includeScript value="{!$Resource.jQueryLib19Compress}"/>
+    <apex:includeScript value="/soap/ajax/10.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/10.0/apex.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+    <apex:stylesheet value="{!$Resource.DataTableCss}"/>
+    <style>
+        table.dataTable thead .sorting{background:url('{!$Resource.DT_sort_both}') no-repeat center right}
+        table.dataTable thead .sorting_asc{background:url('{!$Resource.DT_sort_asc}') no-repeat center right}
+        table.dataTable thead .sorting_desc{background:url('{!$Resource.DT_sort_desc}') no-repeat center right}
+        table.dataTable thead .sorting_asc_disabled{background:url('{!$Resource.DT_sort_asc_disabled}') no-repeat center right}
+        table.dataTable thead .sorting_desc_disabled{background:url('{!$Resource.DT_sort_desc_disabled}') no-repeat center right}
+    
+    </style>
+    
+    <script>
+    
+        function openandClose(){
+            //alert(y);
+            
+            //window.open('{!cpqURL}'+'?username=m%40t&password=p&_csrf=bf8449c6-c267-42a9-944a-9a892bc3ce71?id={!accId}&conId='+y);
+            //window.open('{!cpqURL}'+'?cpq=true');
+            var opt = '{!oppId}';
+            if(opt != null && opt != ''){ 
+              //alert(opt);
+              window.close();
+              //window.open('{!cpqURL}'+'/discovery?accountId='+'{!$CurrentPage.parameters.id}&uid={!$User.Email}&sales_org={!salesOrgID}&opportunity={!oppId}&contactId='+y);
+              window.open('{!cpqURL}'+'/discovery?accountId='+'{!$CurrentPage.parameters.id}&uid={!$User.Id}&sales_org={!salesOrgID}&opportunity={!oppId}&contactId='+y+'&emailId={!$User.Email}');
+             
+             
+              //window.open('{!cpqURL}'+'/discovery?accountId='+'{!$CurrentPage.parameters.id}&sales_org={!salesOrgID}&contactId='+y);  
+             // var test = window.setTimeout(function(){
+             //   window.location.href = '{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity={!oppId}&contact='+y';
+             // }, 30*250 );  
+            }
+            else{
+               createopportunity();
+               
+               var opt1 = '{!oppId}';
+            // alert('hey there:'+opt1);
+            // window.open('{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity={!oppId}&contact='+y);            
+           
+            }
+            
+       }
+    </script>
+    
+    <apex:form id="frmId">
+         <apex:messages id="messages" />
+         <apex:outputPanel id="outerMyCpq">
+         <apex:outputPanel id="myCpq" rendered="{!oppCreated}">
+         
+             <script>
+                 var dopptyId ='{!oppId}';
+                 var salesorg = '{!salesOrgID}';
+                 var cloneContract = '{!cloneContract}';
+                 var cloneQuote = '{!cloneQuote}';
+                 var isExternalClone = '{!isExternalClone}';
+                 
+                 
+                 if(cloneContract == 'Yes'){
+                     //alert('welcome1');
+                     window.open('{!cpqURL}'+'/edit_contract?contractId={!contractID}&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity={!oppID}&contactId='+y);
+                 }
+                 else if(isExternalClone == 'true'){
+                     //alert('welcome2');
+                     window.open('{!cpqURL}'+'/discovery?accountId={!acc1.id}&quoteId={!quoteID}&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity={!oppID}&contactId='+y);    
+                 }
+                 else if(cloneQuote == 'Yes'){
+                     //alert('welcome3');
+                     window.open('{!cpqURL}'+'/discovery?quoteId={!quoteID}&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity={!oppID}&contactId='+y);
+                    } 
+                 else{
+                    //alert('welcome4');
+                     if(salesorg != '1500' && salesorg != '1501'){
+                         window.open('{!cpqURL}'+'/discovery?accountId='+'{!$CurrentPage.parameters.id}&uid={!$User.Id}&sales_org={!salesOrgID}&opportunity={!oppId}&contactId='+y+'&emailId={!$User.Email}');                                
+                     }
+                     else{
+                         window.open('{!cpqURL}'+'/discovery?accountId='+'{!$CurrentPage.parameters.id}&uid={!$User.Id}&sales_org={!salesOrgID}&opportunity={!oppId}&contactId='+y+'&branchId={!currentUser.ETS_WMI_Branch_ID__c}&emailId={!$User.Email}');                                
+                     }
+                 }
+                 window.close();
+             </script>
+        </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:actionFunction name="createopportunity" action="{!Createopportunity}" reRender="outerMyCpq,messages"/> 
+                        
+        <apex:actionstatus id="Redirecting" >
+               <apex:facet name="start">
+                   <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+                       <div class="waitingHolder" >
+                           <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                            <font color="Red"><b>Please wait we are Redirecting to Select Contact Page....</b></font> 
+                        </div>
+                    </div>
+                </apex:facet>
+          </apex:actionstatus> 
+                
+        <apex:actionFunction name="callCreateContact" action="{!CreateContact}" reRender="conPb" status="Redirecting"/>
+        <!--<apex:pageBlock title="Please create or select a Contact" id="conPb">-->
+        <apex:pageBlock title="{!titleString}" id="conPb">
+          
+            <script>
+                $(document).ready(function() {
+                     //$('#pgId:frmId:conPb:conTbl').dataTable();
+                     $('#ContactListTable').dataTable();
+                } );
+                
+                 function validateData()
+                {
+                    var salOrg = "{!salesOrgID}";
+                    var fn = document.getElementById('pgId:frmId:conPb:createConId:pbsFn:pbsiFn:fn');
+                    var ln = document.getElementById('pgId:frmId:conPb:createConId:pbsLn:pbsiLn:ln');
+                    var ph = document.getElementById('pgId:frmId:conPb:createConId:pbsPh:pbsiPh:ph');
+                    var mob = document.getElementById('pgId:frmId:conPb:createConId:pbsMob:pbsiMob:mob');
+                    var eml = document.getElementById('pgId:frmId:conPb:createConId:pbsEm:pbsiEm:em');
+                    
+                    document.getElementById('fnError').style.display = "none";
+                    document.getElementById('lnError').style.display = "none";
+                    document.getElementById('phError').style.display = "none";
+                    document.getElementById('mobError').style.display = "none";
+                                        
+                    if(fn.value == ''){
+                        fn.focus();
+                        document.getElementById('fnError').style.display = "block";
+                        return false;
+                    }
+                    if(ln.value == ''){
+                        ln.focus();
+                        document.getElementById('lnError').style.display = "block";
+                        return false;
+                    }
+                    
+                   if(ph.value == ''){
+                            ph.focus();
+                            document.getElementById('phError').style.display = "block";
+                            return false;
+                    }
+                    
+                    if(salOrg == '1200'){
+                        var emlUK = document.getElementById('pgId:frmId:conPb:createConId:pbsEmUK:pbsiEmUK:em');
+                        var roleUK = document.getElementById('pgId:frmId:conPb:createConId:pbsRoleUK:pbsiRoleUK:listOfRoles');
+                        
+                        document.getElementById('emailErrorUK').style.display = "none";
+                        document.getElementById('roleErrorUK').style.display = "none";
+                                            
+                        if(emlUK.value == ''){
+                                //em.focus();
+                                document.getElementById('emailErrorUK').style.display = "block";
+                                return false;
+                         }
+                     
+                         if(roleUK.value == 'Select'){
+                                //listOfRoles.focus();
+                                document.getElementById('roleErrorUK').style.display = "block";
+                                return false;
+                         }
+                  }  
+                  /*
+                    if(mob.value == ''){
+                            mob.focus();
+                            document.getElementById('mobError').style.display = "block";
+                            return false;
+                     }
+                     
+                     if(eml.value == ''){
+                            mob.focus();
+                            document.getElementById('emailError').style.display = "block";
+                            return false;
+                     }
+                    */
+                    callCreateContact();
+                }
+                            
+                $(document).ready(function(){
+                    $("#createContactDiv").hide();
+                    $("#contactLists").show();
+                    
+                    $( '[id$=opBtn]').hide();
+                    $( '[id$=opBtnUK]').hide();
+                   //  var accdsh = "{!$CurrentPage.parameters.accDashboard}"
+                   // alert({!$CurrentPage.parameters.accDashboard}+'@@'+(accdsh == 'true'));
+                  //  if(accdsh === 'true')
+                  //  $( '[id$=createcondash]').hide();
+                 //   else
+                //    $( '[id$=createconuk]').hide();
+                    
+                    
+                  $("#CreateNewContact").click(function(){
+                    $("#createContactDiv").toggle();
+                  });
+                });
+            
+              
+            </script>
+            <script>
+                var url = '{!url}';
+                var fromAccount = '{!isFromAccount}';
+                var selectedConId = '{!selectedConId}';
+                
+              //  var accdash = "{!$CurrentPage.parameters.accDashboard}";
+              //  if(accdash == 'true' && url!=null && url!= '' && selectedConId!=null && selectedConId!=''){      
+              //  var selectedContactId = '{!selectedConId}';
+                //openandCloseContact(selectedContactId);
+              
+              //  }               
+                //alert("before if");
+                if(url!=null && url!= '' && selectedConId!=null && selectedConId!=''){
+                  if(fromAccount==='true')
+                   {
+                        
+                        if(sforce.console.isInConsole()){
+                           
+                            sforce.console.getFocusedPrimaryTabId(function showTabId(result) {
+                            result.calledUrl = url;
+                            var primaryTabId = result.id;
+                            sforce.console.openSubtab(primaryTabId , result.calledUrl, true, '', null,openSuccess, 'salesforceSubtab');
+                            });
+                            var openSuccess = function openSuccess(result) {
+                            };
+                             
+                        }
+                        else{
+                           //Shankar - Check if the user is navigated from Account Dashboard.
+                           if("{!$CurrentPage.parameters.accDashboard}" == 'true'){
+                            
+                                //Shankar - Redirect to CPQ to create new quote.
+                                var accountId = '{!$CurrentPage.parameters.id}';
+                                var selectedContactId = '{!selectedConId}';
+                                var urll =  '{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&opportunity={!$CurrentPage.parameters.opportunityid}&contact='+selectedContactId+'&emailId={!$User.Email}';
+                                //alert("redirect to cpq"+urll);
+                                //document.getElementById('login-form').submit();
+                                //window.opener.location.href = urll;
+                                window.open('{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&opportunity={!$CurrentPage.parameters.opportunityid}&contact='+selectedContactId+'&emailId={!$User.Email}');
+                                //alert("before fist else");
+                                window.close();
+                           }
+                           else{
+                         //   alert("redirect to uk");
+                            window.opener.location.href = url;
+                            //alert("before second else");
+                            window.close();
+                           }
+                        }
+                   }
+                  else{
+                  //alert("before fillin");
+                   fillIn(selectedConId);
+                   }
+                }
+                   
+             </script>
+             
+            <apex:pageMessages id="Message" />
+            <apex:outputPanel id="conOP">
+                <apex:outputPanel id="opCreateCon" rendered="{!!isPrsnAcc && !renderRep}">
+                    <div id="CreateNewContact" style="float:left; width:300px;"><input type="button" value="Create New Contact"/></div><br/>
+                    <div id="createContactDiv" style="display:none">
+                        <apex:pageBlock id="createConId" title="Create Contact">
+                        
+                            <apex:pageBlockSection id="pbsFn" columns="1">
+                                <apex:pageBlockSectionItem id="pbsiFn">
+                                    <apex:outputLabel value="First Name" />
+                                    <apex:outputPanel >
+                                       <div class="requiredInput">
+                                         <div class="requiredBlock"></div>
+                                         <apex:inputText value="{!conFn}" id="fn"/>&nbsp;<label id="fnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide first name</label>
+                                       </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection id="pbsLn" columns="1">
+                                <apex:pageBlockSectionItem id="pbsiLn">
+                                    <apex:outputLabel value="Last Name" />
+                                    <apex:outputPanel >
+                                      <div class="requiredInput">
+                                        <div class="requiredBlock"></div>
+                                        <apex:inputText id="ln" value="{!conLn}" />
+                                        &nbsp;<label id="lnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide last name</label>
+                                      </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection id="pbsPh" columns="1">
+                                <apex:pageBlockSectionItem id="pbsiPh">
+                                    <apex:outputLabel value="Phone" />
+                                    <apex:outputPanel >
+                                      <div class="requiredInput">
+                                        <div class="requiredBlock"></div>
+                                        <apex:inputText id="ph" value="{!conPh}" />
+                                        &nbsp;<label id="phError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide phone number</label>
+                                      </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection columns="1" id="pbsEmUK" rendered="{!if(salesOrgID == '1200',true,false)}">
+                                <apex:pageBlockSectionItem id="pbsiEmUK">
+                                    <apex:outputLabel value="Email" />
+                                    <apex:outputPanel >
+                                      <div class="requiredInput">
+                                        <div class="requiredBlock"></div>
+                                        <apex:inputText id="em" value="{!conEmail}" />
+                                        &nbsp;<label id="emailErrorUK" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Email</label>
+                                      </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection columns="1" id="pbsRoleUK" rendered="{!if(salesOrgID == '1200',true,false)}">
+                                <apex:pageBlockSectionItem id="pbsiRoleUK">
+                                    <apex:outputLabel value="Role" />
+                                    <apex:outputPanel >
+                                      <div class="requiredInput">
+                                        <div class="requiredBlock"></div>
+                                            <apex:selectList id="listOfRoles" value="{!conRole}" size="1">
+                                                <apex:selectOptions value="{!contactRolesList}"></apex:selectOptions>
+                                            </apex:selectList>
+                                            &nbsp;<label id="roleErrorUK" Style="color:#FF0000;font-weight:bold;display:none;">Please Select Contact Role</label>
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection id="pbsMob" columns="1">
+                                <apex:pageBlockSectionItem id="pbsiMob">
+                                    <apex:outputLabel value="Mobile" />
+                                    <apex:outputPanel >
+                                    <div class="requiredInput1">
+                                        <div class="requiredBlock1"></div>
+                                        <apex:inputText id="mob" value="{!conMob}" />
+                                        &nbsp;<label id="mobError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide mobile number</label>
+                                     </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageBlockSection columns="1" id="pbsEm" rendered="{!if(salesOrgID != '1200',true,false)}" > <!--  -->
+                                <apex:pageBlockSectionItem id="pbsiEm">
+                                    <apex:outputLabel value="Email" />
+                                    <apex:outputPanel >
+                                      <div class="requiredInput1">
+                                        <div class="requiredBlock1"></div>
+                                        <apex:inputText value="{!conEmail}" id="em"/>
+                                        &nbsp;<label id="emailError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Email</label>
+                                      </div>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageblocksection >
+                                <apex:pageBlockSectionItem >
+                                   <apex:outputLabel value="Fax" />
+                                   <apex:inputText value="{!conFax}" />
+                                </apex:pageBlockSectionItem>
+                            </apex:pageblocksection>  
+                             <!--rendered="{!!cretecontactbutton}"-->
+                            <apex:outputPanel id="createconuk"> 
+                            <apex:pageBlockSection columns="1">
+                                <apex:pageBlockSectionItem >
+                                    <input type="button" value="Create Contact" onclick="validateData();"/>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            </apex:outputPanel>
+                            
+                            <!--<apex:outputPanel id="createcondash" rendered="{!cretecontactbutton}">
+                            <apex:pageBlockSection columns="1">
+                                <apex:pageBlockSectionItem >
+                                     <!--<input type="button" value="Create ContactA" onclick="validateData();openandCloseContact();window.top.close();"/>-->
+                                    <!--<apex:commandButton onclick="validateData();openandCloseContact();window.top.close();return false" value="Create ContactA" reRender="conPb"/>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            </apex:outputPanel>-->
+                            
+                        </apex:pageBlock>
+                    </div>
+                </apex:outputPanel> 
+                <input type="hidden"  name="hiddenContact" id="hiddenContact" />
+                <apex:inputHidden value="{!contactId}" id="hidenid"/>
+                <input type="hidden" name="hiddenContactPh" id="hiddenContactPh" />
+                <input type="hidden" name="hiddenContactPhField" id="hiddenContactPhField" />
+                <input type="hidden" name="hiddenPrimaryContactPhField" id="hiddenPrimaryContactPhField" />  
+                <br/><br/>
+                <apex:outputLabel style="font-weight:bold;" value="Contact List" rendered="{!(IF(!renderRep, true, false))}"/><br/>
+                <apex:outputLabel style="font-weight:bold;" value="Mobile Mini UK Sales Rep" rendered="{!renderRep}" /><br/>
+                <apex:outputPanel >
+                <div id ="contactLists" style="display:none">
+                <apex:outputPanel rendered="{!!renderRep}">
+                <table id="ContactListTable" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th >Select</th>
+                            <th>Name</th>
+                            <th>Phone #</th>
+                            <th>Mobile #</th>
+                            <th>Email</th>
+                            <th>Fax</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!lstContact}" var="item">
+                            <tr>
+                                <td >
+                                  <apex:outputPanel layout="inline" rendered="{!!isFromAccount}">
+                                    <input type="radio" onclick="fillIn('{!item.id}');" name="test"/>
+                                  </apex:outputPanel>
+                                  <apex:outputPanel layout="inline" rendered="{!isFromAccount}">
+                                    <input type="radio" onclick="showNext('{!item.id}');" name="test"/>
+                                  </apex:outputPanel>
+                                    
+                                </td>
+                                
+                                <td>
+                                    {!item.Name}
+                                </td>
+                                <td>
+                                    {!item.Phone}
+                                </td>
+                                <td>
+                                    {!item.MobilePhone}
+                                </td>
+                                <td>
+                                    {!item.Email}
+                                </td>
+                                <td>
+                                    {!item.Fax}
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                   </tbody>
+                </table>
+                </apex:outputPanel>
+                </div>
+                
+                <apex:outputPanel rendered="{!renderRep}">
+                <table id="ContactListTable" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Name</th>
+                            <th>Rep ID</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!lstReps}" var="item">
+                            <tr>
+                                <td>
+                                    <input type="radio" onclick="showNextRep('{!item.Name}','{!item.Sales_Rep_Id__c}','{!item.Id}');" name="test"  id="{!item.id}"/>
+                                    <!--<apex:selectradio  onclick="showNext('{!item.Name}','{!item.Sales_Rep_Id__c}');" />-->
+                                </td>
+                                <td>
+                                    {!item.Name}
+                                </td>
+                                <td >
+                                    &nbsp;{!item.Sales_Rep_Id__c }
+                                </td>
+                               
+                               
+                            </tr>
+                        </apex:repeat>
+                   </tbody>
+                </table>
+                </apex:outputPanel>
+                </apex:outputPanel>
+                
+                
+                <apex:outputPanel id="opBtn" style="display:none">
+                    <br/><br/>
+                     <!-- <apex:commandButton onclick="openandClose();" value="Next" reRender="conPb"/>
+                     <apex:actionFunction action="{!next}" name="nextfind" reRender="conPb"/> -->
+                     <apex:commandButton onclick="openandClose();" value="Next" reRender="conPb"/>
+                </apex:outputPanel>
+                <apex:outputPanel id="opBtnUK" style="display:none">
+                    <br/><br/><apex:commandButton action="{!next}" value="Next" reRender="conPb"/>
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+    <form name="f" target="_blank" style="display:none" role="form" method="get" id="login-form" autocomplete="off" action="http://cpq-devweb/CPQ?cpq=true">
+       <div class="form-group">
+          <label for="email" class="login-labels">Email Address</label>
+          <input type="email" name="username" id="email" class="form-control" value="m@t" placeholder="youremail@gmail.com"/>
+          <span class="form-error" style="display: none;">Email is Required</span>
+       </div>
+       <div class="form-group">
+          <label for="password" class="login-labels">Password</label>
+          <input type="password" name="password" id="password" value="p" class="form-control" placeholder="Password"/><span class="form-error" style="display: none;">Password is Required</span>
+          <div class="forget-password" align="right">
+             <a href="#">Forgot password</a>
+          </div>
+          <input type="hidden" name="_csrf" value="bf8449c6-c267-42a9-944a-9a892bc3ce71"/>
+       </div>
+          <input type="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Login"/><i class="fa fa-chevron-right"></i> 
+    </form>
+    <script language="javascript">
+      
+       window.onload = new function()
+      {
+       window.focus();
+       var ele=document.getElementById('{!$Component.form.block.section.query}');
+       if (ele)
+       {
+           ele.focus();
+       }
+      }
+     
+     function showNextRep(name,repId,RcdId){
+              //  alert("shownext");
+                $( '[id$=opBtn1]').show();
+                salename = name;
+                salerepId = repId;
+                RecordId = RcdId;
+               //alert(RecordId);
+                getSelecteduser();
+                }
+                
+                function getSelecteduser()
+                { 
+                  // alert("in se;lectuser");
+                    var winMain=window.opener;
+                    if (null==winMain)
+                    {
+                    winMain=window.parent.opener;
+                    }
+                    
+                    var ele=winMain.document.getElementById('{!$CurrentPage.parameters.repID}');
+                    ele.value=salerepId;
+                    ele=winMain.document.getElementById('{!$CurrentPage.parameters.repName}');
+                    ele.value=salename;
+                    ele=winMain.document.getElementById('{!$CurrentPage.parameters.recordId}');
+                    ele.value=RecordId;
+                    CloseWindow();
+                }
+   
+       function fillIn(id)
+       {
+          var winMain=window.opener;
+          if (null==winMain)
+          {
+             winMain=window.parent.opener;
+          }
+          var ele=winMain.document.getElementById('{!$CurrentPage.parameters.idLoc}');
+          ele.value=id;
+          CloseWindow();
+       }
+
+       function CloseWindow()
+       {
+          var winMain=window.opener;
+          if (null==winMain)
+          {
+             winMain=window.parent.opener;
+          }
+          if('{!renderRep}' == 'true'){
+              winMain.closeFulfillingDepotLookupPopup();
+          }
+          else{
+              winMain.closeLookupPopup();
+          }
+       }
+       var x;var y;
+       function showNext(conRowId)
+       {
+      //  alert('show next');
+        document.getElementById('hiddenContact').value = '';
+       var conid = document.getElementById('hiddenContact').value = conRowId;
+        //alert("{!$CurrentPage.parameters.accDashboard}");
+          var accdash = "{!$CurrentPage.parameters.accDashboard}";
+          if(accdash == 'true'){
+          //alert("cpq");
+          $( '[id$=opBtn]').show();
+          }
+          else{
+          //alert("uk");
+          $( '[id$=opBtnUK]').show();
+          }
+        var x =document.getElementById('pgId:frmId:conPb:hidenid').value =conid;
+        y = x;
+       // alert(x);
+        
+       }
+        
+        
+            
+            
+            
+            
+            function openandCloseContact(){
+           // if(selectedConId != ''){
+              alert("conid"+selectedConId);
+              //var urll =  '{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&opportunity={!$CurrentPage.parameters.opportunityid}&contact='+conid;
+              window.open('{!cpqURL}'+'/?cpq=true&mode=create&account='+'{!$CurrentPage.parameters.id}&opportunity={!$CurrentPage.parameters.opportunityid}&contact='+selectedConId+'&emailId={!$User.Email}');
+              
+           //   }
+            
+            }
+            
+       
+    </script>
+</apex:page>

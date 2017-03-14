@@ -1,0 +1,92 @@
+<!--
+Name   : AccountHierarchy
+Usage  : Used to display Account Hierarchy of given account with custom fields/data.
+Author : Aashish Mathur
+Date   : July 14, 2009
+-->
+
+<apex:page standardController="Account" extensions="AccountHierarchyController"
+        title="Account Hierarchy: {!Account.Name}">
+         <script>
+         //added by Najma Ateeq for #00035443
+           function showHide(divN) {
+
+                    if (document.getElementById('div_' + divN).style.display == 'none') {
+                        document.getElementById('div_' + divN).style.display = 'block';
+                        document.getElementById('img_' + divN).src = '/img/alohaSkin/setup/setup_minus_lev1.gif';
+                    } else if (document.getElementById('div_' + divN).style.display == 'block') {
+                        document.getElementById('div_' + divN).style.display = 'none';
+                        document.getElementById('img_' + divN).src = '/img/alohaSkin/setup/setup_plus_lev1.gif';
+                    }
+               }
+           function expandAll(accId){
+                //var id = document.getElementById("accountData").style.display;
+                //var id = document.getElementByTagName('div').getAttribute("id");
+                var divId = 'div_'+accId;
+                //alert(divId);
+                document.getElementById(divId).style.display = 'block';
+                document.getElementById('collapseLink_'+accId).style.display = 'block';
+                document.getElementById('expandLink_'+accId).style.display = 'none';
+            }
+            
+            function collapseAll(accId){
+                //var id = document.getElementById("accountData").style.display;
+                //var id = document.getElementByTagName('div').getAttribute("id");
+                var divId = 'div_'+accId;
+                //alert(divId);
+                document.getElementById(divId).style.display = 'none';
+                document.getElementById('expandLink_'+accId).style.display = 'block';
+                document.getElementById('collapseLink_'+accId).style.display = 'none';
+            }
+         </script>
+    <apex:form >
+        <apex:sectionHeader title="Account Hierarchy" subtitle="{!Account.Name}" />
+        <apex:pageMessages />
+        
+        The hierarchy is created by associating accounts with parent accounts.
+        <br />
+        <br />
+        
+        <apex:pageBlock rendered="{!NOT(hasError)}">
+            <!-- Table listing Account Hierarchy -->
+            <apex:pageBlockTable value="{!nodesList}" var="node" >
+            <!-- Added Opportunity Colomn by Najma Ateeq for #00035443 -->
+                 <apex:column headervalue="Open Opportunity" width="10%">
+                     <!-- panel to show number of Open Opportunities -->
+                    <apex:outputpanel rendered="{!IF(node.countOpp != 0, true, false)}" >
+                        <apex:outputtext value="{!node.countOpp}" escape="false" />
+                        <a href="#expandLink_{!node.account.Id}" onclick="expandAll('{!node.account.Id}');" style="text-decoration: none" id="expandLink_{!node.account.Id}">[+]</a>
+                        <a href="#collapseLink_{!node.account.Id}" onclick="collapseAll('{!node.account.Id}');" style="text-decoration: none;display :none" id="collapseLink_{!node.account.Id}">[-]</a>
+                    </apex:outputpanel>
+                    <!-- Data Div to show list of Opportunities -->
+                     <div id="div_{!node.account.Id}" style="display: none; padding: 5px;" >
+                      <table width="100%" border="0">
+                        <apex:repeat var="opp" value="{!node.lstOpportunity}">
+                          <tr>
+                            <td><a href="/{!opp.id}" target="_blank">{!opp.Name}</a></td>
+                          </tr>
+                        </apex:repeat>        
+                        </table>            
+                    </div>
+               </apex:column>
+               
+                <apex:column headervalue="Account Name" style="white-space:pre;">
+                   <!-- White space to indent Hierarchy -->
+                   <apex:outputPanel >{!node.spanContent}</apex:outputPanel>
+                   <apex:outputLink value="/{!node.account.Id}">{!node.account.Name}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headervalue="BranchID" value="{!node.account.Branch__c}" />
+                <apex:column headervalue="Servicing Branch Id" value="{!node.account.Servicing_Branch_Id__c}" />
+                <apex:column headervalue="Owner"
+                       value="{!node.account.Owner.FirstName} {!node.account.Owner.LastName}" />
+                <apex:column headervalue="ResultID" value="{!node.account.Result_Id__c}" />
+                <apex:column headervalue="Phone" value="{!node.account.Phone}" />
+                <apex:column headervalue="Billing City" value="{!node.account.BillingCity}" />
+                <apex:column headervalue="Billing State/Province" value="{!node.account.BillingState}" />
+                 <apex:column headervalue="Last Activity Datetime" value="{!node.account.Last_Activity_Datetime__c}" />
+                  <apex:column headervalue="Next Activity Date" value="{!node.account.Next_Activity_Date__c}" />
+          </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

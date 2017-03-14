@@ -1,0 +1,441 @@
+<apex:page id="pg" standardController="Call_Mentoring_Session__c" extensions="AdvancedCallMentoringSessionController">
+   <apex:includeScript value="{!$Resource.JQueryScript1_4_2}"/>
+<style>
+    .selectedRating{
+       height:16px;
+       width:16px;
+       background-image: url({!URLFOR($Resource.StarRating,'star.png')}) ;
+       float:left;
+    }
+    .unselectedRating{
+       height:16px;
+       width:16px;
+       background-image: url({!URLFOR($Resource.StarRating,'blankstar.png')}) ;
+       float:left;
+    }
+</style>
+ 
+<script>
+     $(document).ready(function() {
+       var maxEffect = parseInt('{!maxEffectiveness}');
+       var effect = parseInt('{!callMentoringSession.Overall_Effectiveness_of_Call__c}');
+    
+       var str='<div id="first">';
+       for(i=0;i < effect ;i++){
+            str += '<div class="selectedRating" onclick="$(this).toggleClass(\'unselectedRating selectedRating\'); grantRating(this,\'effectiveRating\',$(this).attr(\'class\'));"></div>';
+        }
+        for(i=0;i < maxEffect-effect ;i++){
+            str += '<div class="unselectedRating" onclick="$(this).toggleClass(\'unselectedRating selectedRating\'); grantRating(this,\'effectiveRating\',$(this).attr(\'class\'));"></div>';
+        }
+        str+='</div>';
+        //alert(str);
+        $('#effectiveRating').html(str);
+        
+       var maxRating = parseInt('{!maxSalesPersonRating}');
+       var rating = parseInt('{!callMentoringSession.Salesperson_s_Star_Rating_of_CS__c}');
+    
+       str='<div id="second">';
+       for(i=0;i < rating ;i++){
+            str += '<div class="selectedRating" onclick="$(this).toggleClass(\'unselectedRating selectedRating\');grantRating(this,\'salesPersonRating\',$(this).attr(\'class\')); "></div>';
+        }
+        for(i=0;i < maxRating-rating ;i++){
+            str += '<div class="unselectedRating" onclick="$(this).toggleClass(\'unselectedRating selectedRating\');grantRating(this,\'salesPersonRating\',$(this).attr(\'class\')); "></div>';
+        }
+        //alert(str);
+        $('#starRating').html(str);
+     });
+    
+    
+    function grantRating(obj,rating,status){
+        //alert(status+rating);
+        if(status=='selectedRating'){
+            $(obj).prevAll().removeClass().addClass('selectedRating');
+        }
+        else if(status=='unselectedRating'){
+            $(obj).nextAll().removeClass().addClass('unselectedRating');
+        }
+        
+        var effectiveRatingHdn = document.getElementById('pg:frm:editBlock:effectiveRatingHdn');
+        var salesPersonRatingHdn = document.getElementById('pg:frm:editBlock:salesPersonRatingHdn');
+        if(rating == 'effectiveRating'){
+            $(effectiveRatingHdn).val($(obj).parent().children('.selectedRating').length);
+        }else if(rating == 'salesPersonRating'){
+            $(salesPersonRatingHdn).val($(obj).parent().children('.selectedRating').length);
+        }
+        
+    }
+    function validate(){
+        var purposeCallComp = document.getElementById('pg:frm:editBlock:purposeCall');
+        var purposeCallOtherComp = document.getElementById('pg:frm:editBlock:purposeCallOther');
+        if(purposeCallComp != null && purposeCallComp.value =='Other' && purposeCallOtherComp != null && purposeCallOtherComp.value ==''){
+            alert('Please fill purpose of call Other field');
+            return false;
+        }
+        var productNeedComp = document.getElementById('pg:frm:editBlock:productNeed');
+        var productNeedOtherComp = document.getElementById('pg:frm:editBlock:productNeedOther');
+        if(productNeedComp != null && productNeedComp.value =='Other' && productNeedOtherComp != null && productNeedOtherComp.value ==''){
+            alert('Please fill Product Need Other field');
+            return false;
+        }
+        var transactionTypeComp = document.getElementById('pg:frm:editBlock:transactionType');
+        var transactionTypeOtherComp = document.getElementById('pg:frm:editBlock:transactionTypeOther');
+        if(transactionTypeComp != null && transactionTypeComp.value =='Other' && transactionTypeOtherComp != null && transactionTypeOtherComp.value ==''){
+            alert('Please fill Transaction Type Other field');
+            return false;
+        }
+        /*var nextCoachingDate =document.getElementById('pg:frm:editBlock:nextCoachingdate');       
+        alert('{!currentDate}');
+        var date2 = new Date('{!currentDate}');
+        alert('date2'+date2);
+        if(nextCoachingDate != null && nextCoachingDate.value !=''){
+            var date1 = new Date(nextCoachingDate.value); 
+            var date2 = new Date() ;
+            alert('date1'+date1);
+            alert('date2'+date2);
+            if( date1 < date2){ 
+                alert('Next Coaching Date Should not be the Past date');
+                return false;
+            }
+            
+        }*/
+        return true;
+    }
+    function checkPurposeOther(){
+        var purposeCallComp = document.getElementById('pg:frm:editBlock:purposeCall');
+        var otherLabelC = document.getElementById('otherPurposeLabel');
+        var otherFieldC = document.getElementById('otherPurposeField');
+        if(purposeCallComp != null && purposeCallComp.value=='Other'){
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = '';
+                otherFieldC.style.display = '';
+            }
+        }else{
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = 'none';
+                otherFieldC.style.display = 'none';
+            }
+        }
+    }
+    function checkProductOther(){
+        var productCallComp = document.getElementById('pg:frm:editBlock:productNeed');
+        var otherLabelC = document.getElementById('otherProductLabel');
+        var otherFieldC = document.getElementById('otherProductField');
+        if(productCallComp != null && productCallComp.value=='Other'){
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = '';
+                otherFieldC.style.display = '';
+            }
+        }else{
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = 'none';
+                otherFieldC.style.display = 'none';
+            }
+        }
+    }
+    function checkTransactionOther(){
+        var transactionCallComp = document.getElementById('pg:frm:editBlock:transactionType');
+        var otherLabelC = document.getElementById('otherTransactionLabel');
+        var otherFieldC = document.getElementById('otherTransactionField');
+        if(transactionCallComp != null && transactionCallComp.value=='Other'){
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = '';
+                otherFieldC.style.display = '';
+            }
+        }else{
+            if(otherLabelC != null && otherFieldC != null){
+                otherLabelC.style.display = 'none';
+                otherFieldC.style.display = 'none';
+            }
+        }
+    }
+        
+</script>
+<apex:form id="frm" >
+<apex:sectionHeader title="Advanced Coaching Session Edit " subtitle="New Coaching Session"/>
+<apex:outputPanel id="editPanel">
+    <apex:pageBlock id="editBlock" title="Coaching Session Edit" mode="edit">
+    
+        <apex:pageBlockButtons >
+            <apex:commandButton id="saveBtn" value="Save" onclick="return validate();" action="{!saveData}"/>
+            <apex:commandButton id="saveNewBtn" value="Save & New" onclick="return validate();" action="{!saveDataNew}"/>
+            <apex:commandButton id="cancelBtn" value="Cancel"  action="{!cancelEdit}" immediate="true"/>
+        </apex:pageBlockButtons>
+        <apex:messages />
+        <table width="100%" cellPadding="2" cellSpacing="2">
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Coaching Session Name" /></td>
+            <td class="datacol" width="25%"><apex:inputField value="{!callMentoringSession.Name}" /></td>
+            <td width="20%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>
+          </tr> 
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Type Of Call" /></td>
+            <td class="datacol" width="25%"><apex:inputField value="{!callMentoringSession.Type_of_Call__c}" style="width:90%"/></td>
+            <td width="20%" ><apex:outputLabel value="Rep Name" /></td>
+            <td class="datacol" width= "30%" ><apex:inputField value="{!callMentoringSession.Rep_Name__c}" /></td>
+            
+            
+          </tr>
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Existing or New Customer" /></td>
+            <td class="datacol" width="25%"><apex:inputField value="{!callMentoringSession.Existing_or_New_Customer__c}" style="width:90%"/></td>
+            <td width="20%" ><apex:outputLabel value="Date" /></td>
+            <td width= "30%" class="datacol"><apex:inputField value="{!callMentoringSession.Rep_Date__c}" style="width:47%;"/></td>
+            
+          </tr>
+          <tr>
+                    
+            <td ><apex:outputLabel value="Type of Customer" /></td>
+            <td class="datacol" ><apex:inputField value="{!callMentoringSession.Type_of_Customer__c}" style="width:90%"/></td>
+            <td width="20%" ><apex:outputLabel value="Coach" /></td>
+            <td width= "30%"><apex:inputField value="{!callMentoringSession.Mentor__c}" /></td>
+          </tr>
+          <tr>      
+            <td ><apex:outputLabel value="Purpose of Call" /></td>
+            <td class="datacol" ><apex:inputField id="purposeCall" value="{!callMentoringSession.Purpose_of_Call__c}" onchange="checkPurposeOther();" style="width:90%"/></td>
+            <td ><div id="otherPurposeLabel" style="display : {!IF(callMentoringSession.Purpose_of_Call__c =='Other','','none')};"><apex:outputLabel value="Purpose of Call Other" /></div></td>
+            <td class="datacol" ><div id="otherPurposeField" style="display : {!IF(callMentoringSession.Purpose_of_Call__c =='Other','','none')};"><apex:inputField id="purposeCallOther" value="{!callMentoringSession.Purpose_of_Call_Other__c}" /></div></td>
+            
+          </tr>
+          <tr>
+            <td><apex:outputLabel value="Product Need" /></td>
+            <td class="datacol" ><apex:inputField id="productNeed" value="{!callMentoringSession.Product_Need__c}" onchange="checkProductOther();" style="width:90%"/></td>
+            <td ><div id="otherProductLabel" style="display : {!IF(callMentoringSession.Product_Need__c =='Other','','none')};"><apex:outputLabel value="Product Need Other" /></div></td>
+            <td class="datacol" ><div id="otherProductField" style="display : {!IF(callMentoringSession.Product_Need__c =='Other','','none')};"><apex:inputField id="productNeedOther" value="{!callMentoringSession.Product_Need_Other__c}" /></div></td>
+            
+          </tr>
+          <tr>      
+            <td><apex:outputLabel value="Transaction Type" /></td>
+            <td class="datacol" ><apex:inputField id="transactionType" value="{!callMentoringSession.Transaction_Type__c}" onchange="checkTransactionOther();" style="width:90%"/></td>
+            <td ><div id="otherTransactionLabel" style="display : {!IF(callMentoringSession.Transaction_Type__c =='Other','','none')};"><apex:outputLabel value="Transaction Type Other" /></div></td>
+            <td class="datacol" ><div id="otherTransactionField" style="display : {!IF(callMentoringSession.Transaction_Type__c =='Other','','none')};"><apex:inputField id="transactionTypeOther" value="{!callMentoringSession.Transaction_Type_Other__c}" /></div></td>
+            
+          </tr>       
+         
+         <!--   <tr>
+            <td><apex:outputLabel value="Call Title/Keywords" /></td>
+            <td class="datacol" ><apex:inputField value="{!callMentoringSession.Call_Title__c}" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr> 
+          <tr>              
+            <td><apex:outputLabel value="Date/Time of Call" /></td>
+            <td class="datacol" ><apex:inputField value="{!callMentoringSession.Date_Time_of_Call__c}" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr> -->
+        </table>
+        <br/>
+        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#99CCFF">
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr> 
+            <tr>
+                <td width="50%" align="center"><b>Section Of Phone Calls</b></td>
+                <td colspan="2" align="center"><b>Salesperson Evaluation</b></td>
+            </tr>
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ></td>
+                <td width="25%" align="center"><b>Rep</b></td>
+                <td width="25%" align="center"><b>Manager</b></td>
+            </tr>           
+        </table>
+        
+        <table cellpadding="4" cellspacing="4">
+            <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Pre Call Prep/Planning</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Objective and call openings created for the call.  Connection, tone, and friendliness appropriate" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Pre_Call_Prep_Planning__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Pre_Call_Prep_planning__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Comment" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Pre_Call_Comment__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Pre_Call_Comment__c}" style="width:95%;"/></td>
+            </tr>
+            <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Call Opening</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Gate keeper: Gathered as much information from whomever you are able, prior to speaking to your prospect." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Call_Opening_Gate_keeper__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Call_Opening_Gate_keeper__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Prospect:  Created enough interest/curiosity to move the customer to questioning" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Call_Opening_Prospect__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Call_Opening_Prospect__c}" style="width:95%;"/></td>
+            </tr>
+             <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Discovery</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Asked appropriate questions to get information" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Discovery_Asked_Appropriate_Question__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Discovery_Asked_Appropriate_Ques__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Ex: When will you need it?   What do you know about our containers/Have you ever used a (our) containers before? Who will be accessing the container?  Where will it be placed?  How will you be using the container" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Discovery_Container_Question__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Discovery_Container_Question__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Connected MMI container features to a benefit for the customer addressing a specific need.  Set MMI the company/products apart from other storage options." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Discovery_Connected_MMI__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Discovery_Connected_MMI__c}" style="width:95%;"/></td>
+            </tr>
+            <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Recommendation</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Rep recommends a product after knowing specifically how it will meet their needs and is in the customer’s best interest." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Recommends_A_Product__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Recommends_A_Product__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Explains the reasoning for the recommendation of a specific product by recapping the MMI features, tied to a customer benefit addressing specific needs mentioned earlier in discovery." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Recommends_Explains_Reasoning__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Recommends_Explains_Reasoning__c}" style="width:95%;"/></td>
+            </tr>
+            <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Close/Commitment</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Effectively asked the customer for a commitment to the next step. (I.e. delivery date, follow up call, order for rental or purchase." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Close_Commitment_Effectively_Asked__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Close_Commitment_Effectively_Ask__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Order/sale processed?  If not, why?" /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Close_Commitment_Order_Sale_Processe__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Close_Commitment_Order_Sale_Proc__c}" style="width:95%;"/></td>
+            </tr>
+            
+            <tr bgcolor="#DDDDDD">
+                <td colspan="4" ><b>Follow up</b> </td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Rep directly asks customer when they will have a decision and schedules a follow up appointment, for their decision on that call." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Follow_Up_Directly_Asks__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Follow_Up_Directly_Asks__c}" style="width:95%;"/></td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Rep schedules phone appointment with customer and sets expectation for that call." /></td>
+                <td width= "20%"><apex:inputField value="{!callMentoringSession.Rep_Follow_Up_Schedules_Phone_Appointmen__c}" style="width:95%;"/></td>
+                <td width= "30%" ><apex:inputField value="{!callMentoringSession.Manager_Follow_Up_Schedules_Phone_Appoin__c}" style="width:95%;"/></td>
+            </tr>
+            
+            
+            <tr bgcolor="#99CCFF">
+                <td colspan="4" ><b>Overall Effectiveness of Call</b> </td>
+            </tr>
+            <!--  <tr>
+                <td colspan="4" >
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" ><apex:outputLabel value="Rep Name" /></td>
+                            <td width= "25%" align="left"><apex:inputField value="{!callMentoringSession.Rep_Name__c}" style="width:95%;"/></td>
+                            <td width="15%" align="right"><apex:outputLabel value="Date" /></td>
+                            <td width= "50%" align="left"><apex:inputField value="{!callMentoringSession.Rep_Date__c}" style="width:47%;"/></td>
+                        </tr>
+                        
+                    </table>
+                </td>
+                
+            </tr> 
+             <tr>
+               <td colspan="4" >
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" ><apex:outputLabel value="Coach" /></td>
+                            <td width= "25%"><apex:inputField value="{!callMentoringSession.Mentor__c}" style="width:95%;"/></td>
+                            <td width="65%" align="center">&nbsp;</td>
+                        </tr>
+                        
+                    </table>
+                </td>
+                
+            </tr> -->
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Objective/Purpose for Coaching Session" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Objective_Purpose_for_coaching_session__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Specific Area of Coaching" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Specific_Area_Of_Coaching__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Area of Strength" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Area_Of_Strength__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Area of Opportunity/Focus" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Area_of_Opportunity_Focus__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Root Cause of Opportunity" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Root_Cause_of_Opportunity__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Action Plan, Measurement and Goal: (specific objectives and actions with the rep to develop a skill that will lead to a performance improvement, i.e. participation in trainings and role plays)" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Action_Plan_Measurement_And_Goal__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Rep Questions/Comments" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Rep_Questions_Comments__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Manager Comments & Expectations" /></td>
+                <td width= "25%"><apex:inputField value="{!callMentoringSession.Manager_Comments_And_Expectations__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td width="50%" ><apex:outputLabel value="Date of Next Coaching Session" /></td>
+                <td width= "25%"><apex:inputField id="nextCoachingdate" value="{!callMentoringSession.Next_Coaching_Session_Date__c}" style="width:95%;"/></td>
+                <td width= "25%" align="center">&nbsp;</td>
+            </tr>
+            </table>
+            <table width="100%" cellpadding="4" cellspacing="4">
+            	<tr bgcolor="#DDDDDD">
+                	<td colspan="3" ><b>Others</b> </td>
+            	</tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best!" /></td>
+                <td width= "25%" ><apex:inputField value="{!callMentoringSession.Best_of_the_Best__c}"/></td>
+                <td width="50%">&nbsp;</td>
+
+            </tr>
+           <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best Category" /></td>
+                <td width= "75%" colspan="2"><apex:inputField value="{!callMentoringSession.Best_of_the_Best_Category__c}" /></td>
+                
+
+            </tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best Comments" /></td>
+                <td width= "75%" colspan="2"><apex:inputField value="{!callMentoringSession.Best_of_the_Best_Comments__c}" style="width:36%;" /></td>
+                
+
+            </tr>
+            </table>
+            
+        
+    </apex:pageBlock>
+</apex:outputPanel>
+
+</apex:form>  
+</apex:page>

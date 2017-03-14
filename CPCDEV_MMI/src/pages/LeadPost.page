@@ -1,0 +1,12 @@
+<apex:page showHeader="false" id="pg" controller="LeadPostController" action="{!insertLeads}" >
+
+
+  <h1>This Form Posts Leads</h1>
+  <p>Enter xml below, then click Submit</p> 
+
+    <form action="{!pageURL}" method='POST' enctype='text/xml'>
+      <input type="text" name="xml" value="" />
+      <input type="submit" name="submit" value="submit"/>
+    </form>
+
+</apex:page>

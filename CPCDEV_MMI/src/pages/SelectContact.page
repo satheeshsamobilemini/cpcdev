@@ -1,0 +1,292 @@
+<apex:page id="pgId" controller="SelectContactController" showHeader="false" sidebar="false">
+
+	<apex:includeScript value="{!$Resource.jQueryLib19Compress}"/>
+	<apex:includeScript value="/soap/ajax/10.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/10.0/apex.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+    <apex:stylesheet value="{!$Resource.DataTableCss}"/>
+    <style>
+    	table.dataTable thead .sorting{background:url('{!$Resource.DT_sort_both}') no-repeat center right}
+    	table.dataTable thead .sorting_asc{background:url('{!$Resource.DT_sort_asc}') no-repeat center right}
+    	table.dataTable thead .sorting_desc{background:url('{!$Resource.DT_sort_desc}') no-repeat center right}
+    	table.dataTable thead .sorting_asc_disabled{background:url('{!$Resource.DT_sort_asc_disabled}') no-repeat center right}
+    	table.dataTable thead .sorting_desc_disabled{background:url('{!$Resource.DT_sort_desc_disabled}') no-repeat center right}
+    
+    </style>
+	<apex:form id="frmId">
+		<apex:actionFunction name="callCreateContact" action="{!CreateContact}" reRender="conPb"/>
+		<apex:pageBlock title="Please create or select a Contact" id="conPb">
+			<script>
+				$(document).ready(function() {
+					 //$('#pgId:frmId:conPb:conTbl').dataTable();
+					 $('#ContactListTable').dataTable();
+				} );
+				
+				 function getSelectedContact(conId,eleId)
+		        {
+					document.getElementById('hiddenContact').value = '';
+					document.getElementById('hiddenContact').value = conId;
+					document.getElementById('hiddenContactPh').value = '';
+					document.getElementById('hiddenContactPhField').value = '';
+					var RadioBoxes = document.getElementsByTagName('input');
+					for (var i = 0; i < RadioBoxes.length; i++) {
+			             //alert(RadioBoxes[i].getAttribute('id'));
+			             if (RadioBoxes[i].type == 'radio' && RadioBoxes[i].getAttribute('id') != 'phoneNumber' && RadioBoxes[i].getAttribute('id') != 'mobileNumber' ) {
+			                 RadioBoxes[i].checked = false;
+			             }
+			         }
+			         eleId.checked = true;
+		        }
+		        
+		        function getSelectedContactPh(conIdPh, selectedConField, conRowId,eleId)
+		        {
+					document.getElementById('hiddenContactPh').value = '';
+					document.getElementById('hiddenContactPh').value = conIdPh;
+					document.getElementById('hiddenContactPhField').value = '';
+					document.getElementById('hiddenContactPhField').value = selectedConField;
+					/*var RadioBoxes = document.getElementsByTagName('input');
+					for (var i = 0; i < RadioBoxes.length; i++) {
+			             if (RadioBoxes[i].type == 'radio' && RadioBoxes[i].getAttribute('id') != 'phoneNumber' && RadioBoxes[i].getAttribute('id') != 'mobileNumber' ) {
+			                 //RadioBoxes[i].checked = false;
+			             }
+			         }*/
+			         document.getElementById(conRowId).checked = true;
+			         document.getElementById('hiddenContact').value = '';
+					 document.getElementById('hiddenContact').value = conRowId;
+			         //eleId.checked = true;
+		        }
+		        
+		        function getSelectedPrimaryContact(fieldname){
+		        	document.getElementById('hiddenPrimaryContactPhField').value = '';
+					document.getElementById('hiddenPrimaryContactPhField').value = fieldname;
+		        }
+		        
+		         function validateData()
+		        {
+					var fn = document.getElementById('pgId:frmId:conPb:createConId:pbsFn:pbsiFn:fn');
+					var ln = document.getElementById('pgId:frmId:conPb:createConId:pbsLn:pbsiLn:ln');
+					var ph = document.getElementById('pgId:frmId:conPb:createConId:pbsPh:pbsiPh:ph');
+					var mob = document.getElementById('pgId:frmId:conPb:createConId:pbsMob:pbsiMob:mob');
+					document.getElementById('fnError').style.display = "none";
+					document.getElementById('lnError').style.display = "none";
+					document.getElementById('phError').style.display = "none";
+					document.getElementById('mobError').style.display = "none";
+					if(fn.value == ''){
+						fn.focus();
+						document.getElementById('fnError').style.display = "block";
+						return false;
+					}
+					if(ln.value == ''){
+						ln.focus();
+						document.getElementById('lnError').style.display = "block";
+						return false;
+					}
+					
+					if(document.getElementById('phoneNumber').checked) {
+						if(ph.value == ''){
+							ph.focus();
+							document.getElementById('phError').style.display = "block";
+							return false;
+						}
+					}
+					if(document.getElementById('mobileNumber').checked) {
+						if(mob.value == ''){
+							mob.focus();
+							document.getElementById('mobError').style.display = "block";
+							return false;
+						}
+					}
+					
+					callCreateContact();
+		        }
+			</script>
+			<script>
+	            var url = '{!url}';
+	            //alert(url);
+	            if(url != 'null' && url != ''){
+	                /*window.opener.location.href = url;
+	                window.close();*/
+	                if(sforce.console.isInConsole()){
+                        sforce.console.getFocusedPrimaryTabId(function showTabId(result) {
+                         result.calledUrl = url;
+                         var primaryTabId = result.id;
+                         sforce.console.openSubtab(primaryTabId , result.calledUrl, true, '', null,openSuccess, 'salesforceSubtab');
+                         });
+                         var openSuccess = function openSuccess(result) {
+                         };
+                         
+                    }else{
+                        window.opener.location.href = url;
+                        window.close();
+                    }
+	            }
+	            
+	            $(document).ready(function(){
+	            	$("#createContactDiv").hide();
+				  $("#CreateNewContact").click(function(){
+				    $("#createContactDiv").toggle();
+				  });
+				});
+            
+            </script>
+			<apex:pageMessages id="Message" />
+			<apex:outputPanel id="conOP">
+	           	<apex:outputPanel id="opCreateCon" rendered="{!!isPrsnAcc}">
+	           		<div id="CreateNewContact" style="float:left; width:300px;"><input type="button" value="Create New Contact"/></div>
+	           		<div id="createContactDiv">
+						<apex:pageBlock id="createConId" title="Create Contact">
+							<apex:pageBlockSection id="pbsFn" columns="1">
+								<apex:pageBlockSectionItem id="pbsiFn">
+									<apex:outputLabel value="First Name" />
+									<apex:outputPanel >
+										<apex:inputText id="fn" value="{!conFn}" />
+										&nbsp;<label id="fnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide first name</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<!-- <apex:pageBlockSectionItem id="pbsiFn">
+									<apex:outputPanel >
+										<apex:inputText id="fn" value="{!conFn}" />
+										&nbsp;<label id="fnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide first name</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem> -->
+							</apex:pageBlockSection>
+							<apex:pageBlockSection id="pbsLn" columns="1">
+								<apex:pageBlockSectionItem id="pbsiLn">
+									<apex:outputLabel value="Last Name" />
+									<apex:outputPanel >
+										<apex:inputText id="ln" value="{!conLn}" />
+										&nbsp;<label id="lnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide last name</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<!-- <apex:pageBlockSectionItem id="pbsiLn">
+									<apex:outputPanel >
+										<apex:inputText id="ln" value="{!conLn}" />
+										&nbsp;<label id="lnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide last name</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem> -->
+							</apex:pageBlockSection>
+							<apex:pageBlockSection id="pbsPh" columns="1">
+								<apex:pageBlockSectionItem id="pbsiPh">
+									<apex:outputLabel value="Phone" />
+									<apex:outputPanel >
+										<apex:inputText id="ph" value="{!conPh}" />
+										&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('Phone');" name="SelectPc" id="phoneNumber" checked="true" />&nbsp;Primary contact
+										&nbsp;<label id="phError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide phone number</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<!-- <apex:pageBlockSectionItem id="pbsiPh">
+									<apex:outputPanel >
+										<apex:inputText id="ph" value="{!conPh}" />
+										&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('Phone');" name="SelectPc" id="phoneNumber" checked="true" />&nbsp;Primary contact
+										&nbsp;<label id="phError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide phone number</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem> -->
+							</apex:pageBlockSection>
+							<apex:pageBlockSection id="pbsMob" columns="1">
+								<apex:pageBlockSectionItem id="pbsiMob">
+									<apex:outputLabel value="Mobile" />
+									<apex:outputPanel >
+										<apex:inputText id="mob" value="{!conMob}" />
+										&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('MobilePhone');"  name="SelectPc" id="mobileNumber"/>&nbsp;Primary contact
+										&nbsp;<label id="mobError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide mobile number</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem>
+								<!-- <apex:pageBlockSectionItem id="pbsiMob">
+									<apex:outputPanel >
+										<apex:inputText id="mob" value="{!conMob}" />
+										&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('MobilePhone');"  name="SelectPc" id="mobileNumber"/>&nbsp;Primary contact
+										&nbsp;<label id="mobError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide mobile number</label>
+									</apex:outputPanel>
+								</apex:pageBlockSectionItem> -->
+							</apex:pageBlockSection>
+							<apex:pageBlockSection columns="1">
+								<apex:pageBlockSectionItem >
+									<apex:outputLabel value="Email" />
+									<apex:inputText value="{!conEmail}" />
+								</apex:pageBlockSectionItem>
+								<!-- <apex:pageBlockSectionItem >
+									<apex:inputText value="{!conEmail}" />
+								</apex:pageBlockSectionItem> -->
+							</apex:pageBlockSection>
+							<apex:pageBlockSection columns="1">
+								<!-- <apex:pageBlockSectionItem >
+									
+								</apex:pageBlockSectionItem> -->
+								<apex:pageBlockSectionItem >
+									<!-- <apex:commandButton action="{!CreateContact}" value="Create Contact" reRender="conPb"/>  -->
+									<input type="button" value="Create Contact" onclick="validateData();"/>
+								</apex:pageBlockSectionItem>
+							</apex:pageBlockSection>
+						</apex:pageBlock>
+					</div>
+				</apex:outputPanel> 
+	           	<input type="hidden" name="hiddenContact" id="hiddenContact" />
+	           	<input type="hidden" name="hiddenContactPh" id="hiddenContactPh" />
+	           	<input type="hidden" name="hiddenContactPhField" id="hiddenContactPhField" />
+	           	<input type="hidden" name="hiddenPrimaryContactPhField" id="hiddenPrimaryContactPhField" />  
+	           	<br/><br/>
+	           	<apex:outputLabel style="font-weight:bold;" value="Contact List"/><br/><br/>
+	           	<table id="ContactListTable" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			                <th style="display:none;">Select</th>
+			                <th>Name</th>
+			                <th>Phone #</th>
+			                <th>Mobile #</th>
+			                <th>Email</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+			            <apex:repeat value="{!lstContact}" var="item">
+				            <tr>
+				                <td style="display:none;">
+				                	<input type="radio" onclick="getSelectedContact('{!item.Id}', this);" name="Select" id="{!item.Id}"/>
+				                </td>
+				                <td>
+				                	{!item.Name}
+				                </td>
+				                <td>
+				                	<input type="radio" onclick="getSelectedContactPh('{!item.Phone}','Phone','{!item.Id}',this);" name="SelectPh" /> &nbsp;{!item.Phone}
+				                </td>
+				                <td>
+				                	<input type="radio" onclick="getSelectedContactPh('{!item.MobilePhone}','MobilePhone','{!item.Id}',this);" name="SelectPh" /> &nbsp;{!item.MobilePhone}
+				                </td>
+				                <td>
+				                	{!item.Email}
+				                </td>
+				            </tr>
+			            </apex:repeat>
+			       </tbody>
+			    </table>
+	           	
+	           	<!-- <apex:outputLabel rendered="{!IsContactPresent}" style="font-weight:bold;" value="Contact List"/><br/><br/>
+				<apex:pageBlockTable id="conTbl" rendered="{!IsContactPresent}" value="{!lstContact}" var="item">
+				    <apex:column >
+				        <apex:facet name="header">Select</apex:facet>
+				        <input type="radio" onclick="getSelectedContact('{!item.Id}', this);" name="Select" id="{!item.Id}"/>
+				    </apex:column> 
+				    <apex:column >
+				        <apex:facet name="header">Name</apex:facet>
+				        {!item.Name}
+				    </apex:column>
+				    <apex:column >
+				        <apex:facet name="header">Phone #</apex:facet>
+				        <input type="radio" onclick="getSelectedContactPh('{!item.Phone}','Phone','{!item.Id}',this);" name="SelectPh" /> &nbsp;{!item.Phone}
+				    </apex:column> 
+				    <apex:column >
+				        <apex:facet name="header">Mobile #</apex:facet>
+				        <input type="radio" onclick="getSelectedContactPh('{!item.MobilePhone}','MobilePhone','{!item.Id}',this);" name="SelectPh" /> &nbsp;{!item.MobilePhone}
+				    </apex:column>
+				    <apex:column >
+				        <apex:facet name="header">Email</apex:facet>
+				        {!item.Email}
+				    </apex:column>    
+				</apex:pageBlockTable> -->
+				<apex:outputPanel id="opBtn" rendered="{!IsContactPresent}">
+					<br/><br/><apex:commandButton action="{!next}" value="Next" reRender="conPb"/>
+				</apex:outputPanel>
+			</apex:outputPanel>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,322 @@
+<apex:page showChat="false" showHeader="false" renderAs="pdf" controller="RFDUKPDFController" sidebar="false" title="Request For Delivery" applyBodyTag="false" 
+                            contentType="application/pdf" readOnly="true" standardStylesheets="false">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+        <style type="text/css" media="print">
+            @page{
+                size:A4 portrait;
+                border:solid 4px #003e7e;
+               @top-center { 
+                    content: element(header);
+                }
+            }
+            html, body { height: 100%; width: 100%; margin: 0; }
+            .tableRowName{
+                border:1px solid #000 !important; 
+                border-spacing:0;
+                border-collapse: collapse;
+                padding:3px !important;    
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+            .tableRowValue{
+                border:1px solid #000 !important; 
+                border-spacing:0;
+                border-collapse: collapse;
+                padding:3px !important;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+            thead {display: table-header-group !important;}
+        </style>
+    </head>
+    <body style="width: 700px; height:auto; margin:0px auto; padding:0; font-size:14px; font-family:Arial,Helvetica,sans-serif">
+        <table style="width:100%; border-spacing:0">
+            <tbody>
+                <tr>
+                    <td style="width:30px; background:#fff; border-spacing:0; border-right:solid 15px #003e7e; height:20px"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="width:100%; border-spacing:0">
+            <tbody>
+                <tr>
+                    <td><apex:image url="{!$Resource.MobileMiniUKLtd_Logo}" style="padding-left:15px;" height="60"/></td>
+                    <td style="text-align:right"><strong style="background:#003e7e; padding:12px 35px; margin-right:20px; color:#fff; display:inline-block; text-align:center">
+                        REQUEST FOR DELIVERY</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="blueBar" style="border-spacing:0; border-left:solid 15px #003e7e; height:191.9%; margin-left:30px; position: absolute;"></div>
+        <table style="width:100%; border-spacing:0; padding-left:40px">
+            <tbody>
+                <tr>
+                    <td style="">
+                        <table width="85%" border="0" cellpadding="0" style="margin:15px auto; border-spacing:0; page-break-inside:auto; font-family:Calibri,serif; border:solid 3px #003e7e; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; padding:10px">
+                            <tbody>
+                                <tr>
+                                    <td style="color:#003e7e; margin:3px; width:35%">Salesperson:</td>
+                                    <td>
+                                        <span style="border:solid 1px #7183b2; margin:3px; padding:3px; display:block">{!fullQuote.Rep_Name__c}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#003e7e">Quote Ref Number:</td>
+                                    <td>
+                                        <span style="border:solid 1px #7183b2; margin:3px; padding:3px; display:block">{!fullQuote.Quote_Ref__c}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#003e7e">MM Delivery Branch:</td>
+                                    <td>
+                                        <span style="border:solid 1px #7183b2; margin:3px; padding:3px; display:block">{!fullQuote.Fulfilling_Depot__c}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#003e7e">Request Date:</td>
+                                    <td>
+                                        <span style="border:solid 1px #7183b2; margin:3px; padding:3px; display:block">{!requestDate}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table width="95%" cellpadding="0" style="margin:12px auto 7px auto; border-spacing:0;border-collapse:collapse; border:1px solid #000; page-break-inside:auto">
+                            <tbody>
+                                <tr>
+                                    <th style="font-weight:bold; background:#dce3f0; text-align:left;border: 1px solid #000;border-spacing:0;border-collapse: collapse;padding:3px;">
+                                        Customer Details
+                                    </th>
+                                    <th style="background:#dce3f0;border:1px solid #000;border-spacing:0;border-collapse:collapse;padding:8px;"></th>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName" style="width:45%">
+                                        Customer Name:
+                                    </td>
+                                    <td class="tableRowValue">{!customerName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Customer Account Number:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Account__r.Result_Id__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Site Contact Name:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Delivery_First_Name__c} {!fullQuote.Delivery_Last_Name__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Site Contact Telephone &amp; Mobile Number:
+                                    </td>
+                                    <td class="tableRowValue">
+                                        {!fullQuote.Delivery_Phone__c}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Office Contact Name:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Billing_First_Name__c} {!fullQuote.Billing_Last_Name__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Office Contact Telephone &amp; Mobile Number:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Billing_Phone__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="tableRowName">
+                                        Office Contact Email:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Billing_Email__c}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table width="95%" cellpadding="0" style="-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;margin:12px auto 7px auto; border-spacing:0;border-collapse: collapse; border:1px solid #000; page-break-inside:auto">
+                            <tbody style="border-spacing:0;border-collapse:collapse;">
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <th class="tableRowName" style="font-weight:bold; background:#dce3f0;border-spacing:0;border-collapse: collapse; text-align:left; border:1px solid #000;border-top:0px;">
+                                        Delivery
+                                    </th>
+                                    <th class="tableRowValue" style="background:#dce3f0;border-spacing:0;border-collapse: collapse; border:1px solid #000;border-top:0px;"/>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName" style="width:45%">
+                                        Delivery Date:
+                                    </td>
+                                    <td class="tableRowValue">{!requiredDate}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Delivery Time:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Del_Time__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName" rowspan="2">
+                                        Delivery Address:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Delivery_Address__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;"><td class="tableRowValue">{!fullQuote.Delivery_City__c}</td></tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Delivery Instructions:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Delivery_Instructions__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Industry:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Industry__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Unit Purpose:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Unit_Purpose__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Location Type:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Location_Type__c}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table width="95%" cellpadding="0" style="-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;margin:12px auto 7px auto; border-spacing:0;border-collapse: collapse; border:1px solid #000; page-break-inside:auto">
+                            <tbody>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <th class="tableRowName" style="font-weight:bold;width:45%; background:#dce3f0;border-spacing:0;border-collapse: collapse; text-align:left; border:1px solid #000;border-top:0px;">
+                                        Customer Order
+                                    </th>
+                                    <th class="tableRowValue" style="background:#dce3f0;border-spacing:0;border-collapse: collapse; text-align:left; border:1px solid #000;border-top:0px;"></th>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">
+                                        Purchase Order Number:
+                                    </td>
+                                    <td class="tableRowValue">{!fullQuote.Opportunity__r.Purchase_Order__c}</td>
+                                </tr>
+                                <tr style="border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName">Hire Period:</td>
+                                    <td class="tableRowValue">{!fullQuote.Rental_Length__c} Weeks.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table width="95%" cellpadding="0" style="-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;margin:12px auto 7px auto; border-spacing:0;border-collapse: collapse; border:1px solid #000; page-break-inside:auto">
+                            <thead style="display: table-header-group;">
+                                <tr style="page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <th colspan="6" style="width:100%;page-break-inside:avoid; page-break-after:auto; font-weight:bold; background:#003e7e; color:#fff; padding:3px; border:1px solid #000">
+                                        Units Required
+                                    </th>
+                                    <th/>
+                                </tr>
+                                <tr style="text-align:center; page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <th class="tableRowName" style="width:7%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Qty</strong>
+                                    </th>
+                                    <th class="tableRowName" style="width:55%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Unit Type</strong>
+                                    </th>
+                                    <th class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Hire Rate <span style="display:block; font-weight:normal; font-size:small;">Per Week<i style="color:#F00">*</i>
+                                            </span>
+                                        </strong>
+                                    </th>
+                                    <th class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Hire Rate <span style="display:block; font-weight:normal; font-size:10px;">Per Service/Instance<i style="color:#F00">*</i>
+                                            </span>
+                                        </strong>
+                                    </th>
+                                    <th class="tableRowName" style="width:13%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Transport Cost <span style="display:block; font-weight:normal; font-size:small;">Each Way</span>
+                                        </strong>
+                                    </th>
+                                    <th class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">
+                                        <strong>Damage Waiver</strong>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <apex:repeat value="{!allSelectedProducts}" var="pdtlist">
+                                    <tr style="text-align:center; page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                        <td class="tableRowName" style="width:7%; page-break-inside:avoid; page-break-after:auto">
+                                            {!pdtLineItemQuantityMap[pdtlist.Id]}
+                                        </td>
+                                        <td class="tableRowName" style="width:50%; text-align:left; page-break-inside:avoid; page-break-after:auto">
+                                            {!pdtlist.Description__c} 
+                                        </td>
+                                        <td class="tableRowName" style="width:15%; page-break-inside:avoid; page-break-after:auto">
+                                            &pound;{!pdtlist.Price__c} 
+                                        </td>
+                                        <td class="tableRowName" style="width:15%; page-break-inside:avoid; page-break-after:auto">
+                                            &pound;{!accessoryServiceRateMap[pdtlist.Id]} 
+                                        </td>
+                                        <td class="tableRowName" style="width:15%; page-break-inside:avoid; page-break-after:auto">
+                                            &pound;{!pdtlist.TransportCost__c}
+                                        </td>
+                                        <td class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">
+                                            {!pdtlist.LLW__c}
+                                        </td>
+                                    </tr>
+                                </apex:repeat>
+                                <!--
+                                <tr style="text-align:center; page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <td class="tableRowName" style="width:7%; page-break-inside:avoid; page-break-after:auto">
+                                    </td>
+                                    <td class="tableRowName" style="width:55%; text-align:right; page-break-inside:avoid; page-break-after:auto">
+                                        <b>Total</b> 
+                                    </td>
+                                    <td class="tableRowName" style="width:15%; page-break-inside:avoid; page-break-after:auto">
+                                        <b>&pound;{!hirePerWeek}</b>
+                                    </td>
+                                    <td class="tableRowName" style="width:15%; page-break-inside:avoid; page-break-after:auto">
+                                        <b>&pound;{!totalServiceRate}</b>
+                                    </td>
+                                    <td class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">
+                                        <b>&pound;{!totalTransportCost}</b>    
+                                    </td>
+                                    
+                                    <td class="tableRowName" style="width:10%; page-break-inside:avoid; page-break-after:auto">   
+                                    </td>
+                                </tr>
+                                -->
+                                
+                            </tbody>
+                        </table>
+                        <p style="color:#F00; width:95%; margin:0 auto 5px auto; font-family:Arial,Helvetica,sans-serif">
+                            *Hire Rate Excludes Damage Waiver
+                        </p>
+                        <table width="95%" cellpadding="0" style="-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;margin:12px auto 7px auto; border-spacing:0;border-collapse: collapse; border:1px solid #000; page-break-inside:auto">
+                            <tbody style="page-break-inside:avoid; page-break-after:auto">
+                                <tr style="page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <th style="background:#dce3f0; border:1px solid #000; padding:3px; width:60%; text-align:left; page-break-inside:avoid; page-break-after:auto">
+                                        Further Comments/Site Access Restrictions/Stacking or Linking Required: 
+                                    </th>
+                                </tr>
+                                <tr style="page-break-inside:avoid; page-break-after:auto;page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <td style="background:#FFFFFF; border:1px solid #000; border-top:none; border-bottom:none; padding:3px; height:24px; page-break-inside:avoid; page-break-after:auto">
+                                        {!commentsStringRowOne}    
+                                    </td>
+                                </tr>
+                                <tr style="page-break-inside:avoid; page-break-after:auto;border-spacing:0;border-collapse:collapse;">
+                                    <td style="background:#FFFFFF; border:1px solid #000; padding:3px; height:24px; page-break-inside:avoid; page-break-after:auto">
+                                        {!commentsStringRowTwo}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</apex:page>

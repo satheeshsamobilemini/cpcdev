@@ -1,0 +1,33 @@
+<apex:page StandardController="MMI_Quotes__c">
+    <apex:form >
+    <apex:pageBlock title="Quick Quote" mode="edit">
+      <apex:pageBlockButtons >
+        <apex:commandButton action="{!save}" value="Save"/>
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection title="Quick Quote Details" columns="2">
+        <apex:inputField value="{!MMI_Quotes__c.Rental_Rate__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Security_Deposit__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.LLW__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.LLW_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Locks__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Locks_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Tax__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Tax_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.COD__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.COD_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Quick_Quote__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Quick_Quote_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Recurring_Tax__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Reoccurring_Monthly_Charges__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Rental_PP_E__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Rental_PP_E_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Delivery__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Delivery_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Pick_Up__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Pick_Up_Total__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Fuel_Surcharge_N__c}"/>
+        <apex:inputField value="{!MMI_Quotes__c.Fuel_Surcharge_Total__c}"/>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,14 @@
+<apex:page standardController="My_Calls__c" >
+	<apex:outputPanel id="callPanel" rendered="{!NOT(ISBLANK(My_Calls__c.Call_URL__c))}" style="align:center;">
+<!--  		 <EMBED type="application/x-mplayer2" pluginspage="http://www.microsoft.com/Windows/MediaPlayer/" autostart="false" loop="false" width="100%" height="100%" volume="400" hidden="false" src="{!My_Calls__c.Call_URL__c}"  />   -->
+		<embed pluginspage="http://www.microsoft.com/Windows/MediaPlayer/" src="{!My_Calls__c.Call_URL__c}" autostart="false" loop="false" width="100%" height="100%" volume="400" />
+		<!-- <iframe src="{!My_Calls__c.Call_URL__c}" id="callFrame" width="100%" height="100%" />  -->
+    </apex:outputPanel>
+    <style>
+    	.Custom22Tab{
+    		background-color:#F3F3EC;
+    	}
+    </style>
+    
+
+</apex:page>

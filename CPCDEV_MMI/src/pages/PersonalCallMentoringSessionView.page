@@ -1,0 +1,220 @@
+<apex:page id="pg" standardController="Call_Mentoring_Session__c" extensions="PersonalCallMentoringSessionViewCtrl">
+<apex:includeScript value="{!$Resource.JQueryScript1_4_2}"/>
+<style>
+    .selectedRating{ 
+       height:16px;
+       width:16px; 
+       background-image: url({!URLFOR($Resource.StarRating,'star.png')}) ;
+       float:left;
+    }
+    .unselectedRating{
+       height:16px;
+       width:16px;
+       background-image: url({!URLFOR($Resource.StarRating,'blankstar.png')}) ;
+       float:left;
+    }
+</style>
+
+<apex:form id="frm" >
+
+  <apex:outputPanel id="messagePanel" rendered="{!ISNULL(callMentoringSession)}" ><br/><br/>
+    <apex:outputLabel value="No Record Found" style="font-weight:bold;font-size:16px;" />
+</apex:outputPanel> 
+<apex:outputPanel id="detailsPanel" rendered="{!IF(ISNULL(callMentoringSession),false,true)}">
+<apex:sectionHeader title="Coaching Session " subtitle="{!callMentoringSession.Name}"/>
+    <apex:pageBlock id="detailsBlock" title="Coaching Session Details" >
+        <apex:pageBlockButtons >
+            <apex:commandButton id="editBtn" value="Edit" action="{!editData}"/>
+            <apex:commandButton id="cloneBtn" value="Clone" action="{!cloneData}"/>
+            <apex:commandButton id="deleteBtn" value="Delete" action="{!delete}"/>
+            <apex:commandButton id="NewBtn" value="New" action="{!newData}"/>
+        </apex:pageBlockButtons> 
+        <table width="100%" cellPadding="2" cellSpacing="2" >
+           <tr>
+            <td  width="25%"><apex:outputLabel value="Personal Coaching Session Name" style="font-weight:bold;"/></td>
+            <td class="datacol" width="25%"><apex:outputField value="{!callMentoringSession.Name}" /></td>
+           </tr> 
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Employee Type" style="font-weight:bold;" /></td>
+            <td class="datacol" width="25%">
+	             <apex:outputField value="{!callMentoringSession.Employee_Type__c}"  />	
+            </td>
+            <td width="20%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>
+                
+          </tr>
+          
+          <tr>
+          	 <td width="20%"><apex:outputPanel id="EmpPanel1" ><apex:outputLabel value="Rep Name" style="font-weight:bold;" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}"/><apex:outputLabel value="Employee Name" style="font-weight:bold;" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',false,true)}"/></apex:outputPanel></td>
+    	     <td width= "30%" ><apex:outputPanel id="EmpPanel2" ><apex:outputField value="{!callMentoringSession.Rep_Name__c}"  rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}"/><apex:outputField value="{!callMentoringSession.Employee_Name__c}" rendered="{!IF(callMentoringSession.Employee_Type__c =='Rep',false,true)}"/></apex:outputPanel></td>
+			 <td width="20%">&nbsp;</td>
+             <td width="30%">&nbsp;</td>
+          </tr>
+           <tr>
+          
+            <td width="20%" ><apex:outputLabel value="Type of Training/Mentoring" style="font-weight:bold;"/></td>
+            <td width= "30%"><apex:outputField value="{!callMentoringSession.Type_of_Training_Mentoring__c}" /></td>
+            
+          </tr>
+          <tr>
+          
+            <td width="20%" ><apex:outputLabel value="Coached By" style="font-weight:bold;"/></td>
+            <td width= "30%"><apex:outputField value="{!callMentoringSession.Mentor__c}" /></td>
+            
+          </tr>
+          <tr>              
+           <td><apex:outputLabel value="Date" style="font-weight:bold;"/></td>
+            <td class="datacol" ><apex:outputField value="{!callMentoringSession.Rep_Date__c}" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr> 
+          
+        </table>
+        <br/>
+        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#99CCFF">
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr> 
+            <tr>
+                <td width="50%" align="center"><b>Comments/Notes for Training & Mentoring</b></td>
+                <!--  <td colspan="2" align="center"><b>Salesperson Self Rating</b></td> -->
+                <td colspan="2">&nbsp;</td>
+            </tr> 
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <!--  <tr>
+                <td width="50%" ></td>
+                <td width="25%" align="center"><b>Rating</b></td>
+                <td width="25%" align="center"><b>Please Coach Me on this Area</b></td>
+            </tr> -->
+        </table>
+       	 <table width="100%"  cellpadding="4" cellspacing="4">
+        	
+        	<tr>
+        		<td><b>Comments</b></td>
+        		<td><apex:outputField value="{!callMentoringSession.Coach_Comments_1__c}" /></td>
+        	</tr>
+        	
+        	<!--  <tr> 
+        		<td><b>Coached By</b></td>
+        		<td><apex:outputField value="{!callMentoringSession.Mentor__c}" /></td>
+        	</tr> -->
+        	<tr bgcolor="#DDDDDD">
+                	<td colspan="3" ><b>Employee</b> </td>
+            	</tr> 
+        	<tr>
+        		<td><b>Employee Comments/Goal</b></td>
+        		<td><apex:outputField value="{!callMentoringSession.Rep_Comments_Goal__c}" /></td>
+        	</tr>
+        </table>
+        <table width="100%" cellpadding="4" cellspacing="4">
+            	<tr bgcolor="#DDDDDD">
+                	<td colspan="3" ><b>Best of the Best</b> </td>
+            	</tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel style="font-weight:bold;" value="Best of the Best!" /></td>
+                <td width= "75%"><apex:outputField value="{!callMentoringSession.Best_of_the_Best__c}" style="width:95%;"/></td>
+                
+
+            </tr>
+           <tr>
+                <td width="25%" ><apex:outputLabel style="font-weight:bold;" value="Best of the Best Category" /></td>
+                <td width= "75%"><apex:outputField value="{!callMentoringSession.Best_of_the_Best_Category__c}" style="width:95%;"/></td>
+                
+
+            </tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel style="font-weight:bold;" value="Best of the Best Comments" /></td>
+                <td width= "75%"><apex:outputField value="{!callMentoringSession.Best_of_the_Best_Comments__c}" style="width:95%;"/></td>
+                
+
+            </tr>
+            </table>
+            
+        
+    </apex:pageBlock> 
+    
+      <apex:pageBlock title="Activity History">
+          <apex:pageBlockButtons location="top">
+            <apex:commandButton id="logCall" value="Log A Call" onclick="logCall();return false;"/> 
+            <apex:commandButton id="mailMerge" value="Mail Merge" onclick="mailMerge();return false;"/> 
+            <apex:commandButton id="SendAnEmail" value="Send An Email" onclick="sendMail();return false;"/> 
+            <!-- <apex:commandButton id="RequestUpdate" value="Request Update" action="{!newMyCall}"/> 
+            <apex:commandButton id="viewAll" value="View All" action="{!newMyCall}"/> --> 
+        </apex:pageBlockButtons> 
+        <apex:pageBlockTable value="{!callMentoringSession.ActivityHistories}" var="activityHistory" rendered="{!callMentoringSession.ActivityHistories.size > 0}">
+              <apex:column headerValue="Call Name" >
+                  <apex:outputLink value="/{!activityHistory.id}" >{!activityHistory.Subject}</apex:outputLink>
+              </apex:column>
+              <apex:column value="{!activityHistory.Status}" />
+              <apex:column value="{!activityHistory.Call_Type__c}" />
+              <apex:column value="{!activityHistory.isTask}" />
+              <apex:column value="{!activityHistory.Branch__c}"/>  
+              <apex:column value="{!activityHistory.ActivityDate}"/>                                                 
+        </apex:pageBlockTable>
+        </apex:pageBlock>
+        <apex:pageBlock title="Open Activities">
+        	<apex:pageBlockButtons location="top">
+            	<!--  <apex:commandButton id="newEvent" value="New Event" onclick="newEvent();return false;"/>  -->
+            	<apex:commandButton id="newTask" value="New Task" action="{!newTask}"/> 
+        </apex:pageBlockButtons> 
+        <apex:pageBlockTable value="{!callMentoringSession.OpenActivities}" var="openActivity" rendered="{!callMentoringSession.OpenActivities.size > 0}">
+              <apex:column headerValue="Call Name" >
+                  <apex:outputLink value="/{!openActivity.id}" >{!openActivity.Subject}</apex:outputLink>
+              </apex:column>
+              <apex:column value="{!openActivity.Activity_Code__c}" />
+              <apex:column value="{!openActivity.Description}" />
+                                                               
+        </apex:pageBlockTable>
+   </apex:pageBlock> 
+   
+   <apex:pageBlock title="Notes And Attachments">
+        	<apex:pageBlockButtons location="top">
+            	<apex:commandButton id="newAttach" value="AttachFile" onclick="AttachFile();return false;"/> 
+        </apex:pageBlockButtons> 
+        <apex:pageBlockTable value="{!callMentoringSession.NotesAndAttachments}" var="noteAttach" rendered="{!callMentoringSession.NotesAndAttachments.size > 0}">
+              <apex:column headerValue="Call Name" >
+                  <apex:outputLink value="/{!noteAttach.id}" >{!noteAttach.Title}</apex:outputLink>
+              </apex:column>
+              <apex:column value="{!noteAttach.CreatedDate}" />
+              <apex:column value="{!noteAttach.LastModifiedDate}" />
+			                                                  
+        </apex:pageBlockTable>
+   </apex:pageBlock>
+</apex:outputPanel>
+ 
+</apex:form>  
+<script>
+	
+	/*function newTask(){
+		var url = '/setup/ui/recordtypeselect.jsp?ent=Task&retURL='+'{!callMentoringSession.id}'+'&nooverride=1&save_new_url=00T%2Fe%3Fwhat_id%3D'+'{!callMentoringSession.id}&retURL%3D'+'{!callMentoringSession.id}'+'&nooverride%3D1';
+		window.location.href = url;
+	}*/
+	
+	function newEvent(){
+		var url = '/00U/e?what_id='+'{!callMentoringSession.id}'+'&retURL='+'{!callMentoringSession.id}'+'&nooverride=1';
+		window.location.href = url;
+	}
+	
+	function logCall(){
+		var url ='/setup/ui/recordtypeselect.jsp?ent=Task&retURL='+'{!callMentoringSession.id}'+'&nooverride=1&save_new_url=00T/e%3Ftitle=Call%26what_id='+'{!callMentoringSession.id}'+'%26followup=1%26tsk5=Call%26retURL='+'{!callMentoringSession.id}'+'%26nooverride=1';
+		window.location.href = url;
+	}
+	
+	function mailMerge(){
+		var url = '/mail/mmchoose.jsp?id={!callMentoringSession.id}&1={!callMentoringSession.Name}&retURL={!callMentoringSession.id}&nooverride=1';
+		window.location.href = url;
+	}
+	function sendMail(){
+		var url = '/_ui/core/email/author/EmailAuthor?p3_lkid={!callMentoringSession.id}&retURL=/{!callMentoringSession.id}&Fnooverride=1';
+		window.location.href = url;
+	}
+	function AttachFile(){
+		var url = '/p/attach/NoteAttach?pid={!callMentoringSession.id}&parentname={!callMentoringSession.Name}&retURL={!callMentoringSession.id}';
+		window.location.href = url;
+	}
+</script> 
+</apex:page>

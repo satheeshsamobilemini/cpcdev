@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Back_to_User</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Back to User</shortDescription>
+        <value>Back to User</value>
+    </labels>
+    <labels>
+        <fullName>Encrypted_String_Value_Changed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Encrypted String Value Changed</shortDescription>
+        <value>Encrypted string value changed</value>
+    </labels>
+    <labels>
+        <fullName>First</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>First</shortDescription>
+        <value>First</value>
+    </labels>
+    <labels>
+        <fullName>Last</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Last</shortDescription>
+        <value>Last</value>
+    </labels>
+    <labels>
+        <fullName>Next</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Next</shortDescription>
+        <value>Next</value>
+    </labels>
+    <labels>
+        <fullName>No_Access_User_Field_History</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Access User Field History</shortDescription>
+        <value>You do not have read access to the User Field History object which stores field history information for your user record. Please contact your System Administrator for assistance.</value>
+    </labels>
+    <labels>
+        <fullName>No_User_Field_History</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No User Field History</shortDescription>
+        <value>No User Field History records found for this user.</value>
+    </labels>
+    <labels>
+        <fullName>Page_Number_Of</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Page Number Of</shortDescription>
+        <value>Page {0} of {1}</value>
+    </labels>
+    <labels>
+        <fullName>Previous</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Previous</shortDescription>
+        <value>Previous</value>
+    </labels>
+    <labels>
+        <fullName>Processing</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Processing</shortDescription>
+        <value>Processing...</value>
+    </labels>
+    <labels>
+        <fullName>Save_Settings</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Save Settings</shortDescription>
+        <value>Save Settings</value>
+    </labels>
+    <labels>
+        <fullName>Select_All</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select All</shortDescription>
+        <value>Select All</value>
+    </labels>
+    <labels>
+        <fullName>Settings_Saved</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Settings Saved</shortDescription>
+        <value>Settings Saved</value>
+    </labels>
+    <labels>
+        <fullName>Show_All</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Show All</shortDescription>
+        <value>Show All</value>
+    </labels>
+    <labels>
+        <fullName>Show_Less</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Show Less</shortDescription>
+        <value>Show Less</value>
+    </labels>
+    <labels>
+        <fullName>Track_History</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Track History</shortDescription>
+        <value>Track History</value>
+    </labels>
+    <labels>
+        <fullName>Unselect_All</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unselect All</shortDescription>
+        <value>Unselect All</value>
+    </labels>
+    <labels>
+        <fullName>User_Field_History</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>User Field History</shortDescription>
+        <value>User Field History</value>
+    </labels>
+    <labels>
+        <fullName>User_Field_History_Setup</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>User Field History Setup</shortDescription>
+        <value>User Field History Setup</value>
+    </labels>
+    <labels>
+        <fullName>User_Field_History_Setup_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>User Field History Setup Message</shortDescription>
+        <value>Select one or more fields below to track field history. Once you have completed your selections, click &quot;Save Settings&quot;. The selected field(s) will then be tracked from that point forward. If you remove a field(s) from history tracking and click &quot;Save Settings&quot;, field history will no longer be tracked. Any previous history for the removed field(s) will still be available as User Field History records. You may come back to this page at any time to update the fields selected for history tracking.</value>
+    </labels>
+    <labels>
+        <fullName>View_History_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View History Message</shortDescription>
+        <value>The following list details the latest changes to this users record based on the User object fields that have been set up for field history tracking.  This list is limited to the last 1,000 changes (displayed in groups of 20) and is sorted by Date/Time Changed descending (showing the most recent change at the top).  Click the underlined column headers to sort by a different field in the list.  To display the full list of history (if greater than 1,000 records), you can create a report on the User Field History object and filter by this user.</value>
+    </labels>
+</CustomLabels>

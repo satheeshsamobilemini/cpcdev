@@ -1,0 +1,17 @@
+<apex:page controller="QqFromJpController">
+    <apex:includeScript value="/soap/ajax/10.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/10.0/apex.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:form id="frmMain">
+        <apex:pageBlock title="Please select a Sub Contractor" id="pb">
+            <apex:pageMessages id="Message" />
+             <apex:actionStatus id="acnStstus" startText="Loading....."/>
+            <apex:selectRadio value="{!selectedSc}" layout="pageDirection" >
+                <apex:selectOptions value="{!lstScOption}"/>
+            </apex:selectRadio>
+            <apex:pageBlockButtons >
+            	<apex:commandButton action="{!next}" value="Next" reRender="pb,urlOP"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

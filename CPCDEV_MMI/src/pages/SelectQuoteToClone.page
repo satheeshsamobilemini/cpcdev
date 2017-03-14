@@ -1,0 +1,80 @@
+<apex:page id="clonePage" controller="SelectQuoteToCloneCntrl">
+
+    <style>
+          .emptyTableMsg{
+          text-align: center;
+          color: grey;
+          font-size: 12px;
+          padding: 10%;
+          font-weight: bold;
+      }
+    </style>
+    
+    <script type="text/javascript">
+    
+        function redirectToContactPopup(){
+            var left = (screen.width/2)-(900/2); 
+            var top = (screen.height/2)-(500/2); 
+            var quoteID = document.getElementById('hiddenQuote').value;
+            window.close();
+            window.open('{!$Page.SelectConatctPopup}?id={!accountID}&FromAccount=true&accDashboard=true&Sales_Org={!salesOrg}&externalClone=true&opportunityid=&quoteid='+quoteID);
+        }
+        
+    </script>
+    
+<apex:form id="quoteCloneForm">
+    <apex:pageMessages id="errMsg" />
+    <apex:pageBlock id="pb">
+        <apex:pageBlockSection columns="1" id="pbs">
+            <apex:pageBlockSectionItem id="pbsi">
+                <apex:outputLabel >10 Digit Quote#</apex:outputLabel>
+                <apex:inputText value="{!quoteNum}" id="quoteNo"  size="15"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Get Quote Details" action="{!fetchQuoteDetails}" reRender="quotePanel,errMsg"/>        
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+        
+    <apex:outputPanel id="quotePanel">
+        <apex:pageBlock id="quoteBlock" rendered="{!showQuoteDetails}">
+            <apex:outputPanel layout="block" id="quoteDetails" rendered="{!showDetailsPanel}">
+                <input type="hidden" value="{!quote.ID}" id="hiddenQuote"/>
+                <table id="" class="table" align="center" cellspacing="0" width="98%">
+                    <thead>
+                        <tr>
+                            <th>Quote #</th>
+                            <th>Status</th>
+                            <th>Plant</th>
+                            <th>Initial Charges</th>
+                            <th>Transaction Type</th>
+                            <th>Del City</th>
+                            <th>Del State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{!quote.name}</td>
+                            <td>{!quote.status__c}</td>
+                            <td>{!quote.Plant__c}</td>
+                            <td>{!quote.Total_Initial_Charges__c}</td>
+                            <td>{!quote.Transaction_Type__c}</td>
+                            <td>{!quote.Delivery_City__c}</td>
+                            <td>{!quote.Shipto_State__c}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </apex:outputPanel>
+            
+            <apex:outputPanel id="noQuoteDetails" layout="block" rendered="{!!showDetailsPanel}" styleClass="emptyTableMsg">
+                <apex:outputText >Quote details not found. Enter different quote and try again.</apex:outputText>
+            </apex:outputPanel>
+            <apex:pageBlockButtons location="bottom" rendered="{!showProceed}">
+                <apex:commandButton value="Proceed" onclick="redirectToContactPopup()"/>
+            </apex:pageBlockButtons>
+                  
+        </apex:pageBlock>
+    </apex:outputPanel>
+</apex:form> 
+</apex:page>

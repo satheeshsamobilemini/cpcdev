@@ -1,0 +1,1375 @@
+<apex:page controller="rzm.RMobilePlanningController" sidebar="false" tabStyle="RMobile_PlanPage__tab" title="RMobile Planning Page" standardstylesheets="false" id="page">
+<apex:sectionHeader title="Runzheimer Mobile for Salesforce" subtitle="Itinerary Plan" help="https://www.runzheimer.com/Solutions/Runzheimer-Mobile-Route-Planning-Software.aspx"/>
+
+<head>
+    <apex:includeScript value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/js/jquery-1.9.0.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/js/jquery-ui-1.10.0.custom.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/js/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/css/jquery-ui-1.10.0.custom.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/css/jquery.dataTables.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/css/rmobile.css')}" />                                        
+    <script src="https://www.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?key={!mapKey}"></script>        
+    <apex:includeScript value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/js/mapController.js')}" />
+    
+    <script>
+    if (!window.console) console = {log: function() {}};
+    
+    var poiCollection = [];
+    window.onload = function() {
+        var currentTime = new Date()
+        var month = currentTime.getMonth() + 1
+        var day = currentTime.getDate()
+        var year = currentTime.getFullYear()
+     
+        var lat;
+        var lon;
+        var anchorType;
+        var anchorId;
+        var content;
+        var infoContent;
+        
+        try {
+            lat = $.urlParam('lat');
+        } catch(e) {lat = 39.527596;}
+        
+        try {
+            lon = $.urlParam('lon');
+        } catch(e) {lon = -99.141968;}
+        
+        try {
+            anchorType = $.urlParam('type');
+        } catch(e) {anchorType = 'Account';}
+        
+        try {
+            anchorId = $.urlParam('theId');
+        } catch(e) {anchorId = null;}
+        
+        if (lat==0) lat=39.527596;
+        if (lon==0) lon=-99.141968;
+        
+        console.log('The latitude is: ' + lat);
+        console.log('The longitude is: ' + lon);
+        console.log('Anchor Type: ' + anchorType);
+        console.log('AnchorId: ' + anchorId);
+        
+        document.getElementById('myLat').value = lat;
+        document.getElementById('myLong').value = lon;
+        document.getElementById('datepicker').value = month + "/" + day + "/" + year;
+        document.getElementById('mySearch').value = "{!JSENCODE($CurrentPage.parameters.adr)}";
+
+        mapController.initMap('map');
+                
+        if (anchorId != null)
+        {           
+            content = '<div style="width:180px;"><strong>{!$CurrentPage.parameters.adr}</strong></div>'
+            infoContent = '<div style="width:180px;"><strong>'+'{!$CurrentPage.parameters.adr}'+'</strong><br/><br/><a href="#" onclick="addToItinerary(\''+anchorType+'\', \''+anchorId+'\', \'{!itinerary.OwnerId}\');return false;">Add to Itinerary</></div>';
+            
+            mapController.addPOICollection([                        
+            {lat: lat, lng: lon, type: anchorType, rolloverContent: content,
+             infoWindowContent: infoContent     
+            },                            
+            ]);
+        }
+                                
+    }
+    
+    $.urlParam = function(name){
+        var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        return results[1] || 0;
+    }
+    
+    function geocode(address) {     
+        
+        if (address==null || address == '')
+        {
+            alert('Please enter an address to center map');
+            document.getElementById("responseErrors").innerHTML = 'Please enter an address to center map';
+        } else {                        
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.RMobilePlanningController.getGeoCodes}',
+                address,
+                function(results, event){                                               
+                    if (event.status) {
+                        if (results.length==2)
+                        {
+                            document.getElementById('myLat').value=results[0];
+                            document.getElementById('myLong').value=results[1];
+                            mapController.clearMap();   
+                            mapController.addPOICollection([
+                                {lat: results[0], lng: results[1], rolloverContent: address, infoWindowContent: results[0] +', ' + results[1] }                         
+                            ]); 
+                        } else {
+                            alert(results);
+                        }
+                        doSearch(address);                
+                    } else if (event.type === 'exception') {                    
+                        document.getElementById('responseErrors').innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {                    
+                        document.getElementById("responseErrors").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+    }
+    
+    // Additions to handle new add window
+    var objectType;
+    var recordID;
+    var userRecord;
+    
+    <!-- START CHANGES -->
+    //var gmStopCount = 0;
+    //var gmStopData = '';
+    <!-- START CHANGES -->
+     
+    // Record details of record selected for when the record needs
+    // created, and open the Add Stop window
+    function addWithDetail(objType, theId, theUser, theName) {
+        objectType = objType;
+        recordID = theId;
+        userRecord = theUser;
+        
+        $( "#nameAdd" ).val(theName);
+        $( "#dialog-form-add" ).dialog( "open" );
+    }
+    
+    // Create a itinerary and stop on create button selection from add stop window
+    function addItineraryAndStop(objectType, recordID, userRecord,
+        durationHour, durationMinute, comments, startHour, startMinute, isCalendarEvent) {
+        durationHour = durationHour || 0;
+        durationMinute = durationMinute || 0;
+        var duration = parseInt(durationHour)+parseInt(durationMinute);        
+        var itineraryDate = document.getElementById('datepicker').value;        
+        var itineraryOwnerField = $('input[data-id="itineraryOwner"]').attr('id');
+        var userId;
+        if(JSON.parse('{!isManager}')) userId = document.getElementById('page:form:itineraryOwner').value;
+        else userId = '{!$User.Id}';
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.addItineraryAndStop}',
+            objectType, recordID, itineraryDate, userId, duration, comments, 
+            startHour, startMinute, isCalendarEvent,  
+            function(results, event){
+                
+                if (event.status) {
+                    rerenderitinerary();               
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            },
+            {escape: true}
+        );
+    }
+    
+    function addToItinerary(objType, theId, theUser) {      
+                
+        var itineraryDate = document.getElementById('datepicker').value;
+        var lookupValueId = $('input[data-id="myLookupField"]').attr('id');
+        var itineraryOwnerField = $('input[data-id="itineraryOwner"]').attr('id');
+        var userId;
+        if(JSON.parse('{!isManager}')) userId = document.getElementById('page:form:itineraryOwner').value;
+        else userId = '{!$User.Id}';
+
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.addToItinerary}',
+            objType, theId, itineraryDate, userId,
+            function(results, event){               
+                //getItinerary();
+                //doSearch();             
+                if (event.status) {
+                    rerenderitinerary();                
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    function doSearch(address) {
+
+        document.getElementById('dataTable').style.display = 'block';
+                
+        var myLat = document.getElementById('myLat').value;
+        var myLong = document.getElementById('myLong').value;
+        var myRadius = document.getElementById('myRadius').value;
+        var myLimit = document.getElementById('myLimit').value;
+        var findAccounts = document.getElementById('findAccounts').checked;
+        var findContacts = document.getElementById('findContacts').checked;
+        var findLeads = document.getElementById('findLeads').checked;
+        var findOpportunities = document.getElementById('findOpportunities').checked;
+        var radiusUnit = (document.getElementById('radiusMile').checked)? document.getElementById('radiusMile').value : document.getElementById('radiusKilometer').value;
+        var myRecords = document.getElementById('myRecords').checked;
+        var closeDate = document.getElementById('closeDate').value;
+        var opptyStage = document.getElementById('opptyStage').value;
+        var opptySource = document.getElementById('opptySource').value;
+        var acctType = document.getElementById('accountType').value;
+        var acctIndustry = document.getElementById('accountIndustry').value;
+        var contactSource = document.getElementById('contactSource').value;
+        var leadSource = document.getElementById('leadSource').value;
+        var leadIndustry = document.getElementById('leadIndustry').value;
+        var leadStatus = document.getElementById('leadStatus').value;
+        var leadRating = document.getElementById('leadRating').value;
+        var itineraryOwnerField = $('input[data-id="itineraryOwner"]').attr('id');
+        var userId;
+        if(JSON.parse('{!isManager}')) userId = document.getElementById('page:form:itineraryOwner').value;
+        else userId = '{!$User.Id}';
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.doSearch}',
+            myLat, myLong, myRadius, myLimit, findAccounts, findContacts, findLeads, findOpportunities, radiusUnit, myRecords, 
+            closeDate, opptyStage, opptySource, acctType, acctIndustry, contactSource, leadSource, leadIndustry, leadStatus, leadRating, userId,
+            function(results, event){
+                mapController.clearMap();
+                var poiCollection = [{lat: myLat, lng: myLong, rolloverContent: address, infoWindowContent: 'Lat: ' + myLat + ' Lon: ' + myLong }];
+                var rowType;
+                var aaDataSet = [];
+                var aaDataRow = [];
+                var aoColumns = [];
+                document.getElementById('myLat').value;
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                    document.getElementById('remoteAcctId').innerHTML = [];
+                    document.getElementById("responseErrors").innerHTML = [];
+                    if (results.length>0) rowType = results[0].rowType;
+                    
+                    aoColumns = [{ "sTitle": "" },{ "sTitle": rowType },{ "sTitle": "Address" },{ "sTitle": "City" },]
+                    
+                    for (var i=0, j=results.length; i<j; i++) {
+                        
+                        oppInfo=(results[i].rowType=="Opportunity")?', ' + results[i].Amount + ', ' + results[i].Stage + ', ' + results[i].CloseDate:"";
+                        addIcon='<img style="cursor:pointer;" onclick="addToItinerary(\''+results[i].rowType+'\', \''+results[i].rowId+'\', \'{!itinerary.OwnerId}\');" src="{!URLFOR($Resource.RunzheimerAssets, '/img/add-icon.png')}" title="Add to Itinerary" width="12px" height="12px"/>&nbsp;&nbsp;'                      
+                        
+                        var rowName = results[i].rowName.replace("'", "\\\'");
+                        rowName = rowName.replace("\"", "\\\"");
+                        addWithDetailsIcon = '<img style="cursor:pointer;" onclick="addWithDetail(\''+results[i].rowType+'\', \''+results[i].rowId+'\', \'{!itinerary.OwnerId}\', \''+rowName+'\');" src="/img/func_icons/util/datePicker16.gif" title="Add With Details" width="12px" height="12px"/>&nbsp;&nbsp;'
+                                              
+                        if (rowType=='Contact')
+                        {
+                            poiIcon='<a href="/'+results[i].rowId+'" target="_blank" style="text-decoration:none;" title="View Detail" >'
+                                    +'<div class="rzpoi_contact">'+getDisplayLetter(i)+'</div></a>'
+                        } else if (rowType=='Lead') {
+                            poiIcon='<a href="/'+results[i].rowId+'" target="_blank" style="text-decoration:none;" title="View Detail" >'
+                                    +'<div class="rzpoi_lead">'+getDisplayLetter(i)+'</div></a>'
+                        } else if (rowType=='Opportunity') {
+                            poiIcon='<a href="/'+results[i].rowId+'" target="_blank" style="text-decoration:none;" title="View Detail" >'
+                                    +'<div class="rzpoi_opp">'+getDisplayLetter(i)+'</div></a>'
+                        } else {
+                            poiIcon='<a href="/'+results[i].rowId+'" target="_blank" style="text-decoration:none;" title="View Detail" >'
+                                    +'<div class="rzpoi_account" style="display:inline-block;">'+getDisplayLetter(i)+'</div></a>'
+                        }                                                                                                                                              
+                        
+                        poiCollection.push({lat: results[i].Latitude, lng: results[i].Longitude, index: i, type: rowType, rolloverContent: '<div style="width:180px;"><strong>'+results[i].rowName+'</strong><br/>' + results[i].Street +'<br/>' + results[i].City+' '+results[i].State+'<br/><strong>'+results[i].AccountCompany+'</strong></div>', 
+                        infoWindowContent: 
+                         '<div style="width:180px;"><strong>'+results[i].rowName+'</strong><br/>'
+                        +'<table><tr>'
+                        +'<td><a href="#" onclick="addToItinerary(\''+results[i].rowType+'\', \''+results[i].rowId+'\', \'{!itinerary.OwnerId}\');">Add to Itinerary</a></td>'
+                        +'<td>&nbsp;&nbsp;&nbsp;</td>'
+                        +'<td>&nbsp;&nbsp;&nbsp;</td>'
+                        +'<td><a href="#" onclick="addWithDetail(\''+results[i].rowType+'\', \''+results[i].rowId+'\', \'{!itinerary.OwnerId}\', \''+rowName+'\');">Add With Details</a></td>'
+                        +'<td>&nbsp;&nbsp;&nbsp;</td>'
+                        +'<td><a href="/'+results[i].rowId+'" target="_blank" >View Detail</a></td>'
+                        +'</tr></table>'
+                        +'</div>'                     
+                        });
+                                        
+                        if (rowType=='Account')
+                        {
+                            aaDataRow = [poiIcon,'<a href="/'+results[i].rowId+'" target="_blank" title="View Detail" >'+results[i].rowName+'</a>', results[i].Street, results[i].City, results[i].Type, results[i].Industry, results[i].rowOwner, addIcon+'&nbsp;'+addWithDetailsIcon];
+                            aoColumns = [{ "sTitle": "" },{ "sTitle": rowType },{ "sTitle": "Address" },{ "sTitle": "City" },{ "sTitle": "Type" },{ "sTitle": "Industry" },{ "sTitle": "Owner" },{ "sTitle": "" }]
+                        } else if (rowType=='Contact') {
+                            aaDataRow = [poiIcon,'<a href="/'+results[i].rowId+'" target="_blank" title="View Detail" >'+results[i].rowName+'</a>', results[i].AccountCompany, results[i].Street, results[i].City, results[i].LeadSource, results[i].rowOwner, addIcon+'&nbsp;'+addWithDetailsIcon];
+                            
+                            aoColumns = [{ "sTitle": "" },{ "sTitle": rowType },{"sTitle":"Account"},{ "sTitle": "Address" },{ "sTitle": "City" },{ "sTitle": "Source" },{ "sTitle": "Owner" },{ "sTitle": "" }]                                                  
+                        } else if (rowType=='Lead') {
+                            aaDataRow = [poiIcon,'<a href="/'+results[i].rowId+'" target="_blank" title="View Detail" >'+results[i].rowName+'</a>', results[i].AccountCompany, results[i].Street, results[i].City, results[i].Status, results[i].LeadSource, results[i].Industry, results[i].Rating, results[i].rowOwner, addIcon+'&nbsp;'+addWithDetailsIcon];                                
+                            aoColumns = [{ "sTitle": "" },{ "sTitle": rowType },{"sTitle":"Company"},{ "sTitle": "Address" },{ "sTitle": "City" },{ "sTitle": "Status" },{ "sTitle": "Source" },{ "sTitle": "Industry" },{ "sTitle": "Rating" },{ "sTitle": "Owner" },{ "sTitle": "" }]                    
+                        } else if (rowType=='Opportunity') {
+                            aaDataRow = [poiIcon,'<a href="/'+results[i].rowId+'" target="_blank" title="View Detail" >'+results[i].rowName+'</a>', results[i].AccountCompany, results[i].Street, results[i].City, results[i].Amount, results[i].Stage, results[i].CloseDate, results[i].LeadSource, results[i].rowOwner, addIcon+'&nbsp;'+addWithDetailsIcon];                                
+                            aoColumns = [{ "sTitle": "" },{ "sTitle": rowType },{"sTitle":"Account"},{ "sTitle": "Address" },{ "sTitle": "City" },{"sTitle":"Amount"},{ "sTitle": "Stage" },{ "sTitle": "Close Date" },{ "sTitle": "Source" },{ "sTitle": "Owner" },{ "sTitle": "" }]                    
+                        }                       
+                        aaDataSet.push(aaDataRow);
+                    } 
+                    mapController.addPOICollection(poiCollection);
+                    
+                    
+                    $('#dynamic').html( '<table class="tb-bg" cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table>' );
+                    $('#example').dataTable( {
+                        
+                        "aaData": aaDataSet,
+                        "aoColumns": aoColumns,
+                        "aaSorting": [[ 1, "asc" ]]                        
+                        
+                    } );                        
+                    
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    function deleteRow(rowId, itineraryId) {
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.removeStop}',
+            rowId,
+            function(results, event){
+                
+                if (event.status) {                    
+                    reorder(itineraryId);                         
+                    $("#stop-detail").html('');
+                    //getItinerary(true);
+                    //rerenderitinerary();                                                                           
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    // Added parameter for Create Event with Stop functionality
+    function updateStop(stopId, durationHour, durationMinute, comments, startHour, startMinute, isCalendarEvent) {
+        durationHour = durationHour || 0;
+        durationMinute = durationMinute || 0;
+        var duration = parseInt(durationHour)+parseInt(durationMinute);        
+        var itineraryDate = document.getElementById('datepicker').value;
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.updateStop}',
+            stopId, duration, comments, itineraryDate, startHour, startMinute, isCalendarEvent, 
+            function(results, event){
+                
+                if (event.status) {
+                    rerenderitinerary();               
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    function moveStop(stopId, itineraryId, currentStop, direction) {
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.moveStop}',
+            stopId, itineraryId, currentStop, direction,
+            function(results, event){
+                
+                if (event.status) {
+                    rerenderitinerary();                    
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }    
+        
+    function reorder(itineraryId) {
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.reorderItinerary}',
+            itineraryId,
+            function(results, event){
+                
+                if (event.status) {                 
+                    rerenderitinerary();
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    function getItinerary(clearMap) {
+        
+        var myLat = document.getElementById('myLat').value;
+        var myLong = document.getElementById('myLong').value;
+        var itineraryDate = document.getElementById('datepicker').value;
+        var itineraryOwnerField = $('input[data-id="itineraryOwner"]').attr('id');
+        var userId;
+        if(JSON.parse('{!isManager}')) userId = document.getElementById('page:form:itineraryOwner').value;
+        else userId = '{!$User.Id}';
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.getItinerary}',
+            myLat, myLong, itineraryDate, userId,
+            function(results, event){
+                if (clearMap) mapController.clearMap();
+                var poiCollection = [];
+                
+                
+                
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                    document.getElementById('remoteAcctId').innerHTML = [];
+                    document.getElementById('responseErrors').innerHTML = [];
+                    for (var i=0, j=results.length; i<j; i++) {
+                        poiCollection.push({lat: results[i].Latitude, lng: results[i].Longitude, text: i+1, type: results[i].rowType, 
+                                            rolloverContent: '<div style="width:180px;"><strong>'+results[i].rowName+'</strong></div>', 
+                                            infoWindowContent: '<div style="width:180px;"><strong>'+results[i].Street+'</strong></div>' });                      
+                    } 
+                    mapController.addPOICollection(poiCollection);
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    
+    $(function()
+    {
+        $("#datepicker").datepicker({
+            onSelect: function()
+            {
+               $("#stop-detail").html('');
+               clickDay($("#datepicker").val());
+               //getItinerary(true); commented out so the search results don't change when the date changes            
+            }
+        });
+    }); 
+    </script>
+     
+<script>
+  $(function() {
+      // Added field for Calendar Event and new array of fields to empty out when close/cancelled from add stop window
+      var stopId = $( "#stopId" ),
+      name = $( "#name" ),
+      comments = $( "#comments" ),
+      durationHour = $( "#durationHour" ),
+      durationMinute = $( "#durationMinute" ),
+      startHour = $( "#startHour" ),
+      startMinute = $( "#startMinute" ),      
+      isCalendarEvent = $("#isCalendarEvent"),
+      addFields = $( [] ).add( $( "#nameAdd" ) ).add( $( "#commentsAdd" ) ).add($( "#durationHourAdd" )).add($( "#durationMinuteAdd" )).add($( "#startHourAdd" )).add($( "#startMinuteAdd" )),
+      allFields = $( [] ).add( name ).add( comments ).add(isCalendarEvent),
+      tips = $( ".validateTips" );
+       
+    function updateTips( t ) {
+        if(t != "") {
+          tips
+            .text( t )
+            .addClass( "ui-state-highlight" )
+            .css("color", "red");
+        } else {
+            tips
+            .text( t )
+            .removeClass( "ui-state-highlight");
+        }
+      /*setTimeout(function() {
+        tips.removeClass( "ui-state-highlight", 1500 );
+      }, 500 );*/
+    }
+ 
+    function checkLength( o, n, min, max ) {
+      if ( o.val().length > max || o.val().length < min ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be between " +
+          min + " and " + max + "." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
+    function checkMaxLength( o, n, max ) {
+      if ( o.val().length > max ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be less than " +
+          + max + "characters." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+ 
+    function checkRegexp( o, regexp, n ) {
+      if ( !( regexp.test( o.val() ) ) ) {
+        o.addClass( "ui-state-error" );
+        updateTips( n );
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
+    // Confirm if Calendar Event is selected, that the required data is present
+    function validateCheckbox(o, sh, dh, dm) {
+        if (!o.is(':checked')) {
+            return true;
+        } else {
+            if(sh.val() == 'xxx' ||
+                dh.val() == 0 && dm.val() == 0) {
+                
+                o.addClass( "ui-state-error" );
+                o.css('outline-color', 'red');
+                o.css('outline-style', 'solid');
+                o.css('outline-width', 'thin');
+                
+                updateTips( "With 'Is Calendar Event' selected, the Stop must have an estimated arrival and duration." );
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+    
+    // For Add New Stop dialog modal
+    $( "#dialog-form-add" ).dialog({
+    autoOpen: false,
+      height: 550,
+      width: 550,
+      modal: true,
+      buttons: {
+        Create : function() {
+            allFields.removeClass( "ui-state-error" );
+            
+            var validated = true;
+            validated = validated && checkMaxLength( $('#commentsAdd'), "the comments", 255 );
+            validated = validated && validateCheckbox($('#isCalendarEventAdd'), $( "#startHourAdd" ), $( "#durationHourAdd" ), $( "#durationMinuteAdd" ));
+            
+            
+            if(validated) {
+                var localStartMinute = 00;
+                
+                if($( "#startMinuteAdd" ).val() != 'xxx') {
+                    localStartMinute = $( "#startMinuteAdd" ).val();
+                }
+                
+                addItineraryAndStop(objectType, recordID, userRecord, $( "#durationHourAdd" ).val(), 
+                    $( "#durationMinuteAdd" ).val(), $( "#commentsAdd" ).val(), $( "#startHourAdd" ).val(), 
+                    localStartMinute, $( "#isCalendarEventAdd" ).is(':checked'));
+                
+                $( this ).dialog( "close" );
+            }
+            
+        },
+        Cancel: function() {
+            $( "#isCalendarEventAdd" ).prop('checked', false).removeAttr("style");
+            addFields.val( "" ).removeClass( "ui-state-error" );
+            updateTips('');
+          $( this ).dialog( "close" );
+        }
+      }, 
+      
+      close: function() {
+        $( "#isCalendarEventAdd" ).prop('checked', false).removeClass( "ui-state-error" ).removeAttr("style");
+        addFields.val( "" ).removeClass( "ui-state-error" );
+        updateTips('');
+      },
+    });
+    
+    $( "#dialog-form" ).dialog({
+      autoOpen: false,
+      height: 550,
+      width: 550,
+      modal: true,
+      buttons: {
+      
+        "Save": function() {
+          var bValid = true;
+          allFields.removeClass( "ui-state-error" );
+ 
+          bValid = bValid && checkMaxLength( comments, "the comments", 255 );
+          bValid = bValid && validateCheckbox(isCalendarEvent, startHour, durationHour, durationMinute);
+          
+          if ( bValid ) {  
+            var localStartMinute = 00;
+                
+            if(startMinute.val() != 'xxx') {
+                localStartMinute = startMinute.val();
+            }   
+                 
+            updateStop(stopId.val(), durationHour.val(), durationMinute.val(), comments.val(), startHour.val(), localStartMinute, isCalendarEvent.is(':checked'));
+            
+            $("#stop-detail").html('');
+            $( this ).dialog( "close" );
+          }
+        },
+        Cancel: function() {
+            $( "#isCalendarEvent" ).removeAttr("style");
+          $( this ).dialog( "close" );
+          updateTips('');
+        }
+      },
+      close: function() {
+        $( "#isCalendarEvent" ).removeAttr("style");
+        allFields.val( "" ).removeClass( "ui-state-error" );
+        updateTips('');
+      },
+
+    });
+    
+    $( ".search-input").keypress(function(e) {
+    if(e.which == 13) {       
+        geocode(document.getElementById('mySearch').value);        
+    }
+    });
+    
+    $(document).on("click", ".edit-stop", function(){             
+            $( "#stopId" ).val( ($(this).attr('stopId')) );
+            $( "#name" ).val( ($(this).attr('stopName')) );
+            $( "#durationHour" ).val( ($(this).attr('stopDurationHour')) );
+            $( "#durationMinute" ).val( ($(this).attr('stopDurationMinute')) );
+            $( "#startHour" ).val( ($(this).attr('startHour')) );
+            $( "#startMinute" ).val( ($(this).attr('startMinute')) );           
+            $( "#comments" ).val( ($(this).attr('stopComments')) );
+            
+            // Added default display of checkbox based on record being edited
+            var startingChecked = $(this).attr('stopIsCalendarEvent');
+            if(startingChecked == 'true') {
+                $("#isCalendarEvent").prop('checked', true);
+            } else {
+                $("#isCalendarEvent").prop('checked', false);
+            }
+            
+            $( "#dialog-form" ).dialog( "open" );
+      });
+      
+      $(document).on("click", ".detail-btn", function(){            
+            $("#stop-detail").html($(this).attr('data-val'));
+      });
+  });
+  
+  function toggle_visibility()  {
+    
+    (document.getElementById('findAccounts').checked)? document.getElementById('accountfilter').style.display = 'inline' : document.getElementById('accountfilter').style.display = 'none';
+    (document.getElementById('findContacts').checked)? document.getElementById('contactfilter').style.display = 'inline' : document.getElementById('contactfilter').style.display = 'none';
+    (document.getElementById('findLeads').checked)? document.getElementById('leadfilter').style.display = 'inline' : document.getElementById('leadfilter').style.display = 'none';
+    (document.getElementById('findOpportunities').checked)? document.getElementById('opportunityfilter').style.display = 'inline' : document.getElementById('opportunityfilter').style.display = 'none';          
+        
+  }
+  
+  function getDisplayLetter(index) {        
+        var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';        
+        var position = index % 25;        
+        return letters[position];    
+  }
+  
+  function mqRoutePlanner() {
+    // Determine if max records are present and if so, confirm user wants to send only 25
+     Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.RMobilePlanningController.calculateStops}',
+            $("#datepicker").val(),
+            function(result, event){
+                if (event.status) {
+                    if(result.stopCount > 25) {
+                        var answer = confirm("Only 25 addresses may be routed at a time. Would you like to route the first 25?")
+                        if (answer){
+                            window.open('https://maps.google.com/maps?saddr=' + result.startAddress + '&daddr=' + result.addresses);
+                        }
+                    } else {
+                        document.getElementById('gmroute').submit();
+                    }
+                    
+                } else if (event.type === 'exception') {
+                    document.getElementById('responseErrors').innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById('responseErrors').innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+  } 
+  
+  </script>    
+    
+</head>
+<span style="display:none;">
+    <input id="myLat" type="text" placeholder="Latitude Undefined" readonly="true" style="font-size:25%; color:silver; border:none; background-color:transparent;" />
+    <input id="myLong" type="text" placeholder="Longitude Undefined" readonly="true" style="font-size:25%; color:silver; border:none; background-color:transparent;" />
+</span>
+<div class="main-section">
+<div class="finder one"> 
+    <p class="search-bar">
+    <input class="search-input" id="mySearch" type="text" placeholder="Enter address" size="45" /><button class="search-btn" onclick="geocode(document.getElementById('mySearch').value);">Search</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="labeled"></span>
+        
+          <select class="drop-dwn" id="myLimit">
+                      <option value="100" disabled="yes" selected="yes">Max Count - 100</option>                                           
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>                      
+                      <option value="100">100</option>                                            
+                    </select>&nbsp;&nbsp;&nbsp;
+    <select class="drop-dwn" id="myRadius" title="Choose radius of search area">
+                      <option value="5" disabled="yes" selected="yes">Radius - 5</option>
+                      <option value="5">5   mi/km</option>
+                      <option value="10">10  mi/km</option>
+                      <option value="20">20  mi/km</option>
+                      <option value="50">50  mi/km</option>
+                      <option value="75">75  mi/km</option>
+                      <option value="100">100 mi/km</option>
+                      <option value="500">500 mi/km</option>
+                      <option value="1000">1000 mi/km</option>
+                    </select>                   
+    &nbsp;&nbsp;
+    <input class="radio" id="radiusMile" type="radio" name="radius" value="mi" title="Miles" checked="checked"/>Mi
+    <input class="radio" id="radiusKilometer" type="radio" name="radius" value="km" title="Kilometers"/>Km
+    &nbsp;&nbsp;
+    <!-- <span class="labeled">Within</span>-->
+    </p>
+    <div class="extra-radio">                 
+    <span class="search-span">
+    Search:</span><!--/END .search-span -->
+    <input class="radio" type="radio" name="sobject" id="findAccounts" checked="checked" onClick="toggle_visibility();" />Accounts
+    <input class="radio" type="radio" name="sobject" id="findContacts" onClick="toggle_visibility();" />Contacts      
+    <input class="radio" type="radio" name="sobject" id="findLeads" onClick="toggle_visibility();" />Leads
+    <input class="radio" type="radio" name="sobject" id="findOpportunities" onClick="toggle_visibility();" />Opportunities
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="record-span">
+    Record Owner:</span><!-- /END .record-span -->
+    &nbsp;&nbsp;<input id="allRecords" type="radio" name="recordOwner" />All Records
+    &nbsp;&nbsp;<input id="myRecords" type="radio" name="recordOwner" checked="checked"/>My Records
+    <div>
+    <span id="accountfilter" style="display:inline;">
+    <select id="accountType">              
+        <option value="All" selected="yes">Type - All</option>
+        <apex:repeat value="{!accountTypes}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>&nbsp;&nbsp;
+    <select id="accountIndustry">              
+        <option value="All" selected="yes">Industry - All</option>
+        <apex:repeat value="{!industries}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>                            
+    </span>
+    <span id="contactfilter" style="display:none;">
+    <select id="contactSource">              
+        <option value="All" selected="yes">Lead Source - All</option>
+        <apex:repeat value="{!contactSources}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    </span>
+    <span id="leadfilter" style="display:none;">
+    <select id="leadSource">              
+        <option value="All" selected="yes">Lead Source - All</option>
+        <apex:repeat value="{!leadSources}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    <select id="leadIndustry">              
+        <option value="All" selected="yes">Industry - All</option>
+        <apex:repeat value="{!leadIndustries}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    <select id="leadStatus">              
+        <option value="All" selected="yes">Status - All</option>
+        <apex:repeat value="{!leadStatuses}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    <select id="leadRating">              
+        <option value="All" selected="yes">Rating - All</option>
+        <apex:repeat value="{!leadRatings}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    </span>
+    <span id="opportunityfilter" style="display:none;">
+    <select id="opptyStage">              
+        <option value="All" selected="yes">Stage - All</option>
+        <apex:repeat value="{!opptyStages}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    <select id="closeDate">                            
+        <option value="All" selected="yes">Close Date - All</option>
+        <option value="THIS_MONTH">This Month</option>
+        <option value="LAST_MONTH">Last Month</option>
+        <option value="NEXT_MONTH">Next Month</option>
+        <option value="NEXT_90_DAYS">Next 90 Days</option>
+        <option value="THIS_QUARTER">This Quarter</option>
+        <option value="LAST_QUARTER">Last Quarter</option>
+        <option value="THIS_YEAR">This Year</option>                                        
+    </select>
+    <select id="opptySource">              
+        <option value="All" selected="yes">Lead Source - All</option>
+        <apex:repeat value="{!opptySources}" var="i">
+            <option value="{!i}">{!i}</option>
+        </apex:repeat>                                                                               
+    </select>
+    </span>
+    </div>
+    </div> 
+          
+    <p> 
+    <div id="responseErrors" style="color:white;"></div>    
+    </p>        
+    
+    <!-- 
+    onclick="$('#output4').show();" oncomplete="$('#output4').hide();closeDialog();"
+        <apex:inputCheckbox value="{!saveDefaultSummaryText}"  />&nbsp;Save text as default
+        <div id="output4" style="display:none;">Saving....please wait...<img src="{!URLFOR($Resource.CPP_Images, 'Spinner.gif')}"/></div>  
+     -->
+    
+    <div id="map" class="map-box" style="width:778px;height:340px;"></div>
+    <!-- <a id="clearMap" href="#">Clear Map</a>-->                                              
+    <p></p>   
+    
+</div>  <!-- /END .finder -->
+
+<!-- BEGINNING OF FORM (ITINERARY) -->
+
+<div class="sidebarRM">
+<apex:form id="form">
+    <span class="search-span" style="{!IF(NOT(isManager), 'visibility:hidden;', '')}">Assigned To: </span>
+    <!-- Added an onchange function to auto search when user is changed but Steve asked this be removed 
+    <apex:inputField required="false" value="{!itinerary.rzm__User__c}" id="itineraryOwner" html-data-id="itineraryOwner" onchange="geocode(document.getElementById('mySearch').value)" rendered="{!isManager}"> -->
+    <!-- <apex:inputField required="false" value="{!itinerary.rzm__User__c}" id="itineraryOwner" html-data-id="itineraryOwner" rendered="{!isManager}" style="width:160px">
+        <apex:actionSupport event="onchange" reRender="route"/>
+    </apex:inputField> -->
+
+    <apex:selectList value="{!itinerary.rzm__User__c}" id="itineraryOwner" html-data-id="itineraryOwner" size="1" styleClass="drop-dwn" rendered="{!isManager}">
+        <apex:selectOptions value="{!users}"/>
+        <apex:actionSupport event="onchange" reRender="route"/>
+    </apex:selectList>
+    <p id="searchP">
+        <span class="search-span">Itinerary:</span><input type="text" id="datepicker" size="10" /><br/><br/>
+        
+        <button onclick="getItinerary(true);return false;">Show on Map</button><button onclick="mqRoutePlanner();return false;">Route Planner</button></p>
+    <p/>        
+    
+    <apex:outputPanel id="route" styleClass="sidebarRMList">
+        <table>                                        
+        <apex:repeat id="stops" value="{!stops}" var="s">            
+            <apex:panelGroup layout="inline" rendered="{!s.position=='none'}">
+            <tr><td>{!s.stop.Name}</td></tr>
+            </apex:panelGroup>
+            <apex:panelGroup layout="inline" rendered="{!s.position<>'none'}">
+            <tr>
+            <td>
+            <apex:outputPanel >
+                <div class="{!if(s.stop.Location_Type__c=='Contact','rzpoi_contact',
+                              if(s.stop.Location_Type__c=='Lead','rzpoi_lead',
+                              if(s.stop.Location_Type__c=='Opportunity','rzpoi_opp','rzpoi_account')))}">{!s.stop.SortOrder__c}</div>
+            </apex:outputPanel>         
+            </td>
+            <td>&nbsp;
+            
+             <a href="#" class="edit-stop" title="Click to edit Stop" stopId="{!s.stop.Id}"     
+                                   startHour="{!if(s.timeless=true,'xxx',s.theHour)}"
+                                   startMinute="{!if(s.timeless=true,'xxx',s.theMinutes)}"                                                         
+                                   stopName="{!s.stop.Name}" 
+                                   stopDurationHour="{!s.durationHour}"
+                                   stopDurationMinute="{!s.durationMinute}" 
+                                   stopComments="{!s.stop.Comment__c}" 
+                                   stopIsCalendarEvent="{!s.stop.rzm__Calendar_Event__c}" 
+                                   src="{!URLFOR($Resource.RunzheimerAssets, '/img/edit.png')}">edit</a>&nbsp;&nbsp;
+            
+            </td>
+            <td>
+                <a class="detail-btn" href="#" data-val="<table>                                                         
+                                                         <tr style=vertical-align:text-top;><td><strong>Name:</strong>
+                                                            </td>
+                                                             <td colspan=3>{!s.stop.Name}</td>
+                                                         </tr>
+                                                         {!IF(s.stop.ParentName__c != NULL, '
+                                                            <tr style=vertical-align:text-top;><td><strong>Account/Company:</strong>
+                                                                </td>
+                                                                <td colspan=3>'+s.stop.ParentName__c+'</td>
+                                                         </tr> ',
+                                                         '')}
+                                                         
+                                                         <tr style=vertical-align:text-top;><td><strong>Address:</strong>
+                                                            </td>
+                                                             <td colspan=3>{!s.stop.Address__c}</td>
+                                                         </tr>
+                                                         <tr><td><strong>Expected Arrival:</strong></td>
+                                                             <td>{!s.theTime}</td>
+                                                             <td><strong>Duration:</strong></td>
+                                                             <td>{!s.theDuration}</td>
+                                                         </tr>                                              
+                                                         <tr><td><strong>Phone:</strong></td>
+                                                             <td>{!s.stop.Phone__c}</td>
+                                                             <td><strong>Mobile:</strong></td>
+                                                             <td>{!s.stop.Mobile__c}</td>
+                                                         </tr>                                                
+                                                         <tr>
+                                                             <td><strong>Email:</strong></td>
+                                                             <td colspan=3>{!s.stop.Email__c}</td>
+                                                         </tr>
+                                                         </table>">{!s.stop.Name}</a>
+                                                         
+                <apex:outputPanel rendered="{!NOT(s.timeless)}"><br/>{!s.theTime}</apex:outputPanel>
+            </td>                       
+            <td>
+            <apex:outputPanel rendered="{!s.position<>'first' && s.position<>'both'}">    
+            <img style="cursor:pointer;" onclick="moveStop('{!s.stop.Id}','{!s.stop.Itinerary__c}','{!s.stop.SortOrder__c}','up');return false;" src="{!URLFOR($Resource.RunzheimerAssets, '/img/arrow-up.png')}" width="20px" height="20px" title="Move Up"/>&nbsp;&nbsp;
+            </apex:outputPanel>            
+            </td>
+            <td>            
+            <apex:outputPanel rendered="{!s.position<>'last' && s.position<>'both'}">
+            <img style="cursor:pointer;" onclick="moveStop('{!s.stop.Id}','{!s.stop.Itinerary__c}','{!s.stop.SortOrder__c}','down');return false;" src="{!URLFOR($Resource.RunzheimerAssets, '/img/arrow-down.png')}" width="20px" height="20px" title="Move Down"/>&nbsp;&nbsp;
+            </apex:outputPanel>            
+            </td>            
+            <td>
+            <img style="cursor:pointer;" onclick="if (confirm('Are you sure you want to delete this stop?')) deleteRow('{!s.stop.Id}','{!s.stop.Itinerary__c}');return false;" src="{!URLFOR($Resource.RunzheimerAssets, '/img/remove_icon.png')}" width="20px" height="20px" title="Delete"/>&nbsp;&nbsp;                                    
+            </td>
+            <td>
+            <apex:outputPanel rendered="{!s.stop.rzm__Calendar_Event__c}" >
+            <img style="cursor:pointer;" src="{!URLFOR($Resource.RunzheimerAssets, '/images/Calendar-32.png')}" width="20px" height="20px" title="This Stop is an Event in your calendar"/>&nbsp;&nbsp;                                    
+            </apex:outputPanel>
+            </td>
+            </tr>
+            </apex:panelGroup>            
+        </apex:repeat>
+        </table>                                                      
+                                     
+    </apex:outputPanel>
+
+    <div id="stop-detail"></div> 
+         
+    <apex:actionFunction name="rerenderitinerary" rerender="route,directions"/>                        
+    
+    <apex:actionFunction action="{!chooseDay}" name="clickDay" reRender="route,directions">
+        <apex:param name="firstParam" assignTo="{!selectedDay}" value="" />                               
+    </apex:actionFunction>
+    
+    
+    <!-- START CHANGES -->
+    <!-- 
+    <apex:actionFunction name="calculateStops" action="{!calculateStops}" rerender="googleStopsData" />
+    <apex:outputPanel id="googleStopsData">
+        <script>
+            this.gmStopCount = {!GMStopCount}
+            //this.gmStopData = {!GMStopData}
+        </script>
+    </apex:outputPanel> -->
+    
+    <!-- END CHANGES -->
+    
+</apex:form>
+<apex:outputPanel id="directions"> 
+<form id="gmroute" method="get" target="_blank" action="https://maps.google.com/maps">
+    <apex:repeat id="stops" value="{!GoogleMapRouteStops}" var="s">
+        <input type="hidden" name="{!s.Name}" value="{!s.Address}"/>
+    </apex:repeat>
+</form>
+</apex:outputPanel>
+</div><!--/END .sidebarRM -->
+
+</div><!-- /END .main-section -->
+
+<div class="finder two" id="dataTable" style="display:none;">
+<div class="data-table">
+<span id="remoteAcctId" style="padding:5px 0;background:blue;"/>
+<span id="dynamic" />
+</div>
+
+<div id="dialog-form" title="Edit Stop Information">  
+  <p class="validateTips"></p>
+  <form>
+  <fieldset>        
+    <input type="text" name="name" id="name" size="60" style="font-weight:bold; border:none; background-color:transparent;" readonly="true" /><br/><br/>
+        
+    <label for="startHour">Estimated Arrival:</label>    
+    <select id="startHour" name="startHour" class="text ui-widget-content ui-corner-all">
+        <option value="xxx" selected="yes">Timeless</option>                           
+        <option value="480">8 AM</option>
+        <option value="540">9 AM</option>
+        <option value="600">10 AM</option>
+        <option value="660">11 AM</option>
+        <option value="720">12 PM</option>
+        <option value="780">1 PM</option>
+        <option value="840">2 PM</option>
+        <option value="900">3 PM</option>
+        <option value="960">4 PM</option>
+        <option value="1020">5 PM</option>
+        <option value="1080">6 PM</option>
+        <option value="1140">7 PM</option>
+        <option value="1200">8 PM</option>
+        <option value="1260">9 PM</option>
+        <option value="1320">10 PM</option>
+        <option value="1380">11 PM</option>
+        <option value="0">12 AM</option>
+        <option value="60">1 AM</option>
+        <option value="120">2 AM</option>
+        <option value="180">3 AM</option>
+        <option value="240">4 AM</option>
+        <option value="300">5 AM</option>
+        <option value="360">6 AM</option>
+        <option value="420">7 AM</option>                   
+    </select>&nbsp;:&nbsp; <!-- this is your colon -->
+    <select id="startMinute" name="startMinute" class="text ui-widget-content ui-corner-all">
+        <option value="xxx" selected="yes"></option>                                
+        <option value="0">00</option>        
+        <option value="30">30</option>        
+        <option value="" disabled="yes">-----</option>        
+        <option value="1">01</option>
+        <option value="2">02</option>
+        <option value="3">03</option>
+        <option value="4">04</option>
+        <option value="5">05</option>
+        <option value="6">06</option>
+        <option value="7">07</option>
+        <option value="8">08</option>
+        <option value="9">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>      
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>                
+    </select><br/>
+    <label for="durationHour">Duration:</label>
+    <select id="durationHour" name="durationHour" class="text ui-widget-content ui-corner-all">
+        <option value="0" selected="yes"></option>                           
+        <option value="60">1</option>
+        <option value="120">2</option>
+        <option value="180">3</option>
+        <option value="240">4</option>
+        <option value="300">5</option>
+        <option value="360">6</option>
+        <option value="420">7</option>
+        <option value="480">8</option>                   
+    </select>&nbsp;:&nbsp; <!-- this is your colon -->
+    <select id="durationMinute" name="durationMinute" class="text ui-widget-content ui-corner-all">
+        <option value="0" selected="yes"></option>                              
+        <option value="0">00</option>        
+        <option value="30">30</option>        
+        <option value="" disabled="yes">-----</option>
+        <option value="1">01</option>
+        <option value="2">02</option>
+        <option value="3">03</option>
+        <option value="4">04</option>
+        <option value="5">05</option>
+        <option value="6">06</option>
+        <option value="7">07</option>
+        <option value="8">08</option>
+        <option value="9">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>      
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>            
+    </select>
+    <br/>
+    <br/>
+    <br/>
+    <label for="isCalendarEvent">Is Calendar Event:</label>
+    <input id="isCalendarEvent" name="isCalendarEvent" type="checkbox" />
+    <br/><br/>    
+    <label for="comments">Comments:</label><br/>
+    <textarea rows="10" cols="50" name="comments" id="comments" class="text ui-widget-content ui-corner-all" /><br/>
+    <input type="text" name="stopId" id="stopId" style="font-size:25%; color:transparent; border:none; background-color:transparent;" readonly="true" />       
+     
+  </fieldset>
+  </form>
+</div>
+
+
+<div id="dialog-form-add" title="Add Stop Information">  
+  <p class="validateTips"></p>
+  <form>
+  <fieldset>        
+    <input type="text" name="nameAdd" id="nameAdd" size="60" style="font-weight:bold; border:none; background-color:transparent;" readonly="true" disabled="true"/><br/><br/>
+    <label for="startHourAdd">Estimated Arrival:</label>    
+    <select id="startHourAdd" name="startHourAdd" class="text ui-widget-content ui-corner-all">
+        <option value="xxx" selected="yes">Timeless</option>                           
+        <option value="480">8 AM</option>
+        <option value="540">9 AM</option>
+        <option value="600">10 AM</option>
+        <option value="660">11 AM</option>
+        <option value="720">12 PM</option>
+        <option value="780">1 PM</option>
+        <option value="840">2 PM</option>
+        <option value="900">3 PM</option>
+        <option value="960">4 PM</option>
+        <option value="1020">5 PM</option>
+        <option value="1080">6 PM</option>
+        <option value="1140">7 PM</option>
+        <option value="1200">8 PM</option>
+        <option value="1260">9 PM</option>
+        <option value="1320">10 PM</option>
+        <option value="1380">11 PM</option>
+        <option value="0">12 AM</option>
+        <option value="60">1 AM</option>
+        <option value="120">2 AM</option>
+        <option value="180">3 AM</option>
+        <option value="240">4 AM</option>
+        <option value="300">5 AM</option>
+        <option value="360">6 AM</option>
+        <option value="420">7 AM</option>                   
+    </select>&nbsp;:&nbsp; <!-- this is your colon -->
+    <select id="startMinuteAdd" name="startMinuteAdd" class="text ui-widget-content ui-corner-all">
+        <option value="xxx" selected="yes"></option>                                
+        <option value="0">00</option>        
+        <option value="30">30</option>        
+        <option value="" disabled="yes">-----</option>        
+        <option value="1">01</option>
+        <option value="2">02</option>
+        <option value="3">03</option>
+        <option value="4">04</option>
+        <option value="5">05</option>
+        <option value="6">06</option>
+        <option value="7">07</option>
+        <option value="8">08</option>
+        <option value="9">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>      
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>                
+    </select><br/>
+    <label for="durationHourAdd">Duration:</label>
+    <select id="durationHourAdd" name="durationHourAdd" class="text ui-widget-content ui-corner-all">
+        <option value="0" selected="yes"></option>                           
+        <option value="60">1</option>
+        <option value="120">2</option>
+        <option value="180">3</option>
+        <option value="240">4</option>
+        <option value="300">5</option>
+        <option value="360">6</option>
+        <option value="420">7</option>
+        <option value="480">8</option>                   
+    </select>&nbsp;:&nbsp; <!-- this is your colon -->
+    <select id="durationMinuteAdd" name="durationMinuteAdd" class="text ui-widget-content ui-corner-all">
+        <option value="0" selected="yes"></option>                              
+        <option value="0">00</option>        
+        <option value="30">30</option>        
+        <option value="" disabled="yes">-----</option>
+        <option value="1">01</option>
+        <option value="2">02</option>
+        <option value="3">03</option>
+        <option value="4">04</option>
+        <option value="5">05</option>
+        <option value="6">06</option>
+        <option value="7">07</option>
+        <option value="8">08</option>
+        <option value="9">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>      
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>            
+    </select>
+    <br/>
+    <br/>
+    <br/>
+    <label for="isCalendarEventAdd">Is Calendar Event:</label>
+    <input id="isCalendarEventAdd" name="isCalendarEventAdd" type="checkbox" />
+    <br/><br/>    
+    <label for="commentsAdd">Comments:</label><br/>
+    <textarea rows="10" cols="50" name="commentsAdd" id="commentsAdd" class="text ui-widget-content ui-corner-all" /><br/>
+    <input type="text" name="stopIdAdd" id="stopIdAdd" style="font-size:25%; color:transparent; border:none; background-color:transparent;" readonly="true" />       
+     
+  </fieldset>
+  </form>
+</div>
+
+</div><!--/END .finder.two -->
+
+</apex:page>

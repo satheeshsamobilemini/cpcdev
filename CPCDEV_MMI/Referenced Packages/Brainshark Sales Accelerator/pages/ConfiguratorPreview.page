@@ -1,0 +1,5 @@
+<apex:page >
+    <apex:pageBlock id="search-preview">
+        <c:ConfiguratorPreview />
+    </apex:pageBlock>
+</apex:page>

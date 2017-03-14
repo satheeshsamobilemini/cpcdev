@@ -1,0 +1,221 @@
+<!--
+Name   : ManageDaysOff
+Usage  : Used to track the number of days subordinate sales reps are out of
+         the office (sick/vacation, government work, and field visits).
+Author : Aashish Mathur
+Date   : September 2, 2009
+
+Modified Date : October 05 ,2009
+Author : Kirtesh Jain
+Comment : removed code Related to Government work and Field Visits
+-->
+
+<apex:page controller="ManageDaysOffController">
+	<script>
+		function disableButton(btn){
+		    btn.disabled='disabled';
+			btn.className = 'btnDisabled';
+		}
+		
+		function enableButton(btn){
+		    btn.disabled='';
+			btn.className = 'btn';
+		}
+	</script>
+  <style>
+    .bPageBlock .detailList .labelCol {
+      vertical-align:middle;
+    }
+  </style>
+  
+  <apex:sectionHeader title="Manage Sales Reps - Days Off Tracker" />
+  
+  <apex:form id="frmDaysOff">
+    <apex:pageMessages id="pageMsgDaysOff" />
+    
+    <apex:outputPanel layout="block" style="text-align:center;">
+      <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" id="saveStatus"
+          startText="Saving Trackers. Please wait..." />
+    </apex:outputPanel>
+    
+    <apex:actionFunction name="goToPreviousWeekJS" action="{!goToPreviousWeek}" status="weekStatus"
+        reRender="pbsDaysOff, pageMsgDaysOff" />
+    <apex:actionFunction name="goToNextWeekJS" action="{!goToNextWeek}" status="weekStatus"
+        reRender="pbsDaysOff, pageMsgDaysOff" />
+    <apex:actionFunction name="setWeekJS" action="{!setWeek}" status="weekStatus"
+        reRender="pbsDaysOff, pageMsgDaysOff" />
+    <apex:actionFunction name="saveDaysOffTrackersJS" action="{!saveDaysOffTrackers}" status="saveStatus"
+        reRender="frmDaysOff" />
+    <apex:actionFunction name="goToPreviousPageJS" action="{!goToPreviousPage}"
+        status="navigationStatusDaysOff" reRender="pbtDaysOff, navigationPnlDaysOff, pageMsgDaysOff" />
+    <apex:actionFunction name="goToNextPageJS" action="{!goToNextPage}"
+        status="navigationStatusDaysOff" reRender="pbtDaysOff, navigationPnlDaysOff, pageMsgDaysOff" />
+    
+    <apex:pageBlock mode="edit" id="pbDaysOff">
+      <apex:pageBlockButtons rendered="{!hasSubordinateUsers}">
+        <apex:commandButton value="Save" onclick="beforeSave(); return false;" />
+      </apex:pageBlockButtons>
+      
+      <apex:outputLabel value="No Subordinate Users Available" rendered="{!NOT(hasSubordinateUsers)}" />
+      
+      <apex:pageBlockSection columns="1" rendered="{!hasSubordinateUsers}" id="pbsDaysOff">
+        <!-- Time period input -->
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Time Period" for="timePeriod" />
+          <apex:outputPanel id="timePeriod">
+            <table><tr>
+              <td style="vertical-align:middle">
+                <apex:image url="{!URLFOR($Resource.NavigationArrows, 'left.png')}" width="32" height="32"
+                    onclick="goToPreviousWeekJS()" />
+              </td>
+              <td style="vertical-align:middle">
+                <apex:inputField value="{!dotForTimePeriodInput.Time_Period__c}" required="true"
+                    onchange="setWeekJS()" />
+              </td>
+              <td style="vertical-align:middle">
+                <apex:image url="{!URLFOR($Resource.NavigationArrows, 'right.png')}" width="32" height="32"
+                    onclick="goToNextWeekJS()" />
+              </td>
+            </tr></table>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <!-- Action Status for time period input -->
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="" for="statusPnl" />
+          <apex:outputPanel id="statusPnl">
+            &nbsp;
+            <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+                id="weekStatus" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        
+        <!-- Subordinates' Days Off Trackers -->
+        <apex:pageBlockTable value="{!subordinatesDaysOffTrackers}" var="daysOffTracker"
+            rendered="{!NOT(ISNULL(dotForTimePeriodInput.Time_Period__c))}" id="pbtDaysOff">
+          <apex:column headerValue="User Name" value="{!daysOffTracker.userName}" />
+          <apex:column headerValue="Extension" value="{!daysOffTracker.Extension}" />
+          <apex:column headerValue="Vacation/Sick Days">
+            <apex:inputField value="{!daysOffTracker.daysOffTracker.Sick_Days__c}" id="sickDays"/>
+          </apex:column>
+        </apex:pageBlockTable>
+        
+        <!-- Navigation Panel -->
+        <apex:outputPanel layout="block" style="white-space:nowrap;width:100%;"
+            rendered="{!NOT(ISNULL(dotForTimePeriodInput.Time_Period__c))}" id="navigationPnlDaysOff">
+          <apex:outputPanel layout="block" style="text-align:center;">
+            &nbsp;
+            <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+                id="navigationStatusDaysOff" />
+          </apex:outputPanel>
+          <table width="100%"><tr width="100%">
+            <td style="text-align:left;">{!showingFrom} - {!showingTo} of {!noOfSubordinateUsers}</td>
+            <td style="text-align:center;">
+              <apex:commandLink value="Previous Page" onclick="beforePrevious(); return false;"
+                  rendered="{!hasPreviousPage}" />
+              <apex:outputText value="Previous Page" rendered="{!NOT(hasPreviousPage)}" />
+              <apex:outputLabel value=" | " />
+              <apex:commandLink value="Next Page" onclick="beforeNext(); return false;"
+                  rendered="{!hasNextPage}" />
+              <apex:outputText value="Next Page" rendered="{!NOT(hasNextPage)}" />
+            </td>
+            <td style="text-align:right;">Page {!currentPage} of {!totalPage}</td>
+          </tr></table>
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+  
+  <script>
+    /* 1. Function with same name as of default salesforce function
+     * which is responsible to set focus on first input field on page load.
+     * 2. In our case first input field is date input and on focusing
+     * of it pop up div for entering date is shown up on page load.
+     * 3. Setting it as blank fuction ensures that on page load that date
+     * input will not be focused.
+    */
+    function setFocusOnLoad() {}
+    
+    // Run original onload function and then focus element as needed
+    var originalOnload = window.onload;
+    window.onload = function() {
+      if (originalOnload) {
+        originalOnload();
+      }
+      
+      setFocus();
+    }
+    
+    // Function which runs on page load
+    function setFocus() {
+      // Set focus on your element here
+      //document.getElementById("").focus();
+    }
+    
+    // Check for input values before save
+    function beforeSave() {
+	  
+  		var saveBtns = document.getElementsByName("j_id0:j_id62:j_id63:frmDaysOff:pbDaysOff:j_id99:j_id100");
+    	disableButton(saveBtns[0]);
+   		disableButton(saveBtns[1]);
+      	
+      	if (checkForValidInputs()){
+      	 	saveDaysOffTrackersJS();
+      	}else{
+       		enableButton(saveBtns[0]);
+      		enableButton(saveBtns[1]);
+      	}
+      
+    }
+    
+    // Check for input values before navigating to previous page
+    function beforePrevious() {
+      if (checkForValidInputs())
+        goToPreviousPageJS();
+    }
+    
+    // Check for input values before navigating to next page
+    function beforeNext() {
+      if (checkForValidInputs())
+        goToNextPageJS();
+    }
+    
+    // Base id of pageBlockTable
+    var baseId = "{!$Component.frmDaysOff.pbDaysOff.pbsDaysOff}:pbtDaysOff:";
+    
+    // Check if all inputs have valid values
+    function checkForValidInputs() {
+      var index = -1;
+      
+      while(true) {
+        // Go to next row
+        index++;
+        baseIdRow = baseId + index + ":";
+        
+        // Check "Vacation/Sick Days"
+        element = document.getElementById(baseIdRow + "sickDays");
+        
+        // If no more elements then break
+        if (!element)
+          break;
+        
+        if (!hasValidInput(element))
+          return false;
+       }
+      
+      return true;
+    }
+    
+    // Check for negative or greater than 7 inputs
+    function hasValidInput(element) {
+      var elementValue = element.value;
+      
+      if (!isNaN(elementValue) && elementValue >= 0 && elementValue <= 7)
+        return true;
+      
+      // Given element has invalid value
+      alert("Please input a non-negative numeric value less than or equal to 7.");
+      element.focus();
+      return false;
+    }
+  </script>
+</apex:page>

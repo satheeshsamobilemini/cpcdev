@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Campaign_Cookie__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Raw data from the Campaign Tracker that is captured when a tracked visitor submits the web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Raw data from the Campaign Tracker that is captured when a tracked visitor submits the web-to-lead form.</inlineHelpText>
+        <label>Campaign Cookie</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>GAC_Campaign__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Campaign data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Campaign data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Campaign</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Keyword__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Keyword data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Keyword data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Keyword</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Medium__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Medium data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Medium data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Medium</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Source__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Source data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Source data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Source</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Campaign__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_campaign variable from Google Analytics Campaign URLs: The individual campaign name, slogan, promo code, etc. for a product.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_campaign variable from Google Analytics Campaign URLs: The individual campaign name, slogan, promo code, etc. for a product.</inlineHelpText>
+        <label>GA Campaign</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Content__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_content variable from Google Analytics Campaign URLs: Used to differentiate similar content, or links within the same ad. For example, if you have two call-to-action links within the same email message, you can use utm_content and set different values for each so you can tell which version is more effective.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_content variable from Google Analytics Campaign URLs: Used to differentiate similar content, or links within the same ad.</inlineHelpText>
+        <label>GA Content</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Medium__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_medium variable from Google Analytics Campaign URLs: The advertising or marketing medium, e.g.: cpc, banner, email newsletter.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_medium variable from Google Analytics Campaign URLs: The advertising or marketing medium, e.g.: cpc, banner, email newsletter.</inlineHelpText>
+        <label>GA Medium</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Source__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_source variable from Google Analytics Campaign URLs: Identify the advertiser, site, publication, etc. that is sending traffic to your property, e.g. google, citysearch, newsletter4, billboard.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_source variable from Google Analytics Campaign URLs: Identify the advertiser, site, publication, etc. that is sending traffic to your property, e.g. google, citysearch, newsletter4, billboard.</inlineHelpText>
+        <label>GA Source</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Term__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_term variable from Google Analytics Campaign URLs: Identify paid search keywords. If you&apos;re manually tagging paid keyword campaigns, you should also use utm_term to specify the keyword</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_term variable from Google Analytics Campaign URLs: Identify paid search keywords. If you&apos;re manually tagging paid keyword campaigns, you should also use utm_term to specify the keyword</inlineHelpText>
+        <label>GA Term</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Tracked__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF( GA_Tracker_Score__c  &gt; 0, &quot;Tracked&quot;, &quot;Not Tracked&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>GA Tracked</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Tracker_Score__c</fullName>
+        <deprecated>false</deprecated>
+        <description>A score of 0-5 that simply indicates how many of the Google Analytics Campaign parameters were captured from the URL the visitor clicked on.</description>
+        <externalId>false</externalId>
+        <formula>IF( ISBLANK( GA_Campaign__c ) , 0, 1)  +  IF( ISBLANK( GA_Content__c ) , 0, 1)  +  IF( ISBLANK(  GA_Medium__c  ) , 0, 1)  +  IF( ISBLANK(  GA_Source__c  ) , 0, 1)  +  IF( ISBLANK(  GA_Term__c  ) , 0, 1)</formula>
+        <label>GA Tracker Score</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Keyword__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The search term that sent a visitor to your web site prior to them submitting a web-to-lead form. &apos;Not Provided&apos; means the keyword cannot be determined, usually due to Google encrypting searches from logged in Google users.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The search term that sent a visitor to your web site prior to them submitting a web-to-lead form. &apos;Not Provided&apos; means the keyword cannot be determined, usually due to Google encrypting searches from logged in Google users.</inlineHelpText>
+        <label>Keyword</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Noncampaign_Lead_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(GAC_Medium__c = &quot;referral&quot;, &quot;Referral&quot;,  IF( GAC_Campaign__c  = &quot;(direct)&quot;, &quot;Direct&quot;,  IF(GAC_Medium__c = &quot;organic&quot;, &quot;Organic&quot;, IF( Paid_Search__c = true, &quot;Paid Search&quot;, null))))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Non-Campaign Lead Type</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Paid_Search__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>If this is checked, it means that the click that sent a visitor to your web site prior to them submitting a web-to-lead form was on an advertisement (Adwords, Microsoft AdCenter, etc.). Unchecked means they clicked on an organic search result, or the visit was not a search.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If this is checked, it means that the click that sent a visitor to your web site prior to them submitting a web-to-lead form was on an advertisement (Adwords, Microsoft AdCenter, etc.). Unchecked means it was an organic search result or it was not search.</inlineHelpText>
+        <label>Paid Search</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Referrer__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The Referring URL that a visitor came from to arrive on your web site, prior to submitting a web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Referring URL that a visitor came from to arrive on your web site, prior to submitting a web-to-lead form.</inlineHelpText>
+        <label>Referrer</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Search_Engine__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The search engine that a visitor used to find your site, prior to submitting the web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The search engine that a visitor used to find your site, prior to submitting the web-to-lead form.</inlineHelpText>
+        <label>Search Engine</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>gclid__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The Ad click ID from Google Adwords.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Ad click ID from Google Adwords.</inlineHelpText>
+        <label>gclid</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

@@ -1,0 +1,76 @@
+<apex:page ></apex:page>
+<!-- TFS 2291 start 1 
+<apex:page standardController="Account" extensions="SalesScorecardController"
+        title="Sales Scorecard: {!Account.Name}">
+<apex:sectionHeader title="Sales Scorecard" subtitle="{!Account.Name}" />
+    
+  <apex:form >
+        <apex:pageMessages />
+        
+        The hierarchy is created by associating accounts with parent accounts.
+        
+        <apex:pageBlock rendered="{!NOT(hasError)}">   TFS 2291 end 1 -->
+            <!-- Table listing Account Hierarchy --> <!-- TFS 2291 start 2
+            <apex:pageBlockTable value="{!nodesList}" var="node" id="nodeTable">
+                <apex:column headervalue="Account Name"
+                        style="white-space:pre;"> TFS 2291 end 2 --><!-- White space to indent Hierarchy --><!-- TFS 2291 start 3<span
+                        style="padding-right:{!node.spanPadding}px;" />
+                   <apex:outputLink value="/{!node.account.Id}">{!node.account.Name}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headervalue="BranchID" value="{!node.account.Branch__c}" style="text-align:center"/>
+                <apex:column headervalue="Servicing Branch ID" value="{!node.account.Servicing_Branch_Id__c}" style="text-align:center"/>
+                
+               <apex:column style="text-align:center">
+                 <apex:facet name="header">Sales Revenues<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YTD<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Amount</apex:facet>
+                 <apex:outputfield value="{!node.account.Sales_Revenue_YTD_Current_Year__c}" ></apex:outputfield>
+               </apex:column>
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">Sales Revenues<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YTD<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%Change</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_YTD_Percent_Change__c}" ></apex:outputfield>
+               </apex:column>
+              
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">Sales Revenues<br/>Last 12 Months<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Amount</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Last_12_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">Sales Revenues<br/>Last 12 Months<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%Change</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Pct_Chng_Last_12_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">&nbsp;&nbsp;Sales History<br/>0-3 months Ago</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Last_03_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">&nbsp;&nbsp;Sales History<br/>4-6 months Ago</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Last_46_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">&nbsp;&nbsp;Sales History<br/>7-9 months Ago</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Last_79_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">&nbsp;&nbsp;Sales History<br/>10-12 months Ago</apex:facet>
+                  <apex:outputfield value="{!node.account.Sales_Revenue_Last_1012_Months__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">Sales Prospecting<br/>Last year Same Qtr</apex:facet>
+                  <apex:outputfield value="{!node.account.Sale_Revenue_Last_Year_Same_Qtr__c}" ></apex:outputfield>
+               </apex:column>
+               
+               <apex:column style="text-align:center">
+                  <apex:facet name="header">Sales Prospecting<br/>Last year Next Qtr</apex:facet>
+                  <apex:outputfield value="{!node.account.Sale_Revenue_Last_Year_Next_Qtr__c}" ></apex:outputfield>
+               </apex:column>
+           
+           </apex:pageBlockTable>
+        </apex:pageBlock>
+  </apex:form>
+</apex:page>                  TFS 2291 end 3 -->

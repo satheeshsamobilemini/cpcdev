@@ -1,0 +1,39 @@
+<apex:page controller="CloneQuoteCPCRedirect">
+  
+  <script type="text/javascript">
+      window.onload = setFocus
+      function setFocus() {
+        createOpp();
+      }
+  </script>
+  
+  <apex:form id="myForm">
+    <div style="height:100px;">
+    
+    </div>
+    <apex:actionstatus id="cloneredirect" >
+       <apex:facet name="start">
+           <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+               <div class="waitingHolder" >
+                   <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                    <font color="Red"><b>Creating Opportunity and redirecting to CPC....</b></font> 
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus> 
+      
+      <apex:actionFunction name="createOpp" action="{!createOpportunity}" reRender="myForm" status="cloneredirect"/>
+      
+      <apex:outputPanel id="outerPnl" rendered="{!redirectCPC}">
+          <apex:outputPanel >
+              <script>
+                  var isQuote = '{!isFromQuote}';
+                  if(isQuote == 'true')
+                      window.location.href = '{!cpqURL}'+'/discovery?quoteId={!quoteID}&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity={!oppID}';
+                  else
+                      window.location.href = '{!cpqURL}'+'/edit_contract?contractId={!contractId}&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity={!oppID}';
+              </script>
+          </apex:outputPanel>
+      </apex:outputPanel>
+  </apex:form>
+</apex:page>

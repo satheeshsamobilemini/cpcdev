@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Address_Clean__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Address_Clean (Contact)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GeocodeQualityCode__c</fullName>
+        <deprecated>false</deprecated>
+        <description>This is a MapQuest API response code describing the quality of the geocode.</description>
+        <externalId>false</externalId>
+        <label>GeocodeQualityCode (Contact)</label>
+        <length>5</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GeocodeQuality__c</fullName>
+        <deprecated>false</deprecated>
+        <description>This is a MapQuest API response measuring the granularity of the geocode.</description>
+        <externalId>false</externalId>
+        <label>GeocodeQuality (Contact)</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <deprecated>false</deprecated>
+        <displayLocationInDecimal>true</displayLocationInDecimal>
+        <externalId>false</externalId>
+        <label>Location (Contact)</label>
+        <required>false</required>
+        <scale>6</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Location</type>
+    </fields>
+    <fields>
+        <fullName>RMobile_Utilities__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>HYPERLINK(&apos;/apex/rzm__rmobileplanning?type=Contact&apos;
+   + &apos;&amp;theId=&apos; +  Id 
+   + &apos;&amp;lat=&apos; + TEXT(Location__Latitude__s)
+   + &apos;&amp;lon=&apos; + TEXT(Location__Longitude__s)
+   + &apos;&amp;adr=&apos;  + Address_Clean__c
+   ,  IMAGE(&quot;resource/rzm__RunzheimerAssets/img/MQ_Icon_Tiny.png&quot;, &quot;RMobile Planning&quot;)  , &apos;_top&apos;)
++ &apos; &apos; +
+HYPERLINK(&apos;/apex/rzm__addToItinerary?personAccountType=Contact&apos;
+   + &apos;&amp;theId=&apos; +  Id 
+   + &apos;&amp;lat=&apos; + TEXT(Location__Latitude__s)
+   + &apos;&amp;lon=&apos; + TEXT(Location__Longitude__s)   
+   + &apos;&amp;retURL=&apos; + Id
+   ,  IMAGE(&quot;resource/rzm__RunzheimerAssets/img/Add2Itinerary.png&quot;, &quot;Add to Itinerary&quot;)  , &apos;_top&apos;)</formula>
+        <label>RMobile Utilities (Contact)</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

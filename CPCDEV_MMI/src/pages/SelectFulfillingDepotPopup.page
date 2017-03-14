@@ -1,0 +1,85 @@
+<apex:page controller="SelectFulfillingDepotPopupControllerUK" showHeader="false" sidebar="false">
+ <apex:includeScript value="{!$Resource.jQueryLib19Compress}"/>
+    <apex:includeScript value="/soap/ajax/10.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/10.0/apex.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+    <apex:stylesheet value="{!$Resource.DataTableCss}"/>
+    <style>
+        table.dataTable thead .sorting{background:url('{!$Resource.DT_sort_both}') no-repeat center right}
+        table.dataTable thead .sorting_asc{background:url('{!$Resource.DT_sort_asc}') no-repeat center right}
+        table.dataTable thead .sorting_desc{background:url('{!$Resource.DT_sort_desc}') no-repeat center right}
+        table.dataTable thead .sorting_asc_disabled{background:url('{!$Resource.DT_sort_asc_disabled}') no-repeat center right}
+        table.dataTable thead .sorting_desc_disabled{background:url('{!$Resource.DT_sort_desc_disabled}') no-repeat center right}
+    </style>
+    <script>
+                $(document).ready(function() {
+                     //$('#pgId:frmId:conPb:conTbl').dataTable();
+                     $('#ContactListTable').dataTable();
+                } );
+    </script>            
+    
+  <apex:form id="fulfillDepForm">
+  <apex:pageBlock id="fulfillDepBlock" title="Select the FulfillingDepot">
+  <apex:outputPanel >
+                <table id="ContactListTable" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <!--<th>Post Code</th>-->
+                            <th>Service Branch</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!lstDepot}" var="item">
+                            <tr>
+                                <td>
+                                    <!--<input type="radio" onclick="fillIn('{!item.Service_Branch__c}');" name="test"  id="{!item.id}"/>-->
+                                   <input type="radio" name="test" id="item" onclick="fillIn('{!item}');"/> 
+                                    
+                                </td>
+                                <!--<td>
+                                    {!item.Name}
+                                </td>-->
+                                <td >
+                                    &nbsp;{!item}
+                                </td>
+                               
+                               
+                            </tr>
+                        </apex:repeat>
+                   </tbody>
+                </table>
+                </apex:outputPanel>
+                
+  </apex:pageBlock>
+  </apex:form>
+  <script language="javascript">
+  function fillIn(Depovalue)
+       { 
+         //alert("Depovalue"+Depovalue);
+          var winMain=window.opener;
+          if (null==winMain)
+          {
+             winMain=window.parent.opener;
+          }
+          var ele=winMain.document.getElementById('{!$CurrentPage.parameters.fulfildep}');
+          //alert("ele"+ele+"@"+ele.value);
+          ele.value=Depovalue;
+          CloseWindow();
+       }
+
+       function CloseWindow()
+       {
+          var winMain=window.opener;
+          if (null==winMain)
+          {
+             winMain=window.parent.opener;
+          }
+          winMain.closeFulfillingDepotLookupPopup();
+       }
+  
+  
+  </script>
+</apex:page>

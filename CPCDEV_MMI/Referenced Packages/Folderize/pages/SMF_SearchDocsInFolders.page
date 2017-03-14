@@ -1,0 +1,151 @@
+<apex:page controller="sharem.SMF_SearchDocsInFoldersCtrl" extensions="sharem.SMF_DocsViewerExtension,sharem.SMF_FoldersViewerExtension"
+  tabStyle="Folderize__tab" title="Search docs across folders">
+
+
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/cupertino/jquery-ui.css" />
+<apex:stylesheet value="{!URLFOR($Resource.sharem__sm_jqgrid, '/css/ui.jqgrid.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/styles.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/searchDocsInFolders.css')}" />
+
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery-1.9.0.min.js')}"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/i18n/grid.locale-en.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery.jqGrid.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/utils/jqGridUtils.js')}"></script>
+
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/scripts.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/utils/filtersManager.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/utils/foldersHierarchyHelper.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/searchDocsInFolders.js')}"></script>
+
+<!-- ADD the MANAGER of MESSAGES -->
+<c:MessagesManager />
+
+
+
+<script type="text/javascript">
+
+//configure the "scripts.js" file
+SMF_PAGE_OPTIONS.fixPageContainer = true;
+//configure vars from the "jqGridUtils.js" file
+SITE_PREFIX = "{!$Site.Prefix}";
+
+
+$(function()
+{
+	//- initialize the table of documents
+	var docColumnsVisibility = JSON.parse('{!JSENCODE(docColumnsVisibility_Json)}');
+	var docsSortingParameter = JSON.parse('{!JSENCODE(docsSortingParameter_Json)}');
+	initDocumentsTable(docColumnsVisibility, docsSortingParameter);
+
+	//- initialize server-side filters
+	var options =
+	{
+		title: "Search criteria",
+		applyButtonText: "Search",
+		notesContent: getFilterNotes(false, null),
+		onFilterApplied: searchDocs,
+		onFilterReset: onFilterReset
+	};
+	$("#serverSideFilter").filtersManager("initialize", versionsFilter,
+		docsFilter_GetDefaultFiltersInfo(), [{label: "Full Text Search", key: "SearchPattern"}], options);
+
+	//- show main block
+	$("#mainContent").css({"visibility": "visible"});
+});
+
+
+
+/*
+************************* REMOTE ACTIONS *************************
+*/
+function searchDocs()
+{
+	$("#serverSideFilter").filtersManager("setNotes", getFilterNotes(false, null));
+
+	//search documents and refresh the table
+	performRemoteAction(sharem.SMF_SearchDocsInFoldersCtrl.searchDocs, [versionsFilter], {buffer: false},
+		function(result)
+		{
+			//- extract data from the results
+			var documentsList = result.returnedObjects[0];
+			if (result.statusCode == "{!STATUS_PARTIAL_SEARCH_RESULTS}")
+			{
+				var oldestModifiedDate = result.returnedObjects[1];
+				$("#serverSideFilter").filtersManager("setNotes", getFilterNotes(true, oldestModifiedDate));
+			}
+			//- re-render the table of documents
+			jqGrid_ReRender(grid, documentsList);
+		},
+		function()
+		{
+			jqGrid_ReRender(grid, []);
+		}
+	);
+}
+
+function loadAllFolders()
+{
+	//get all folders and handle the results
+	performRemoteAction(sharem.SMF_FoldersViewerExtension.getAllFoldersMap, [], {},
+		function(result)
+		{
+			//- initialize and configure a helper for folders
+			foldersHelper = new FoldersHierarchyHelper(result.returnedObjects[0]);
+			//- configure template in the FoldersHierarchyHelper (replace 'isdtp' param added by LEX)
+			foldersHelper.T_FOLDER_URL = "{!URLFOR($Page.Folderize, null,
+				[selectedFolderId='PH_FOLDER_ID_RAW', selectedVersionId='PH_VERSION_ID'])}".replace("isdtp=", "i=");
+		}
+	);
+}
+
+function loadAndShowFoldersForVersion(versionId)
+{
+	if (versionId == null)
+	{
+		return;
+	}
+
+	//get folders for the version
+	performRemoteAction(sharem.SMF_SearchDocsInFoldersCtrl.getFoldersForVersion, [versionId], {},
+		function(result)
+		{
+			showDialog_FoldersOfVersion(versionId, result.returnedObjects[0]);
+		}
+	);
+}
+
+</script>
+
+
+
+<div style="float: left;">
+	<span class="caption-logo smf-icon-logo-small"></span>
+	<span class="section-title">
+		Search Across Folders
+	</span>
+</div>
+<div class="header-back-link">
+	<a href="{!$Page.Folderize}">Folderize Home</a>
+</div>
+<div class="line-end"></div>
+
+<div id="serverSideFilter"></div>
+
+<div id="mainContent" style="visibility: hidden;">
+
+	<!-- THE TABLE OF FILES -->
+	<div id="contentPane">
+		<div id="tableContainer">
+			<table id="documentsTable"><tr><td></td></tr></table>
+			<div id="paginator"></div>
+		</div>
+	</div>
+</div>
+
+<div style="margin-top: 5px;">
+	Copyright © 2013-2016 ShareMethods LLC All rights reserved
+</div>
+
+</apex:page>

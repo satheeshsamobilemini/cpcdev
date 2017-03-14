@@ -1,0 +1,17 @@
+Dear: {!Contact.FirstName}{!Lead.FirstName}
+
+THIS IS JUST AN EXAMPLE TEMPLATE.  DO NOT USE.
+
+Thank you for your time today.  Below is the link to the presentation I promised to send you.  Please take just a few minutes to review this.
+
+Click the link below:
+https://www.brainshark.com/appexchange/vu?pi=152500&int2={!Contact.Id}{!Lead.Id}&int1={!User.Id}&tx=CRM
+
+Regards, 
+{!User.FirstName}
+
+{!User.FirstName}  {!User.LastName}
+{!User.Title}
+{!User.CompanyName}
+{!User.Phone}
+{!User.Email}

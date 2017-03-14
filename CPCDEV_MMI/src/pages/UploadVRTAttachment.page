@@ -1,0 +1,64 @@
+<apex:page id="pg" standardController="Vehicle_Registration_Tracking__c" extensions="UploadVRTAttachmentController">
+<style>
+    .customRequired{
+         display:inline-block;
+         background-color:#CC0000;
+         width:3px;
+         margin-right:1px;
+         position: relative;
+         vertical-align:top; 
+   }
+</style>
+<apex:form id="theForm" enctype="multipart/form-data">
+	<apex:sectionHeader title="" subtitle="Attach File to Vehicle Registration Tracking {!Vehicle_Registration_Tracking__c.Name}" />
+	<apex:pageBlock title="">
+<!-- 		<script> -->
+<!-- 		function callAttach(){ -->
+		
+<!-- 			attachActionFunction(); -->
+<!-- 		} -->
+		
+<!-- 		</script> -->
+		
+<!-- 		<apex:actionFunction name="attachActionFunction" action="{!attachFile}"  /> -->
+		<apex:messages style="color:red;"/>
+		<br/>
+		<b>1.  Select the File</b><br/>
+		Type the path of the file or click the Browse button to find the file.
+		<br/>
+		<apex:pageBlockSection >
+			<apex:inputFile style="width:100%" id="fileToUpload" value="{!attachment.body}" filename="{!attachment.name}" />  
+		</apex:pageBlockSection>
+		<br/>
+		<b>2. Click the "Attach File" button.</b>
+	    <br/>
+	    ( When the upload is complete the file information will appear below. )
+ 	 	<br/><br/>
+ 	  		<apex:commandButton value="Attach File"  action="{!attachFile}" />   
+<!-- 		<input type="button" onclick="callAttach(); return false;" value="Attach File" /> -->
+ 		<br/><br/> 
+		<b>3. Description :</b>
+		<br/>
+		 <apex:inputField value="{!vrtAttachment.Description__c}"  />
+	 	<br/><br/>
+		<b>4.Click the Done button to return to the previous page.</b>
+	    <br/>(This will cancel an in-progress upload.)
+	 	<br/><br/>  
+			<apex:commandButton value="Done" action="{!upload}"  />
+		
+		<br/><br/><br/><br/>
+		<apex:pageBlockSection rendered="{!isSaved}">	
+			<table width="200%" border="0">
+  				<tr>
+    				<td bgcolor="#8a9ebe" color="#fff" colspan="2" ><b>You have just uploaded the following files :</b></td>
+  				</tr>
+  				<tr>
+    				<td width="30%"><div align="right">File Name : </div></td>
+    				<td width="70%">{!attachmentName}</td>
+  				</tr>
+			</table>
+		</apex:pageBlockSection>	
+	</apex:pageBlock>
+</apex:form>
+
+</apex:page>

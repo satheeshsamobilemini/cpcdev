@@ -1,0 +1,174 @@
+<apex:page showHeader="false" sidebar="false" controller="CustomLinksController_ETS">
+<style>
+
+pre.exception {
+    font-size: 145%;
+}
+
+body, td {
+    margin:0px;
+    color:#333;
+}
+
+body {
+    background-repeat: repeat-x;
+    background-position: left top;
+    font-size: 75%;
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background-color: #FFF;
+}
+
+a {
+    color:#333;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+th {
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+form {
+    margin:0px;
+    padding:0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Verdana', 'Geneva', sans-serif;
+    font-size: 100%;
+    margin:0px;
+    display:inline;
+}
+
+.sidebarModule {
+    background-color:#E8E8E8;
+    margin: 0 0 2px 0;
+    overflow: hidden;
+}
+
+.sidebarModule .requiredMark {
+    color: #E8E8E8; /* Hide in background */
+}
+
+.sidebarModuleHeader {
+    padding: 15px 8px 2px 15px;
+    font-weight: bold;
+}
+
+.sidebarModuleBody,
+.sidebarModuleBodyNoHeader {
+    padding: 0 6px 16px 11px;
+}
+
+.sidebarModuleBodyNoHeader {
+    padding-top: 15px;
+}
+
+.sidebarModuleBody select {
+    font-size: 91%;
+}
+
+.sidebarModuleTag {
+    vertical-align:top;
+}
+
+.sidebarModuleTag img {
+    padding-right:.5em;
+    vertical-align:bottom;
+}
+
+/* - Image - */
+.imageModule .sidebarModuleBody {
+    margin: auto;
+    padding-left: 0;
+    padding-right: 0;
+    width: 185px;
+}
+
+
+/* - Nested Base - */
+.nestedModule {
+    background-color: #E8E8E8;
+    background-image:  url("/img/bgmMessage.gif");
+    background-repeat: no-repeat;
+    background-position: left top;
+    border-color: #E8E8E8; /* Match the background color */
+    border-style: solid;
+    border-width: 10px 0;
+    margin-top: -2px; /* Eat up the margin spacing that's normally present */
+    padding:0px 15px 0px 13px;
+}
+
+.nestedModuleInner {
+    background-color: #FFF;
+    margin-bottom: 0;
+}
+
+.nestedModule .sidebarModuleHeader {
+    padding-top: 7px;
+    padding-bottom: 5px;
+}
+
+.nestedModule .sidebarModuleBody {
+    border-top: 1px solid #CCC;
+    line-height:1.6em;
+    margin: 0 10px 8px;
+    padding: 0px 3px 0 5px;
+}
+
+/* - Custom Links - */
+.linksModule ul {
+    padding: 2px 0 1px 10px;
+    margin: 0;
+}
+
+.linksModule li {
+    list-style: disc;
+    padding: 0;
+    line-height: 1.3em;
+    margin: 0;
+}
+
+</style>
+
+<script>
+function reloadWindow(url)
+{ window.parent.location.href = url;
+}
+</script>
+
+<div class="nestedModule linksModule" style="width:100%;height:100%;padding:10px" >
+    
+    <div class="sidebarModule nestedModuleInner" style="width:100%;height:100%">   
+        
+        <div class="sidebarModuleHeader">
+            <h2></h2>
+        </div>
+        
+        <div class="sidebarModuleBody"  >
+            <b>  ETS/WMI - Custom Links   </b>  
+            <br/>
+            <ul>
+            
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsO')">My Open Tasks</a><label style="color:red"><b><apex:outputText value="({!myOpenActivity})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/006?fcf=00B80000008wP0H')">My Open Opps</a><label><b><apex:outputText value="({!myOpenOpps})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsT')">My Accounts w/o Scheduled Call Back</a><label style="color:red"><b><apex:outputText value="({!myAccountWithNoCallBack})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsL')">My Accounts not Contacted last 30 Days</a><label style="color:red"><b><apex:outputText value="({!myAccountNotContacted})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/001?fcf=00B80000008wP0b')">My Accounts</a><label><b><apex:outputText value="({!myAccount})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsU')">Opp. Pipeline Report</a><label><b><apex:outputText value="" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsP')">Completed Activities</a><label><b><apex:outputText value="({!myCompletedActivities})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsS')">Lunch and Learn</a><label><b><apex:outputText value="({!myLunchnLearn})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00O80000005wnsj')">Tow and Show</a><label><b><apex:outputText value="({!myTownShow})" escape="false" /></b></label></li>
+            </ul>
+              <br/>
+
+           <br /> <br/>
+        </div>
+    </div>
+
+</div>
+</apex:page>

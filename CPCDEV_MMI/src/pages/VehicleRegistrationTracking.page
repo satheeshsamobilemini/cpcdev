@@ -1,0 +1,144 @@
+<!-- 
+Name   : VehicleRegistrationTrackingExtension
+Author : Jyoti Singh
+Date   : Jan 1, 2013
+Usage  : Used in VehicleRegistrationTracking Page.
+ -->
+
+<apex:page controller="VehicleRegistrationTrackingExtension" id="PG" sidebar="false">
+    <apex:form id="formId">
+        <apex:actionFunction name="SaveVRRec" action="{!saveRec}" rerender="VRPGB" status="status" >
+            <apex:param name="RecId" assignTo="{!currentRecId}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="doSortJS" action="{!doSort}" reRender="VRPGB" status="status" >
+            <apex:param value="" name="firstParam" assignTo="{!sortField}"/>
+        </apex:actionFunction>
+        <apex:pageBlock id="VRPGB">
+        <div>
+            <apex:pageBlockTable value="{!vchlRegTrac}" var="vrt" id="PBT">
+                <apex:column > 
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Name'); return false;">
+                        ECode
+                        <img src="{!IF(sortField = 'Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                    </apex:facet>   
+                    <apex:outputLink onclick="window.open('/{!vrt.Id}');return false;">{!vrt.Name}
+                    </apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Equipment__c'); return false;">
+                            Equipment #
+                            <img src="{!IF(sortField = 'Equipment__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet> {!vrt.Equipment__c}
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Usage__c'); return false;">
+                            Usage
+                            <img src="{!IF(sortField = 'Usage__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Usage__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Operating_Status__c'); return false;">
+                            Operating Status
+                            <img src="{!IF(sortField = 'Operating_Status__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Operating_Status__c}">
+                        <apex:inlineEditSupport event="ondblClick" 
+                         /> 
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Type__c'); return false;">
+                            Type
+                            <img src="{!IF(sortField = 'Type__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Type__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Hour_or_Mileage_Reading__c'); return false;">
+                            Hour or Mileage Reading
+                            <img src="{!IF(sortField = 'Hour_or_Mileage_Reading__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Hour_or_Mileage_Reading__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Next_PM_Due_Miles_Hours__c'); return false;">
+                            Next PM Due (Miles/Hours)
+                            <img src="{!IF(sortField = 'Next_PM_Due_Miles_Hours__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Next_PM_Due_Miles_Hours__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('Next_PM_Due_Date__c'); return false;">
+                            Next PM Due (Date)
+                            <img src="{!IF(sortField = 'Next_PM_Due_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.Next_PM_Due_Date__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                            <a href="javascript:void(0);" onclick="doSortJS('DOT_Annual_Inspection_Due_Date__c'); return false;">
+                            DOT Annual Inspection Due Date
+                            <img src="{!IF(sortField = 'DOT_Annual_Inspection_Due_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                            </a>
+                    </apex:facet>
+                    <apex:outputField value="{!vrt.DOT_Annual_Inspection_Due_Date__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Reason Unit is Down/Needs Repairs">
+                    <apex:outputField value="{!vrt.Reason_Unit_is_Down_Needs_Repairs__c}">
+                        <apex:inlineEditSupport event="ondblclick" />
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Comments">
+                    <apex:inputField value="{!vrt.Weekly_Report_Card_Comments__c}"/>                        
+                </apex:column>  
+                <apex:column >
+                    <apex:commandButton value="Save" onClick="setTimeout(function(){SaveVRRec('{!vrt.Id}')},10); return false;"/>                     
+                </apex:column>  
+               <!-- <apex:column value="{!vrt.LastModifiedDate }"/> -->   
+            </apex:pageBlockTable>
+            </div>  
+        </apex:pageBlock>
+        
+        <apex:outputpanel >
+            <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                            <span class="waitingDescription">Loading...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+        </apex:outputpanel>
+    </apex:form> 
+</apex:page>

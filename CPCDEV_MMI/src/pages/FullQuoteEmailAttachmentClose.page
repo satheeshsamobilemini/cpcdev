@@ -1,0 +1,8 @@
+<apex:page sidebar="false" showheader="false">
+	<script>
+		window.onload = function() 
+        {
+            window.close();
+        }
+	</script>
+</apex:page>

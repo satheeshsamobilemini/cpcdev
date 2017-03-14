@@ -1,0 +1,12 @@
+<apex:page standardController="Weekly_Snapshot_Branch_Report__c" extensions="UploadImageOnBranchSnapshotController">
+	<apex:form >
+		<apex:pageBlock title="Upload Image" >
+			<apex:pageBlockButtons >
+				<apex:commandButton value="Upload" action="{!upload}" />
+				<apex:commandButton value="Cancel" action="{!cancel}" />
+			</apex:pageBlockButtons>
+			<apex:messages />
+			<apex:inputFile id="image" value="{!imageAttachment.body}" fileName="{!imageAttachment.name}" />
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,208 @@
+<apex:page id="pg" controller="CollectorNotesCntrl">
+  
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.3.min.js"/>
+    <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />  
+    <apex:includeScript value="http://pagead2.googlesyndication.com/pagead/show_ads.js"/>  
+    <apex:includeScript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"/>
+    <apex:stylesheet value="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+    <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+    <apex:stylesheet value="{!$Resource.AccountDashboardCss}"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <apex:includeScript value="{!$Resource.angularJS}" />
+    <apex:includeScript value="{!$Resource.angularsanitize}" />
+    <apex:includeScript value="{!$Resource.adaptstrap}" />
+    <apex:includeScript value="{!$Resource.adaptstraptpl}" />
+    <apex:stylesheet value="{!$Resource.adaptstrapcss}"/> 
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/resources/demos/style.css"/>
+  
+  <script>function setFocusOnLoad() {}</script>
+  <script type="text/javascript">
+        
+    $j = jQuery.noConflict();     
+    $j(document).ready(function() {
+        $j('#dpFrom').datepicker({dateFormat:'yy/mm/dd'});
+    });
+    
+    function applyFilters(){
+        
+        var sapsoldto = document.getElementById('pg:frm:fltrBlck:pbs:pbsisbt:billto').value;
+        var frmdate = document.getElementById('dpFrom').value;    
+        
+        var reurl = '/apex/CollectorNotes?sapBillTo='+sapsoldto+'&salesOrg={!salesOrg}&sinceDate='+frmdate+'&recType={!recType}';
+        
+        window.close();
+        window.open(reurl);         
+    }
+  </script>
+    
+  <script type="text/javascript">     
+        // ========== initialize documentation app module ========== //
+        var anModule = angular.module('adaptv.adaptStrapDocs', [
+        'ngSanitize',
+        'adaptv.adaptStrap'
+        ]);
+
+        // ========== controllers ========== //
+        anModule.controller('CollectorNotes', ['$scope', function ($scope)  {
+         
+        $scope.models = {!AllNotes};
+
+        $scope.notesTableColumnDefinition = [
+        {
+            columnHeaderDisplayName: 'Contact Type',
+            displayProperty: 'CCT_TYPE_TEXT',
+            sortKey: 'CCT_TYPE_TEXT',
+            visible: true,
+            
+        },
+        
+        {
+            columnHeaderDisplayName: 'Result of Contact',
+            displayProperty: 'CCT_RESULT_TXT',
+            sortKey: 'CCT_RESULT_TXT',
+            visible: true,
+            width: '12em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Customer',
+            displayProperty: 'CUSTOMER',
+            sortKey: 'CUSTOMER',
+            width: '7em'
+            
+        },
+        
+        {
+            columnHeaderDisplayName: 'Specialist',
+            displayProperty: 'COLL_SPECIALIST',
+            sortKey: 'COLL_SPECIALIST',
+            
+        },
+        {
+            columnHeaderDisplayName: 'Specialist Name',
+            displayProperty: 'COLL_SPECIALIST_NAME',
+            sortKey: 'COLL_SPECIALIST_NAME',
+            visible: true
+            
+        },
+        
+        {
+            columnHeaderDisplayName: 'Contact Date Time',
+            displayProperty: 'CCT_TIME',
+            sortKey: 'CCT_TIME',
+            visible: true,
+            width: '12em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Contact Person',
+            displayProperty: 'CCT_NAME',
+            sortKey: 'CCT_NAME',
+            width: '12em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Email',
+            displayProperty: 'CCT_EMAIL',
+            sortKey: 'CCT_EMAIL',
+            width: '25em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Telephone',
+            displayProperty: 'CCT_PHONE',
+            sortKey: 'CCT_PHONE',
+            width: '12em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Fax',
+            displayProperty: 'CCT_FAX',
+            sortKey: 'CCT_FAX',
+            width: '12em'
+        },
+               
+        ];
+
+        // ========== ui handlers ========== //
+        $scope.checkRowSelected = function (item, index) {
+          var found = false;
+          $scope.models.selectedCars.forEach(function (selectedItem) {
+            if (item.id === selectedItem.id) {
+              found = true;
+            }
+          });
+          return found ? 'info row-' + index : 'row-' + index;
+        };
+      }]);
+    </script>
+<apex:form id="frm">
+    <apex:pageBlock title="Filters:" id="fltrBlck">
+        <apex:pageBlockButtons location="Bottom">
+            <apex:commandButton value="Apply"  onclick="applyFilters()" id="applyBtn" />
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="2" id="pbs">
+            
+            <apex:pageBlockSectionItem id="pbsisbt">  
+                <apex:outputText value="SAP Sold To" />
+                <apex:inputText value="{!sapBillTo}"  id="billto" disabled="true"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem id="pbsifd">  
+                <apex:outputText value="Notes From:" /> 
+                <apex:outputPanel >
+                    <input id="dpFrom" type="text" value="{!filterDate}" /> 
+                </apex:outputPanel>    
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <div style="border: thin solid black"> </div>
+    
+    <div ng-app="adaptv.adaptStrapDocs" ng-controller="CollectorNotes">
+        <apex:outputText value="Collector Notes"  style="font-size:10pt;font-weight:bold!important;"/>
+        <lable style="float:right;">Search: &nbsp;<input type="text" ng-model="models.searchText" style="padding-left:0px;float:right;"/> </lable> <br></br><br></br>
+        
+        <script type="text/ng-template" id="colNotesInfo.html">
+            <div>
+                <table align="center" cellspacing="0" style="margin:15px;margin-left:25px;border: 1px solid black;" width="90%" >
+                    <head>
+                        <tr style="background-color: #E6E6FA;">
+                            <th >Text</th>
+                        </tr>
+                    </head>
+                <body>  
+                <tr ng-repeat="colNote in item.collNotesItems" style="background-color:#FAEBD7;border: 1px solid black;">
+                    <td> {{ colNote.TEXT_LINE }} </td>
+                </tr>
+                </body>
+                </table>      
+            </div>
+        </script>
+        <apex:outputPanel rendered="{!If(collectorNotesData.size > 0,false,true)}">
+            <apex:outputLabel style="padding-left:300px"> Collector notes data not available for Customer {!sapBillTo}</apex:outputLabel>
+        </apex:outputPanel>  
+        <apex:outputPanel rendered="{!If(collectorNotesData.size > 0,true,false)}">
+            <ad-table-lite table-name="AllNotes"
+            enable-column-search="true"
+            column-definition="notesTableColumnDefinition"
+            local-data-source="models"
+            page-sizes="[20, 40, 60]"
+            pagination-btn-group-classes="pagination pagination-sm"
+            table-classes="table qtable table-bordered"
+            draggable="false"
+            on-click-sort-direction="DEC"
+            items-not-found-message="Quotes Not Found"
+            snug-sort-icons="true"
+            search-text="models.searchText"
+            row-expand-template="colNotesInfo.html"
+            row-expand-callback="rowExpanded">
+            </ad-table-lite>    
+        </apex:outputPanel>      
+    </div>
+    
+</apex:form>    
+</apex:page>

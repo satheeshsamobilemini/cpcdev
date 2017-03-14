@@ -1,0 +1,90 @@
+<apex:page controller="AcumenMerge.MergeController">
+	<apex:includeScript value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/js/jquery-1.8.2.min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/js/merge.js')}"/>
+	<apex:styleSheet value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/css/Merge.css')}"/>
+	<apex:outputPanel id="parentPanel">
+		<apex:outputPanel id="pageOne" rendered="{!NOT(isMergeStep2)}">
+		    <apex:pageMessages id="pageMessages"/>
+		    <apex:sectionHeader title="Merge Any Object" subtitle="Step 1 of 2" />
+		    <apex:form >
+		        <apex:pageBlock title="Step 1. Select the records to merge" mode="edit">
+		            <apex:pageBlockButtons styleClass="navButtons" >
+		                <apex:commandButton value="Next" action="{!step2}"  rerender="parentPanel" oncomplete="formatMergePage()"/>
+		            </apex:pageBlockButtons>
+		            <apex:pageBlockSection >
+		            Please select up to three records that you wish to merge into one.<br/><br/>
+		            Select your Object type and search term below.
+		            </apex:pageBlockSection>
+		            <apex:pageBlockSection >
+		                <apex:outputPanel styleClass="searchButtons">
+		                    <apex:actionFunction name="resetSearch" action="{!resetSearch}" rerender="panel,fieldSelectPicklist"/>
+		                    <apex:selectList value="{!objectType}" size="1" required="true" onchange="resetSearch()">
+		                        <apex:selectOptions value="{!objectSelectList}"/>
+		                    </apex:selectList><br/><!-- <br/>
+		                    <apex:selectList value="{!objectFieldName}" size="1" id="fieldSelectPicklist">
+		                        <apex:selectOptions value="{!fieldSelectList}"/>
+		                    </apex:selectList>
+		                    <apex:commandButton value="Find Duplicates" action="{!findDupes}" rerender="pageMessages, panel"/>
+		                    <br/><span> or  </span><br/>-->
+		                    <apex:actionFunction name="doSearch" action="{!searchRecords}" />
+		                    <apex:inputText value="{!srch}" onkeypress="return noenter(event)" />
+		                    <apex:commandButton value="Find Records" action="{!searchRecords}" rerender="pageMessages, panel"/>
+
+		                </apex:outputPanel>
+		            </apex:pageBlockSection>
+		            <apex:outputPanel id="panel" >
+		                <apex:pageBlockTable styleClass="searchTable" value="{!wrapperList}" var="w" rendered="{!isResultsFound}">
+		                    <apex:column width="22px">
+		                         <apex:inputCheckbox value="{!w.isSelected}" />
+		                    </apex:column>
+		                    <apex:column >
+		                        <apex:facet name="header">Name</apex:facet>
+								<a href="/{!w.item.Id}" id="{!w.item.Id}" onblur="LookupHoverDetail.getHover('{!w.item.Id}').hide();" onfocus="LookupHoverDetail.getHover('{!w.item.Id}', '/{!w.item.Id}/m?retURL=%2F{!w.item.Id}&isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!w.item.Id}').hide();" onmouseover="LookupHoverDetail.getHover('{!w.item.Id}', '/{!w.item.Id}/m?retURL=%2F{!w.item.Id}&isAjaxRequest=1').show();">{!w.name}</a>
+		                        <!-- <apex:outputLink value="/{!w.item}">{!w.name}</apex:outputLink> -->
+		                    </apex:column>
+		                    <apex:column value="{!w.createdDate}">
+		                        <apex:facet name="header">Created Date</apex:facet>
+		                    </apex:column>
+		                    <apex:column value="{!w.createdBy}">
+		                        <apex:facet name="header">Created By</apex:facet>
+		                    </apex:column>
+		                </apex:pageBlockTable>
+		            </apex:outputPanel>
+		        </apex:pageBlock>
+		    </apex:form>
+		</apex:outputPanel>
+		
+		<apex:outputPanel id="pageTwo" rendered="{!isMergeStep2}">
+			<script type='text/javascript'>
+				$j = jQuery.noConflict();
+				$j(document).ready(function() {
+					$j(".headerRow > div:eq(1)").append("{!headerNames}");
+				});
+			</script>
+		    <apex:pageMessages />
+		    <apex:sectionHeader title="Merge Any Object" subtitle="Step 2 of 2" />
+		    <apex:form >
+		        <apex:pageBlock title="Choose Record Values" mode="edit">
+		            <apex:pageBlockButtons style="float:right">
+		                <apex:commandButton value="Back" action="{!step1}" rerender="parentPanel"/>
+		                <apex:commandButton value="Merge"  action="{!mergeSelections}" onclick="return confirmMerge()"/>
+		            </apex:pageBlockButtons>
+		            <div style="padding:15px">
+		            Select the values that you want to retain in the merged record. Highlighted rows indicate fields that contain conflicting data. The Master Record selected will retain read-only and hidden field values. 
+		            <br /><br />
+		            Note: All related records including any notes, attachments, and activities will be associated with the new merged record.
+		            </div>
+		            <apex:pageBlockTable value="{!toMergeList}" var="item" rules="all" styleClass="blockTable" >
+		                <apex:column value="{!item.fieldLabel}" styleClass="{!IF(item.fieldName=='OwnerId', 'diffValues', IF(item.isSameValues,'sameValues','diffValues'))}"/>
+		                <apex:column >
+		                    <apex:facet name="header"></apex:facet>
+		                    <apex:selectRadio value="{!item.chosenValue}" disabled="{!IF(item.fieldName=='OwnerId',false,item.isSameValues)}" styleClass="radios">
+		                        <apex:selectOptions value="{!item.options}" />
+		                    </apex:selectRadio>
+		                </apex:column>
+		            </apex:pageBlockTable>
+		        </apex:pageBlock>
+		    </apex:form>
+		</apex:outputPanel>
+	</apex:outputPanel>
+</apex:page>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Stores the user field history records based on fields set up for history tracking.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableEnhancedLookup>false</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Changed_By__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <description>User who made the change to this record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>User who made the change to this record.</inlineHelpText>
+        <label>Changed By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>User_History_Changed_By</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Custom_Field__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Indicates that the field that was changed is a custom field on the User object.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Indicates that the field that was changed is a custom field on the User object.</inlineHelpText>
+        <label>Custom Field</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Date_Time_Changed__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Date and time of the change to this record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Date and time of the change to this record.</inlineHelpText>
+        <label>Date/Time Changed</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Field_API_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Field API Name for the field that was changed on the user record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Field API Name for the field that was changed on the user record.</inlineHelpText>
+        <label>Field API Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Label__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Field label for the field that was changed on the user record.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Field label for the field that was changed on the user record.</inlineHelpText>
+        <label>Field Label</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Field type for this field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Field type for this field.</inlineHelpText>
+        <label>Field Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>New_Date_Time_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the new value of field type Date/Time.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the new value of field type Date/Time.</inlineHelpText>
+        <label>New Date/Time Value</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>New_Date_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the new value of field type Date.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the new value of field type Date.</inlineHelpText>
+        <label>New Date Value</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>New_Rich_Text_Area_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the new value of field type Text Area (Rich).</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the new value of field type Text Area (Rich).</inlineHelpText>
+        <label>New Rich Text Area Value</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>New_Text_Area_Multi_Picklist_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the new value of field types Picklist (Multi-Select), Text Area, and Text Area (Long).</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the new value of field types Picklist (Multi-Select), Text Area, and Text Area (Long).</inlineHelpText>
+        <label>New Text Area/Multi-Picklist Value</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>New_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the new value of field types Lookup, Hierarchical Relationship, Checkbox, Currency, Email, Geolocation, Number, Percent, Phone, Picklist, Text (Encrypted), and URL.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the new value of field types Lookup, Hierarchical Relationship, Checkbox, Currency, Email, Geolocation, Number, Percent, Phone, Picklist, Text (Encrypted), and URL.</inlineHelpText>
+        <label>New Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Previous_Date_Time_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the previous value of field type Date/Time.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the previous value of field type Date/Time.</inlineHelpText>
+        <label>Previous Date/Time Value</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Date_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the previous value of field type Date.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the previous value of field type Date.</inlineHelpText>
+        <label>Previous Date Value</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Rich_Text_Area_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the previous value of field type Text Area (Rich).</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the previous value of field type Text Area (Rich).</inlineHelpText>
+        <label>Previous Rich Text Area Value</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Previous_Text_Area_Multi_Picklist_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the previous value of field types Picklist (Multi-Select), Text Area, and Text Area (Long).</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the previous value of field types Picklist (Multi-Select), Text Area, and Text Area (Long).</inlineHelpText>
+        <label>Previous Text Area/Multi-Picklist Value</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Previous_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Stores the previous value of field types Lookup, Hierarchical Relationship, Checkbox, Currency, Email, Geolocation, Number, Percent, Phone, Picklist, Text (Encrypted), and URL.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Stores the previous value of field types Lookup, Hierarchical Relationship, Checkbox, Currency, Email, Geolocation, Number, Percent, Phone, Picklist, Text (Encrypted), and URL.</inlineHelpText>
+        <label>Previous Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <description>User record that was updated.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>User record that was updated.</inlineHelpText>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>User_History_User</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <label>User Field History</label>
+    <listViews>
+        <fullName>All_User_Field_History_Records</fullName>
+        <columns>NAME</columns>
+        <columns>Changed_By__c</columns>
+        <columns>Date_Time_Changed__c</columns>
+        <columns>User__c</columns>
+        <columns>Field_Label__c</columns>
+        <columns>Field_Type__c</columns>
+        <columns>Custom_Field__c</columns>
+        <columns>Previous_Value__c</columns>
+        <columns>New_Value__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All User Field History Records</label>
+        <language>en_US</language>
+    </listViews>
+    <nameField>
+        <displayFormat>{0000000000}</displayFormat>
+        <label>User Field History Id</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>User Field History</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Changed_By__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Date_Time_Changed__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>User__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>New_Value__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Previous_Value__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Field_Label__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Field_API_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Field_Type__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Custom_Field__c</customTabListAdditionalFields>
+        <excludedStandardButtons>New</excludedStandardButtons>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
+        <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <searchResultsAdditionalFields>Changed_By__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Date_Time_Changed__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Field_Label__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Field_API_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>User__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

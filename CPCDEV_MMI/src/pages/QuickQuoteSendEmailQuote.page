@@ -1,0 +1,239 @@
+<apex:page controller="QuickQuoteSendEmailQuote" id="pageId">
+<script>
+	function attachmentPopUp() {
+    		var quoteIdforEmail = document.getElementById('pageId:formId:theHiddenInput').value;
+        	if(quoteIdforEmail != null ){
+        		//newwindow=window.open('/apex/QuickQuoteEmailAttachment?parentId='+quoteIdforEmail,'name','height=300,width=600,scrollbars=yes,resizable=yes');
+        		
+		    	var x = screen.width/2 - 700/2;
+			    var y = screen.height/2 - 450/2;
+			    newwindow = window.open('/apex/QuickQuoteEmailAttachment?parentId='+quoteIdforEmail, 'name','height=485,width=700,left='+x+',top='+y);
+        	}
+  
+        	if (window.focus) {newwindow.focus()}
+		    return false;
+		}
+		
+		function getSelectedTempId(templateId){
+			document.getElementById('hiddenSelectedEmailTemplate').value = '';
+			document.getElementById('hiddenSelectedEmailTemplate').value = templateId;
+		}
+	
+</script>
+	<apex:form id="formId">
+	<apex:inputHidden value="{!qqId}" id="theHiddenInput"/>
+		<apex:pageBlock title="Send Quote">
+			<apex:pageMessages id="pgMsgId" />
+			 <apex:pageBlockSection columns="2">
+			 	<apex:pageBlockSectionItem >
+			 		<apex:outputPanel >
+			 			<div style="width:100%;height:350px; overflow:auto; border:1px solid #cccccc;">
+					 		<table width="100%">
+				 			<tr>
+									<td Style="font-weight:bold;" colspan="3" >Contact List</td>
+				 			</tr>
+				 			<tr>
+					 			<td colspan="3" Style="height:15px;"></td>
+				 			</tr>
+				 				<tr style="background-color: #eeeeee;height:15px;">
+				 				<td Style="font-weight:bold;width:8%;">Select</td>
+				 				<td Style="font-weight:bold;width:42%;">Name</td>
+				 				<td Style="font-weight:bold;width:50%;">Email</td>
+				 			</tr>
+				 				<tr>
+					 				<td colspan="3">
+					 		<apex:outputPanel id="conOp">
+						 					<table width="100%" hight="200%">
+					 			<apex:repeat value="{!lstConWrapper}" var="c">
+						 			<tr>
+							 							<td width="10%"><apex:inputCheckbox value="{!c.isChecked}"/></td>
+						 				<td width="42%"><apex:outputLabel value="{!c.conObj.contactName}" /></td>
+						 				<td width="50%"><apex:outputLabel value="{!c.conObj.contactEmail}" /></td>
+						 			</tr>
+					 			</apex:repeat>
+					 		</table>
+					 		</apex:outputPanel>
+				 				</td>
+				 			</tr>
+					 	</table>
+				 		</div>
+				 	</apex:outputPanel>
+				 	
+			 	</apex:pageBlockSectionItem>
+			 	
+			 	
+			 	<apex:pageBlockSectionItem >
+				 	<apex:outputPanel id="composeOp">
+				 		<div style="width:100%;height:350px; overflow:auto; border:1px solid #cccccc;">
+					 		<table>
+					 			<tr>
+					 				<th colspan="2">Compose Mail</th>
+					 			</tr>
+					 			<tr>
+					 				<td>To</td>
+					 				<td><apex:inputText style="width:500px;" id="toAddr" value="{!toAddress}"/></td>
+					 			</tr>
+					 			<tr>
+					 				<td>CC</td>
+					 				<td><apex:inputText style="width:500px;" id="ccAddr" value="{!ccAddress}"/></td>
+					 			</tr>
+					 			<tr>
+					 				<td>BCC</td>
+					 				<td><apex:inputText style="width:500px;" id="bccAddr" value="{!bccAddress}"/></td>
+					 			</tr>
+					 			<tr>
+					 				<td>Subject</td>
+					 				<td><apex:inputText style="width:500px;" value="{!subject}"/></td>
+					 			</tr>
+					 			<tr>
+					 				<td>Body</td>
+					 				<td><apex:inputTextarea cols="90" rows="7" value="{!mailBody}" style="margin: 2px; height: 165px; width: 496px;"/></td>
+					 			</tr>
+					 			<tr>
+					 				<td align="left" colspan="2">
+                                        	<input type="Button" id="btnAttachment" value="Attachment"  onclick="return attachmentPopUp();" tabindex="18" >
+                                        		<apex:actionPoller id="ActionPollerStartEnd" action="{!attachmentListViewMethod}" reRender="attachListDiv" interval="5" enabled="{!IF(isEnableAction = 'Start' ,true,false)}"/>
+                                        	</input>
+                                        </td>
+					 			</tr>
+					 			<tr>
+					 				<td colspan="2">
+					 					<apex:outputPanel id="attachListDiv">
+				                          	<table width="100%">
+				                          		<apex:repeat value="{!attachmentList}" var="attli" >
+				                          			<tr>
+				                          				<td width="15%"></td>
+				                          				<td height="15px" style="width: 15%;" >
+					                          				<apex:actionRegion >
+					                          					<apex:actionstatus id="DeleteId">
+														            <apex:facet name="stop"> 
+														                <apex:outputlabel > 
+															                <apex:commandLink rerender="attachListDiv" action="{!deleteAttachach}" value="Delete" status="DeleteId">
+												       							<apex:param name="attachId" value="{!attli.id}"/>
+												       						</apex:commandLink>
+														                </apex:outputlabel>
+														            </apex:facet>
+														            <apex:facet name="start"> 
+														                <apex:outputlabel >
+														                    <apex:commandLink value="Deleteing..."  status="DeleteId" ></apex:commandLink> 
+														                </apex:outputlabel>
+														            </apex:facet>
+														        </apex:actionstatus>
+				        
+										       					
+									       					</apex:actionRegion>
+									       				</td> 
+				                          				<td style="padding-left: 5px;" width="70%">
+			      											<apex:outputText value="{!attli.Name}" ></apex:outputText>
+			       										</td> 
+				                          			</tr>
+				                          		</apex:repeat>
+		                                   </table>
+			                          	</apex:outputPanel>
+		                          <br/>
+					 				</td>
+					 			</tr>
+					 		</table>
+				 		</div>
+				 	</apex:outputPanel>
+			 	</apex:pageBlockSectionItem>
+			 	
+			 	<apex:pageBlockSectionItem >
+			 			<apex:outputPanel rendered="{!isContactPresent}">
+				 					<apex:actionStatus id="fillAddress">
+					 					<apex:facet name="stop">
+					 						<apex:outputlabel > 
+						 						<apex:commandButton action="{!fillTo}" value="Set TO" rerender="toAddr,conOp" status="fillAddress"/>
+					 							<apex:commandButton action="{!fillCC}" value="Set CC" rerender="ccAddr,conOp" status="fillAddress"/>
+					 							<apex:commandButton action="{!fillBCC}" value="Set BCC" rerender="bccAddr,conOp" status="fillAddress"/>
+				 							</apex:outputlabel>
+					 					</apex:facet>
+						 				
+					 					<apex:facet name="start">
+					 						<apex:outputlabel >
+						 						<apex:commandButton value="Loading..." disabled="true" status="fillAddress" />
+					 							<apex:commandButton value="Loading..." disabled="true" status="fillAddress" />
+					 							<apex:commandButton value="Loading..." disabled="true" status="fillAddress" />
+					 						</apex:outputlabel>
+					 					</apex:facet>
+					 				</apex:actionStatus>
+				 	</apex:outputPanel>
+			 	</apex:pageBlockSectionItem>
+			 	
+			 	<apex:pageBlockSectionItem id="emailTemplateSection" >
+			 		<apex:outputPanel id="emailTemplateOp">
+	 					<input type="hidden" id="hiddenSelectedEmailTemplate" name="hiddenSelectedEmailTemplate" />
+	 					<table>
+	 						<tr>
+	 							<td>Select an email template folder</td>
+	 							<td>
+	 								<apex:selectList id="lstOfEmailTempFolder" value="{!selectedFolder}" size="1">
+	 									<apex:selectOptions value="{!lstFldr}"/>
+	 									<apex:actionsupport event="onchange"  action="{!showEmailTemplate}" rerender="formId" id="selectTempFolder" status="searchTemplateStatus" />
+	 								</apex:selectList>
+	 								<apex:actionStatus id="searchTemplateStatus" > 
+                                       <apex:facet name="start">
+                                           <apex:image value="{!$Resource.Loading}" width="20" height="20"/>                               
+                                       </apex:facet>
+                                       <apex:facet name="stop"></apex:facet>                     
+                                   </apex:actionStatus>
+	 							</td>
+	 						</tr>
+	 					</table>
+				 	</apex:outputPanel>
+			 	</apex:pageBlockSectionItem>
+			 	<apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+			 	<apex:pageBlockSectionItem id="emailTempList">
+			 		<apex:outputPanel >
+				 		<apex:outputPanel id="emailTemplateListOp" rendered="{!isThereATemplate}">
+				 			<apex:outputLabel style="font:bold" value="Please select an email template" /><br/>
+				 			<div style="float:left;width:100%;height:250px;overflow:auto;"><br/>
+					 			<table>
+									<apex:repeat value="{!lstEmailTemplate}" var="temp">
+									<tr>
+										<td align="left"><input type="radio" name="Select" value="{!temp.Id}" onclick="getSelectedTempId('{!temp.Id}');"/> &nbsp;&nbsp;{!temp.Name}</td>
+									</tr>
+									</apex:repeat>
+								</table>
+							</div><br/>
+							<apex:actionStatus id="GenerateBody">
+			 					<apex:facet name="stop">
+				 						<apex:commandButton action="{!generateEmailBody}" value="Apply Template" rerender="formId" status="GenerateBody" />
+			 					</apex:facet>
+			 					<apex:facet name="start">
+			 							<apex:commandButton value="Loading..." disabled="true" status="GenerateBody" />
+			 					</apex:facet>
+			 				</apex:actionStatus><br/>
+				 		</apex:outputPanel>
+				 		<apex:outputPanel rendered="{!IF(selectedFolder !='' && isThereATemplate = false,true,false)}">
+				 			<apex:outputLabel style="font-weight:bold;" value="No email template found!" />
+				 		</apex:outputPanel>
+			 		</apex:outputPanel>
+			 	</apex:pageBlockSectionItem>
+			 	
+				<apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+				
+			 	<apex:pageBlockSectionItem >
+			 		<apex:outputPanel >
+			 			<apex:actionStatus id="sendMailStatus">
+		 					<apex:facet name="stop">
+		 						<apex:outputlabel > 
+			 						<apex:commandButton action="{!sendMail}" value="Send" rerender="composeOp,pgMsgId" status="sendMailStatus" />
+			 						<apex:commandButton action="{!cancelMail}" value="Cancel" rerender="composeOp,pgMsgId" status="sendMailStatus" />
+	 							</apex:outputlabel>
+		 					</apex:facet>
+			 				
+		 					<apex:facet name="start">
+		 						<apex:outputlabel >
+			 						<apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+		 							<apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+		 						</apex:outputlabel>
+		 					</apex:facet>
+		 				</apex:actionStatus>
+			 			
+				 	</apex:outputPanel>
+			 	</apex:pageBlockSectionItem>
+			 </apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

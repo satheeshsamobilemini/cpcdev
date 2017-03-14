@@ -1,0 +1,18 @@
+<apex:page standardController="Account" standardStylesheets="false">
+    <apex:form >
+        <div align="center">
+        <font size="3" color="black"> <b>SPOC &nbsp;</b> </font>
+        <font size="3" color="black"> <b>NAM &nbsp;</b> </font>
+        <font size="3" color="black"> <b>MAR &nbsp;</b> </font>
+        <font size="3" color="black"> <b>ISR</b> </font><br></br>
+        
+        <apex:outputText value="{!account.SPOC_Icon__c}" escape="false"/>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
+        <apex:outputText value="{!account.NAM_Icon__c}" escape="false"/>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
+        <apex:outputText value="{!account.MAR_Icon__c}" escape="false"/>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
+        <apex:outputText value="{!account.ISR_Icon__c}" escape="false"/></div>
+
+    </apex:form>
+</apex:page>

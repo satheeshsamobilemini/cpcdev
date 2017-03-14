@@ -1,0 +1,89 @@
+<apex:page standardcontroller="User" extensions="USERHISTORY.userHistoryViewController" title="{!User.Name + ' - ' + $Label.userhistory__User_Field_History}">
+	<apex:outputLink value="/{!User.Id}?noredirect=1">{!$Label.userhistory__Back_to_User}</apex:outputLink>
+	<apex:outputPanel rendered="{!!bHasUserHistoryReadAccess}">
+		<apex:pageMessage severity="info" strength="2" summary="{!$Label.userhistory__No_Access_User_Field_History}"  id="pageMessageNoReadAccess" />
+	</apex:outputPanel>
+	<apex:outputPanel rendered="{!bHasUserHistoryReadAccess}">
+		<apex:pageMessage severity="info" strength="2" summary="{!$Label.userhistory__View_History_Message}"  id="pageMessageViewHistory" rendered="{!iNumberOfPages>0}"/>
+		<apex:pageMessage severity="info" strength="2" summary="{!$Label.userhistory__No_User_Field_History}"  id="pageMessageViewHistoryNoRecords" rendered="{!iNumberOfPages<1}"/>
+	</apex:outputPanel>
+	<apex:form id="formMain" rendered="{!bHasUserHistoryReadAccess}">
+		<apex:pageBlock id="mainPageBlock" rendered="{!iNumberOfPages>0}">
+			<apex:panelGrid columns="6">
+				<apex:outputText value="{!$Label.userhistory__Page_Number_Of}">
+					<apex:param value="{!iPageNumber}" />
+					<apex:param value="{!iNumberOfPages}" />
+				</apex:outputText>
+				<apex:commandLink action="{!first}" rendered="{!bDisplayFirst}">{!$Label.userhistory__First}</apex:commandlink>
+                <apex:commandLink action="{!previous}" rendered="{!bHasPrevious}">{!$Label.userhistory__Previous}</apex:commandlink>
+                <apex:commandLink action="{!next}" rendered="{!bHasNext}">{!$Label.userhistory__Next}</apex:commandlink>
+                <apex:commandLink action="{!last}" rendered="{!bDisplayLast}">{!$Label.userhistory__Last}</apex:commandlink>
+                <apex:commandLink action="{!showAll}" rendered="{!bDisplayShowAll}">{!$Label.userhistory__Show_All}</apex:commandlink>
+                <apex:commandLink action="{!showLess}" rendered="{!bDisplayShowLess}">{!$Label.userhistory__Show_Less}</apex:commandlink>
+            </apex:panelGrid>            
+            <apex:pageBlockTable id="pageBlockTableUserHistory" value="{!listUserHistory}" var="userHistory">           	
+            	<apex:column >
+            		<apex:facet name="header">
+            			<apex:commandLink value="{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__Field_Label__c.Label}" action="{!toggleSort}" rerender="mainPageBlock" style="text-decoration:underline;">
+            				<apex:param name="sortField" value="Field_Label__c" assignTo="{!sSortField}" />
+            			</apex:commandLink>
+            		</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Field_Label__c}" />
+            	</apex:column>
+            	<apex:column >
+            		<apex:facet name="header">
+            			<apex:commandLink value="{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__Field_API_Name__c.Label}" action="{!toggleSort}" rerender="mainPageBlock" style="text-decoration:underline;">
+            				<apex:param name="sortField" value="Field_API_Name__c" assignTo="{!sSortField}" />
+            			</apex:commandLink>
+            		</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Field_API_Name__c}" />
+            	</apex:column>
+            	<apex:column >	
+            		<apex:facet name="header">
+            			<apex:commandLink value="{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__Changed_By__c.Label}" action="{!toggleSort}" rerender="mainPageBlock" style="text-decoration:underline;">
+            				<apex:param name="sortField" value="Changed_By__c" assignTo="{!sSortField}" />
+            			</apex:commandLink>
+            		</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Changed_By__c}" />
+            	</apex:column>
+            	<apex:column >	
+            		<apex:facet name="header">
+            			<apex:commandLink value="{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__Date_Time_Changed__c.Label}" action="{!toggleSort}" rerender="mainPageBlock" style="text-decoration:underline;">
+            				<apex:param name="sortField" value="Date_Time_Changed__c" assignTo="{!sSortField}" />
+            			</apex:commandLink>
+            		</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Date_Time_Changed__c}" />
+            	</apex:column>
+            	<apex:column >	
+            		<apex:facet name="header">{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__Previous_Value__c.Label}</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Previous_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Previous_Date_Time_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Date_Time_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Date_Time_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Previous_Date_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Date_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Date_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Previous_Rich_Text_Area_Value__c}" rendered="{!!ISNULL(userHistory.Previous_Rich_Text_Area_Value__c) || !ISNULL(userHistory.New_Rich_Text_Area_Value__c) }"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__Previous_Text_Area_Multi_Picklist_Value__c}" rendered="{!!ISNULL(userHistory.Previous_Text_Area_Multi_Picklist_Value__c) || !ISNULL(userHistory.New_Text_Area_Multi_Picklist_Value__c) }"/>
+            	</apex:column>
+            	<apex:column >	
+            		<apex:facet name="header">{!$ObjectType.USERHISTORY__User_Field_History__c.Fields.USERHISTORY__New_Value__c.Label}</apex:facet>
+            		<apex:outputField value="{!userHistory.USERHISTORY__New_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__New_Date_Time_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Date_Time_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Date_Time_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__New_Date_Value__c}" rendered="{!!ISNULL(userHistory.USERHISTORY__Previous_Date_Value__c) || !ISNULL(userHistory.USERHISTORY__New_Date_Value__c)}"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__New_Rich_Text_Area_Value__c}" rendered="{!!ISNULL(userHistory.Previous_Rich_Text_Area_Value__c) || !ISNULL(userHistory.New_Rich_Text_Area_Value__c) }"/>
+            		<apex:outputField value="{!userHistory.USERHISTORY__New_Text_Area_Multi_Picklist_Value__c}" rendered="{!!ISNULL(userHistory.Previous_Text_Area_Multi_Picklist_Value__c) || !ISNULL(userHistory.New_Text_Area_Multi_Picklist_Value__c) }"/>
+            	</apex:column>
+            </apex:pageBlockTable>	
+			
+			<apex:panelGrid columns="6">
+				<apex:outputText value="{!$Label.userhistory__Page_Number_Of}">
+					<apex:param value="{!iPageNumber}" />
+					<apex:param value="{!iNumberOfPages}" />
+				</apex:outputText>
+				<apex:commandLink action="{!first}" rendered="{!bDisplayFirst}">{!$Label.userhistory__First}</apex:commandlink>
+                <apex:commandLink action="{!previous}" rendered="{!bHasPrevious}">{!$Label.userhistory__Previous}</apex:commandlink>
+                <apex:commandLink action="{!next}" rendered="{!bHasNext}">{!$Label.userhistory__Next}</apex:commandlink>
+                <apex:commandLink action="{!last}" rendered="{!bDisplayLast}">{!$Label.userhistory__Last}</apex:commandlink>
+                <apex:commandLink action="{!showAll}" rendered="{!bDisplayShowAll}">{!$Label.userhistory__Show_All}</apex:commandlink>
+                <apex:commandLink action="{!showLess}" rendered="{!bDisplayShowLess}">{!$Label.userhistory__Show_Less}</apex:commandlink>
+            </apex:panelGrid>
+		</apex:pageBlock>	
+	</apex:form>
+</apex:page>

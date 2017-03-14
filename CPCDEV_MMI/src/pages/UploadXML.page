@@ -1,0 +1,23 @@
+<apex:page controller="uploadXMLController" action="{!createLead}">
+	<script>
+	
+		function showMessage(){
+		    var message = document.getElementById('pg:frm:pb:txtMessage').value ;
+		    alert(message) ;
+
+		  }
+	</script>
+	<apex:form id="frm">
+	 
+		 <apex:pageblock id="pb">
+		  <apex:pageBlockButtons location="bottom">
+		      <input type="button" class="btn"  value="Show"  class="btn"  style="align:right" onclick="showMessage();"/>
+		  </apex:pageBlockButtons>
+		
+		
+		 <apex:outputpanel id="pnl">
+		     <apex:inputtext value="{!message}" id="txtMessage" style="visibility:hidden"/>
+		 </apex:outputpanel>
+		 </apex:pageblock>
+	</apex:form>
+</apex:page>

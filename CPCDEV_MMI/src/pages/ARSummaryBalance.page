@@ -1,0 +1,23 @@
+<apex:page > </apex:page>
+<!-- TFS 2291 start 1
+<apex:page controller="01p80000000HT7c" tabStyle="Account">
+
+<apex:sectionHeader title="{!account.RecordType.Name}" subtitle="{!account.Name}- A/R Summary Information" />
+<b><div style="text-align : right"><a href="/{!account.Id}" > &lt;&lt; Back to {!account.Name}</a></div></b>
+<br/>
+<apex:pageBlock >
+<apex:pageBlocksection title="Account Information (Metrics)">
+    <apex:outputfield value="{!account.Total_Revenue_YTD_Current_Year__c}" /> 
+    <apex:outputfield value="{!account.Summary_balance_current__c}" />
+    <apex:outputfield value="{!account.Sales_Revenue_Last_12_Months__c}" /> 
+    <apex:outputfield value="{!account.Summary_balance_30_days__c}" />
+    <apex:outputfield value="{!account.Sales_Revenue_Pct_Chng_Last_12_Months__c}" />
+    <apex:outputfield value="{!account.Summary_balance_60_days__c}" />
+    <apex:outputfield value="{!account.Rental_Ancillary_Revenue_Last_12_Mos__c}" />
+    <apex:outputfield value="{!account.Summary_balance_90_days__c}" />
+    <apex:outputfield value="{!account.Rental_Ancillary_Rev_Pct_Chng_12_m__c}" />
+    <apex:outputfield value="{!account.Summary_balance_120_days__c}" />
+</apex:pageBlocksection>
+</apex:pageBlock>
+
+</apex:page>  TFS 2291 end 1 -->

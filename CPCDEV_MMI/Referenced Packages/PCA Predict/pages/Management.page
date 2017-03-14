@@ -1,0 +1,293 @@
+<apex:page showHeader="true" controller="pca.SetupController" tabStyle="Management__tab">
+    <apex:stylesheet value="{!URLFOR($Resource.pca__PostcodeAnywhere, 'address.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.pca__PostcodeAnywhere, 'address.js')}" />
+    
+    <apex:sectionHeader title="Postcode Anywhere" subtitle="Account Management and Setup" />
+    
+    <apex:pageMessages id="pageErrors"></apex:pageMessages>
+       
+    <apex:form id="Setup">
+        <apex:pageblock id="Account" title="Account" mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!Save}" value="Save" />
+            </apex:pageBlockButtons>
+            <apex:pageblockSection id="API" title="Credentials">
+                <apex:inputField value="{!Settings.pca__Key__c}" id="key" onchange="account.getBalance()" />
+                <apex:outputLink target="_blank" value="https://account.postcodeanywhere.co.uk/">Manage your account</apex:outputLink>
+            </apex:pageblockSection>
+            <apex:pageblockSection id="Credit" title="Balance">
+                <apex:pageBlockSectionItem helpText="This shows the current amount of credit on your account. Credit is required for each address that is captured.">
+                    <apex:outputLabel id="balanceLabel" for="creditBalance" value="Credit" ></apex:outputLabel>
+                    <apex:outputText id="creditBalance" value="Unknown"></apex:outputText>
+                </apex:pageBlockSectionItem>
+                <apex:outputLink target="_blank" value="https://account.postcodeanywhere.co.uk/#/chooseplan">Top up credit</apex:outputLink>
+            </apex:pageblockSection>
+            <apex:pageblockSection id="Settings" title="Settings">
+                <apex:pageBlockSectionItem id="List" helpText="To customize the countries and order in which they appear, use the controls to move countries from the list on the left to the list on the right. If the list of the right is empty, all countries will be shown.">
+                    <apex:outputLabel value="Countries"/>
+                    <apex:panelGrid columns="4">
+                        <apex:panelGrid columns="1">
+                            <apex:outputLabel value="Hidden" for="hiddenCountryList"/>
+                            <select id="hiddenCountryList" size="10" multiple="multiple" style="width:250px;position:relative;height:172px;" />
+                        </apex:panelGrid>
+                        <apex:panelGroup >
+                            <apex:panelGrid columns="1">
+                                <br/><br/><br/>
+                                <apex:outputText value="Add"/>
+                                <apex:image value="/s.gif" styleClass="rightArrowIcon" style="cursor:pointer" onclick="countrylist.addOptions()"/> 
+                                <apex:image value="/s.gif" styleClass="leftArrowIcon" style="cursor:pointer" onclick="countrylist.removeOptions()"/> 
+                                <apex:outputText value="Remove"/>
+                             </apex:panelGrid>
+                        </apex:panelGroup>
+                        <apex:panelGrid columns="1">
+                            <apex:outputLabel value="Displayed" for="displayCountryList"/>
+                            <select id="displayCountryList" size="10" multiple="multiple" style="width:250px;position:relative;height:172px" />
+                        </apex:panelGrid>
+                        <apex:panelGroup >
+                            <apex:panelGrid columns="1">
+                                <br/>
+                                <apex:outputText value="Top"/>
+                                <apex:image value="/s.gif" styleClass="upArrowIcon" style="cursor:pointer" onclick="countrylist.moveTop()"/> 
+                                <apex:outputText value="Up"/>
+                                <apex:image value="/s.gif" styleClass="upArrowIcon" style="cursor:pointer" onclick="countrylist.moveUp()"/> 
+                                <apex:image value="/s.gif" styleClass="downArrowIcon" style="cursor:pointer" onclick="countrylist.moveDown()"/> 
+                                <apex:outputText value="Down"/>
+                                <apex:image value="/s.gif" styleClass="downArrowIcon" style="cursor:pointer" onclick="countrylist.moveBottom()"/> 
+                                <apex:outputText value="Bottom"/>
+                            </apex:panelGrid>
+                      </apex:panelGroup>
+                    </apex:panelGrid>
+                </apex:pageBlockSectionItem>
+                <apex:inputHidden id="countryCodes" value="{!CountryCodes}"/>
+                <apex:inputField value="{!Settings.pca__CountryByIP__c}" id="CountryByIP" />
+            </apex:pageblockSection>
+        </apex:pageblock>
+        
+        <apex:pageblock id="Addresses" title="Address Forms">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!NewAddress}" value="New Address Form" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!Addresses}" var="address" >
+                <apex:column headerValue="Action" width="40">
+                    <apex:commandLink value="Del" action="{!DeleteAddress}">
+                        <apex:param name="id" value="{!address.Id}" assignTo="{!addressToDelete}"></apex:param>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Address Name">
+                    <apex:outputLink value="{!$Page.pca__EditAddress}?id={!address.Id}">{!address.Name}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        
+        <apex:actionFunction name="saveSettings" action="{!Save}" />
+    </apex:form>
+    
+    <script type="text/javascript">
+    
+        var countrylist = {
+            hiddenList: pca.getElement("hiddenCountryList"),
+            displayList: pca.getElement("displayCountryList"),
+            codesList: pca.getElement("countryCodes"),
+            initialise: function() {
+                var selection = this.codesList.value.split(",");
+    
+                this.hiddenList.options.length = 0;
+                this.displayList.options.length = 0;
+    
+                for (var i = 0; i < pca.countries.length; i++)
+                    this.hiddenList.options.add(new Option(pca.countries[i].name, pca.countries[i].iso3));
+            
+                for (var s = 0; s < selection.length; s++) {
+                    for (var c = 0; c < this.hiddenList.options.length; c++) {
+                        if (selection[s] == this.hiddenList.options[c].value)
+                            this.moveAcross(c, this.hiddenList, this.displayList);
+                    }
+                }
+            },
+            addOptions: function() {
+                for (var i = 0; i < this.hiddenList.options.length; i++) {
+                    if (this.hiddenList.options[i].selected) {
+                        this.moveAcross(i, this.hiddenList, this.displayList);
+                        i--;
+                    }
+                }
+    
+                this.update();
+            },
+            removeOptions: function() {
+                for (var i = 0; i < this.displayList.options.length; i++) {
+                    if (this.displayList.options[i].selected) {
+                        this.moveAcross(i, this.displayList, this.hiddenList);
+                        i--;
+                    }
+                }
+    
+                this.update();
+            },
+            moveTop: function() {
+                while (this.moveUp()){};
+            },
+            moveBottom: function() {
+                while (this.moveDown()){};
+            },
+            moveUp: function() {
+                var options = this.displayList.options,
+                    moved = false;
+                
+                for (var i = 0; i < options.length; i++) {
+                    if (!options[i].selected) continue;
+                    if (i == 0) break;
+
+                    this.swap(options[i], options[i - 1]);
+                    this.scrollToItem(options[i - 1]);
+                    moved = true;
+                }
+    
+                this.update();
+                return moved;
+            },
+            moveDown: function() {
+                var options = this.displayList.options,
+                    moved = false;
+                
+                for (var i = options.length - 1; i >= 0; i--) {
+                    if (!options[i].selected) continue;
+                    if (i == options.length - 1) break;
+
+                    this.swap(options[i], options[i + 1]);
+                    this.scrollToItem(options[i + 1]);
+                    moved = true;
+                }
+    
+                this.update();
+                return moved;
+            },
+            moveAcross: function(index, from, to) {
+                var source = from.options[index],
+                    option = new Option(source.text, source.value);
+    
+                to.options[to.options.length] = option;
+                from.remove(index);
+            },
+            swap: function(x, y) {
+                var t = x.text, v = x.value, s = x.selected;
+                
+                x.text = y.text;
+                x.value = y.value;
+                x.selected = y.selected;
+                
+                y.text = t;
+                y.value = v;
+                y.selected = s;
+            },
+            update: function() {
+                var values = [];
+
+                for (var i = 0; i < this.displayList.options.length; i++)
+                    values.push(this.displayList.options[i].value);
+    
+                this.codesList.value = values.join(",");
+            },
+            scrollToItem: function(item) {
+                var listHeight = pca.getSize(this.displayList).height;
+                
+                if (item.offsetTop < this.displayList.scrollTop)
+                    this.displayList.scrollTop = item.offsetTop;
+                
+                if (item.offsetTop + item.offsetHeight > this.displayList.scrollTop + listHeight)
+                    this.displayList.scrollTop = item.offsetTop + item.offsetHeight - listHeight;
+            }
+        };
+        
+        var account = {
+            keyfield: pca.getElement("key"),
+            balancefield: pca.getElement("creditBalance"),
+            balancelabel: pca.getElement("balanceLabel"),
+            initialise: function() {
+                this.getBalance();
+                
+                if (this.keyfield && !this.keyfield.value)
+                    this.showRegister();
+            },
+            getBalance: function() {
+                if (!this.keyfield || !this.balancefield) return;
+                
+                function success(response) {
+                    pca.setValue(account.balancefield, "None");
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (response[i].Type == "Flex") {
+                             pca.setValue(account.balancefield, response[i].Remaining);
+                             break;
+                        }
+                        else {
+                            pca.setValue(account.balanceLabel, response[i].Name);
+                            pca.setValue(account.balancefield, pca.formatLine(response[i], "{Remaining}/{Purchased}"));
+                        }
+                    }
+                }
+                
+                function fail() {
+                    pca.setValue(this.balancefield, "Unknown");                   
+                }
+                
+                pca.fetch("Management/Balance/List/1.10", { Key: escape(this.keyfield.value) }, success, fail);
+            },
+            showRegister: function() {
+                var modal = new pca.Modal({title: "Register for a free account" });
+               
+                function register(details) {
+                    function success(response) {
+                        pca.setValue(account.keyfield, response[0].InternalKey);
+                        modal.hide();
+                        saveSettings();
+                    }
+                    
+                    function fail(error) {
+                        if (error == "Existing Account") {
+                            modal.clear();
+                            modal.setTitle("Existing account found");
+                            modal.setContent("<p>It looks like you have an existing account with us. Please <a href='http://account.postcodeanywhere.co.uk' target='_blank'>login to your account</a> to access your keys.</p>");
+                            modal.addButton("Close", modal.hide);
+                        }
+                        else
+                            alert(error);
+                    }
+                
+                    if (!details["Email"]) { alert("You must enter an email address."); return; }
+                    if (!details["First Password"]) { alert("You must choose a password."); return; }
+                    if (!details["Second Password"]) { alert("You must confirm your password by typing it again."); return; }
+                    if (details["First Password"] != details["Second Password"]) { alert("The passwords do not match."); return; }
+                   
+                    pca.fetch("CapturePlus/Demos/AddAccountAndTrial/v1.10", { 
+                            key: "KT79-MT84-XR94-DK35", 
+                            Source: "Salesforce",
+                            InternalKeyName: "Salesforce Internal",
+                            ExternalKeyName: "Salesforce Public",
+                            Forename: details["First Name"],
+                            Surname: details["Second Name"],
+                            Email: details["Email"],
+                            Phone: details["Phone"],
+                            CompanyName: details["Company"],
+                            Password: details["First Password"]
+                        }, success, fail);
+                }
+                
+                modal.addField("Company", { value: "{!JSENCODE($User.CompanyName)}" });
+                modal.addHalfFields("Name", { value: "{!JSENCODE($User.FirstName)}", placeholder: "First" }, { value: "{!JSENCODE($User.LastName)}", placeholder: "Last" });
+                modal.addField("Email", { value: "{!JSENCODE($User.Email)}", type: "email", required: true });
+                modal.addField("Phone", { value: "{!JSENCODE($User.Phone)}", type: "tel" });
+                modal.addHalfFields("Password", { type: "password", required: true }, { type: "password", required: true, placeholder: "Repeat password" });
+                modal.addButton("Register", register);
+                modal.addButton("Skip", modal.hide, true);
+                modal.show();
+            }
+        };
+    
+        countrylist.initialise();
+        account.initialise();
+        
+        if ({!LoadedOldSettings})
+            saveSettings();
+    </script>
+</apex:page>

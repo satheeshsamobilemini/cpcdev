@@ -1,0 +1,7 @@
+<apex:page >
+ <script>
+   function loadPostalCodeRateFinder()
+   { var openFinder = window.open('/apex/PostalCodeRateFinder','name','width=800,height=550,top=50,left=60,resizeable=yes,screenX=60,screenY=100'); }
+ </script>
+ <input value="Postal Code Rate Finder" class="btn" type="button" onclick="loadPostalCodeRateFinder();return false;"/>
+</apex:page>

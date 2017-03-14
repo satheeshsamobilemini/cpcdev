@@ -1,0 +1,2448 @@
+<apex:page Controller="QuickQuoteMainController_AC" tabStyle="MMI_Quotes__c" id="quickquote"  standardstylesheets="true" action="{!QuickQuoteMainController_AC_initalize}">
+    <apex:sectionHeader title="Quick Quote" />
+
+    <!-- <apex:includeScript value="{!$Resource.jQueryLib19Compress}"/> -->
+    <apex:includeScript value="{!$Resource.Mobile_Mini_Resource}"/>
+    <apex:includeScript value="/soap/ajax/10.0/connection.js"/>
+    <apex:includeScript value="/soap/ajax/10.0/apex.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+
+    <style type="text/css">
+
+    .borderbox {
+        border: 1px solid black;
+        width: 87%;
+        height: 120%;
+        position: relative;
+        left: 30px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        "
+    }
+
+    .popupborderbox {
+        border: 1px solid black;
+        width: 80%;
+        height: 50%;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        
+    }
+
+    .custPopup {
+       background-color: #FCFAFC;
+                   border-width: 2px;
+                   z-index: 9999;
+                   left: 50%;
+                   padding:10px;
+                   position: absolute;
+                   border: 1px solid #DA9627;
+                   width: 750px;
+                   margin-left: -250px;
+                   top:90px;
+                   border-top-style:outset;
+                   border-top-width:20px;
+                   border-top-color: #DA9627;
+                   -webkit-border-radius: 5px;
+                   -moz-border-radius: 5px;
+                   border-radius: 5px;
+                   -moz-border-radius:10px;
+                   -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+                   border-radius: 15px;
+    }
+
+    .popupBackground {
+       background-color:black;
+                   opacity: 0.20;
+                   filter: alpha(opacity = 20);
+                   position: absolute;
+                   width: 100%;
+                   height: 100%;
+                   top: 0;
+                   left: 0;
+                   z-index: 9998;
+    }
+
+    .popupBackground1 {
+       background-color:black;
+                   opacity: 0.20;
+                   filter: alpha(opacity = 20);
+                   position: absolute;
+                   width: 50%;
+                   height: 100%;
+                   top: 0;
+                   left: 0;
+                   z-index: 9998;
+    }
+
+    .popupborderbox1 {
+        border: 1px solid black;
+        width: 80%;
+        height: 50%;
+        -moz-border-radius: 0px;
+        -webkit-border-radius: 0px;
+        border-radius: 0px;
+        "
+    }
+
+    .custPopup12 {
+       background-color: #FCFAFC;
+                   border-width: 2px;
+                   z-index: 9999;
+                   left: 50%;border: 1px solid #DA9627;
+                   padding:10px;
+                   position: absolute;
+                   width: 100px;
+                   margin-left: -50px;
+                   top:190px;
+                   border-top-style:outset;
+                   -webkit-border-radius: 5px;
+                   -moz-border-radius: 5px; 
+                   border-radius: 5px;
+                   -moz-border-radius:10px;
+                   -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+                   border-radius: 15px;
+    }
+
+    .custPopup1 {
+       background-color: #FCFAFC;
+                   border-width: 2px;
+                   z-index: 9999;
+                   left: 50%;
+                   padding:10px;border: 1px solid #DA9627;
+                   position: absolute;
+                   width: 750px;
+                   margin-left: -250px;
+                   top:90px;
+                   border-top-style:outset;
+                   border-top-width:20px;
+                   border-top-color: #DA9627;
+                   -webkit-border-radius: 5px;
+                   -moz-border-radius: 5px;
+                   border-radius: 5px;
+                   -moz-border-radius:10px;
+                   -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+                   border-radius: 15px;
+    }
+
+    .custPopupProduct {
+       background-color: #FCFAFC;
+                   border-width: 2px;
+                   z-index: 9999;
+                   
+                   padding:10px;border: 1px solid #DA9627;
+                   position: absolute;
+                   width: 1200px;
+                   margin-left: 100px;
+                   top:90px;
+                   border-top-style:outset;
+                   border-top-width:20px;
+                   border-top-color: #DA9627;
+                   -webkit-border-radius: 5px;
+                   -moz-border-radius: 5px;
+                   border-radius: 5px;
+                   -moz-border-radius:10px;
+                   -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+                   border-radius: 15px;
+    }
+
+
+    .popupBackground1 {
+        background-color:black;
+                   opacity: 0.20;
+                   filter: alpha(opacity = 20);
+                   position: absolute;
+                   width: 100%;
+                   height: 100%;
+                   top: 0;
+                   left: 0;
+                   z-index: 9998;
+    }
+
+    .popupborderbox2 {
+        border: 1px solid black;
+        width: 100%;
+        height: 100%;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        
+    }
+
+    .custDescAddressPopup {
+       background-color: #FCFAFC;
+                   border-width: 2px;
+                   z-index: 9999;
+                   left: 50%;
+                   padding:10px;
+                   position: absolute;
+                   width: 750px;border: 1px solid #DA9627;
+                   margin-left: -250px;
+                   top:90px;
+                   border-top-style:outset;
+                   border-top-width:20px;
+                   border-top-color: #DA9627;
+                   -webkit-border-radius: 5px;
+                   -moz-border-radius: 5px;
+                   border-radius: 5px;
+                   -moz-border-radius:10px;
+                   -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+                   border-radius: 15px;
+    }
+
+    .DescAddresspopupBackground {
+        background-color:black;
+                   opacity: 0.20;
+                   filter: alpha(opacity = 20);
+                   position: absolute;
+                   width: 100%;
+                   height: 100%;
+                   top: 0;
+                   left: 0;
+                   z-index: 9998;
+                   
+      .selected td { background-color: #CEECF5; }
+    }
+    </style>
+
+    <script language="javascript" type="text/javascript">
+          function stopRKey(evt) {
+             var evt = (evt) ? evt : ((event) ? event : null);
+             var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+             if ((evt.keyCode == 13) && (node.type=="text")) {
+                return false;
+             }
+          }
+          
+    document.onkeypress = stopRKey; 
+    </script>
+
+
+    <script type="text/javascript">
+             /*$(document).ready(function() {
+           // document.getElementById('descreteAddDiv').style.display = 'none';
+            callwscountry();
+           // document.getElementById('quickquote:formId:lockblock:errorMsgsec').style.display = 'none';
+
+     });*/
+      var previousOnload = window.onload;
+      window.onload = function() {
+       if (previousOnload) {
+        previousOnload(); 
+       } 
+       callwscountry();
+       //alert('loading...');
+      }
+      
+     /*if (sforce.console.isInConsole()) {
+        //alert('console');
+        //window.onload=function(){callwscountry();};
+        //window.onload = setTimeout(function(){ callwscountry(); }, 10000);
+        //window.onload= callwscountry();
+     }else{
+        //alert('page');
+        $(document).ready(function() {
+            callwscountry();
+     });
+     }*/
+     
+     function openRecord(recId){
+            if(sforce.console.isInConsole()){
+                //alert('console');
+                openSfdcRec(recId);
+            }else{
+                //alert('page');
+                window.open('/'+recId,'_blank');
+            }
+            
+      }
+     
+      function openSfdcRec(recordId){
+            sforce.console.getFocusedPrimaryTabId(function showTabId(result) {
+             result.calledUrl = '/'+recordId;
+             var primaryTabId = result.id;
+             sforce.console.openSubtab(primaryTabId , result.calledUrl, true, 
+                 '', null,openSuccess, 'salesforceSubtab');
+         });
+         var openSuccess = function openSuccess(result) {
+         };
+      }
+     
+     
+     // Hide/Out Descrete Add Pop Up
+     
+     function hideshowDescretePopUp(id)
+     {
+       SelectFulfillingBranch();
+        document.getElementById(id).style.display = 'block';
+        
+     }
+      function hideshowDescretePopUpHide(id)
+     {
+     
+        HideSelectBranch();
+        document.getElementById(id).style.display = 'none';
+       
+        
+       }
+     
+     function showTaxPopUp()
+     {
+
+        document.getElementById('descreteAddDiv').style.display = 'none';
+        document.getElementById('TaxDiv').style.display = 'block';
+       // FulfillingBranchSelected();
+        
+     }
+     
+     function hideTaxPopUp()
+     {
+
+         document.getElementById('TaxDiv').style.display = 'none';
+        TaxPopUpCancel();
+     }
+     
+     function hideTaxPopUpSave()
+     {
+        document.getElementById('TaxDiv').style.display = 'none';
+        TaxPopUpSave();
+     }
+     
+     function branchShow()
+     {
+        document.getElementById('branchsearch').style.display = 'block';
+        
+     }
+     
+     function hideBranchSearch()
+     {
+        document.getElementById('branchsearch').style.display = 'none';
+        hidedispBranchPopUp();
+     }
+     
+     function selectedBranchId()
+     {
+        document.getElementById('branchsearch').style.display = 'none';
+       // SelectedBranchMethod();
+        
+     }
+     
+     
+     function showProductSearch()
+     {
+        document.getElementById('ProductSearchId').style.display = 'block';
+        ProductsSelection();  
+     }
+     
+      function hideProductSearch()
+     {
+        document.getElementById('ProductSearchId').style.display = 'none';
+        
+     }
+     
+            function increse()
+            {
+                var v = document.getElementById('quickquote:formId:lockblock:locksection:locksec:lock').value;
+                if(v==''){
+                    v='0';
+                }
+                if(parseInt(v)<99){
+                 document.getElementById('quickquote:formId:lockblock:locksection:locksec:lock').value = parseInt(v) + 1;
+                }
+               disableSaveButton();
+               
+    }
+            function decrese()
+            {
+                var v = document.getElementById('quickquote:formId:lockblock:locksection:locksec:lock').value;
+                if(v==''){
+                    v='0';
+                }
+                if(v!='0')
+                {
+                    document.getElementById('quickquote:formId:lockblock:locksection:locksec:lock').value = parseInt(v) - 1;
+                }
+              disableSaveButton();
+            }
+            
+            function increseqty()
+            {
+                var v = document.getElementById('quickquote:formId:lockblock:locksection:qtysec:qty').value;
+                if(v==''){
+                    v='0';
+                }
+                if(parseInt(v)<99){
+                 document.getElementById('quickquote:formId:lockblock:locksection:qtysec:qty').value = parseInt(v) + 1;
+                }
+               // CalculateTotals();
+                disableSaveButton();
+            }
+            function decreseqty()
+            {
+                var v = document.getElementById('quickquote:formId:lockblock:locksection:qtysec:qty').value;
+                if(v==''){
+                    v='1';
+                }
+                if(v!='1' && v!='0') 
+                {
+                    document.getElementById('quickquote:formId:lockblock:locksection:qtysec:qty').value = parseInt(v) - 1;
+                }
+               // CalculateTotals();
+                disableSaveButton();
+            }
+            
+            function onlyNumbers(evt)
+            {
+                var e = evt
+                if(window.event)
+                { // IE 
+                    var charCode = e.keyCode;
+                } 
+                else if (e.which)
+                { // Safari 4, Firefox 3.0.4
+                    var charCode = e.which
+                }
+                if (charCode > 31 && (charCode < 48 || charCode > 57))
+                    return false;
+                    return true;
+            }
+            
+            function isValidPostalCode() {
+             var p =document.getElementById('quickquote:formId:lockblock:shippingadd:zipsec:zipCode').value;
+             var v =document.getElementById('quickquote:formId:lockblock:shippingadd:contsec:countries').value;
+             
+            switch (v) {
+            case "USA":
+                postalCodeRegex = /^$|^\d{5}((\-)?\d{4})?$/;
+                break;
+            case "CAN":
+                postalCodeRegex = /^$|^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]( )?\d[ABCEGHJKLMNPRSTVWXYZ]\d$/;
+                break;
+            default:
+                postalCodeRegex = /^$|^(?:[A-Z0-9]+([- ]?[A-Z0-9]+)*)?$/;
+            }
+
+            return postalCodeRegex.test(p);
+            }
+            
+            function isValidAddress() {
+             var p =document.getElementById('quickquote:formId:lockblock:shippingadd:addSec:addId').value;
+             addressRegex = /^$|^[a-zA-z0-9\,\.\-\'\#\&\/ ]+$/;
+            return addressRegex.test(p);
+            }
+            
+            function isValidTransactionType() {
+            
+             var t =document.getElementById('quickquote:formId:lockblock:typeselectid:ttypesec:trasSecId').value;
+              if(t!="-None-"){
+                return true;
+              }else{
+                return false;
+              }
+
+            }
+            
+            function isValidCrossStreet() {
+             var p =document.getElementById('quickquote:formId:lockblock:shippingadd:crossPBId:crossfId').value;
+             addressRegex = /^$|^[a-zA-z0-9\,\.\-\'\#\&\/ ]+$/;
+            return addressRegex.test(p);
+            }
+
+              function PostalCodevalidate() {
+                       if(isValidTransactionType()){
+                                if(isValidPostalCode()){
+                                     document.getElementById('ZipError').style.display = 'none';
+                                     document.getElementById('ttypeError').style.display = 'none';
+                                     hideshowDescretePopUp('descreteAddDiv');
+                                     }else{
+                                        document.getElementById('ttypeError').style.display = 'none';
+                                    document.getElementById('ZipError').style.display = 'block';
+                             }
+                        }else{
+                            document.getElementById('ttypeError').style.display = 'block';
+                            document.getElementById('ZipError').style.display = 'none';
+                        }
+            }
+            
+            function hideErrorMsg()
+             {
+        
+                document.getElementById('quickquote:formId:lockblock:locksection:ClosePopPanel').style.display = 'none';
+                document.getElementById('quickquote:formId:lockblock:locksection:errorPanel1').style.display = 'none';
+                
+                document.getElementById('quickquote:formId:lockblock:errorMsgsec').style.display = 'none';
+           
+             }
+
+             
+             function getSelectedRowValueAdd(x,inputId,Id,tableId)
+            {
+                document.getElementById(Id).value = inputId;
+                
+                var tbl = document.getElementById(tableId);
+     
+               for (var i = 0; i < tbl.rows.length; i++) {                
+                       tbl.rows[i].style.backgroundColor = "#F2F2F2";
+               }  
+               tbl.rows[parseInt(x)].style.backgroundColor = "#CEECF5";  
+              // colorChangeFun(x);
+                
+            }
+            
+            function getSelectedRowValueAddondblclick(x,inputId,Id,tableId)
+            {
+                document.getElementById(Id).value = inputId;
+                showTaxPopUp();
+                FulfillingBranchSelected();
+                
+            }
+            
+             function getSelectedRowValueTax(x,inputId,Id,tableId)
+            {
+                
+                document.getElementById(Id).value = inputId;
+                
+                var tbl = document.getElementById(tableId);
+     
+               for (var i = 0; i < tbl.rows.length; i++) {                
+                       tbl.rows[i].style.backgroundColor = "#F2F2F2";
+               }  
+                 
+               tbl.rows[parseInt(x)].style.backgroundColor = "#CEECF5";  
+              // colorChangeFun(x);
+                
+            }
+            
+             function getSelectedRowValueTaxondblclick(x,inputId,Id,tableId)
+            {
+                
+                document.getElementById(Id).value = inputId;
+                hideTaxPopUpSave();
+            }
+            
+             function getSelectedRowValueBranch(x,inputId,Id,tableId)
+            {
+                
+                document.getElementById(Id).value = inputId;
+                
+                var tbl = document.getElementById(tableId);
+     
+               for (var i = 0; i < tbl.rows.length; i++) {                
+                       tbl.rows[i].style.backgroundColor = "#F2F2F2";
+               }  
+                 
+                tbl.rows[parseInt(x)-1].style.backgroundColor = "#CEECF5";  
+              // colorChangeFun(x);
+                
+            }
+            
+             function getSelectedRowValueBranchondblclick(x,inputId,Id,tableId){
+                document.getElementById(Id).value = inputId;
+                SelectedBranchMethod();
+                selectedBranchId();
+                // colorChangeFun(x);
+            }
+            
+             function getSelectedRowValueProd(x,inputId,Id,tableId)
+            {
+                
+                document.getElementById(Id).value = inputId;
+                
+                var tbl = document.getElementById(tableId);
+     
+               for (var i = 0; i < tbl.rows.length; i++) {                
+                       tbl.rows[i].style.backgroundColor = "#F2F2F2";
+               }  
+               
+           
+               tbl.rows[parseInt(x)-1].style.backgroundColor = "#CEECF5";  
+              // colorChangeFun(x);
+                
+            }
+             
+            function getSelectedRowValueProdondblclick(x,inputId,Id,tableId)
+                {
+                    document.getElementById(Id).value = inputId;
+                    SelectedProduct();
+                    hideProductSearch();
+                    document.getElementById('quickquote:formId:lockblock:locksection:prodSec:prodinId').focus();
+                }
+            
+            function colorChangeFun(x)
+            {
+                var newColor = '#CEECF5';
+                var origColor = '#F2F2F2';
+                if ( x.style ) {
+                
+                 // x.style.backgroundColor = (newColor == x.style.backgroundColor)? origColor : newColor;
+                  x.style.backgroundColor =newColor;
+                  
+                 }
+            }
+            
+
+            
+            function onTransactionChange()
+             {
+              changeIncludeLLW();
+              makeAddAvailable();
+           
+             }
+             function productTabOff()
+             {
+              
+              var prodcode = document.getElementById('quickquote:formId:lockblock:locksection:prodSec:prodinId').value;
+
+              document.getElementById('prodCode').value = prodcode;
+           
+               getSpecificProductDetail();
+             }
+             
+             function resfreshcall(){
+              
+             //   Refresh();
+             }
+             
+             
+             function checkRentalLength(CompObj, errorLocation){
+                var errorMsg = '';
+                if(isNaN(CompObj.value)){
+                    errorMsg = 'Please enter a number between 1 to 54.';
+                    document.getElementById('rentalLengthError'+errorLocation).innerHTML = errorMsg;
+                    CompObj.focus();
+                    return false;
+                }else{
+                    
+                    if(CompObj.value < 1 || CompObj.value > 54){
+                        errorMsg = 'Please enter a number between 1 to 54.';
+                        document.getElementById('rentalLengthError'+errorLocation).innerHTML = errorMsg;
+                        CompObj.focus();
+                        return false;
+                    }else{
+                       getRateOnDurationChange();
+                    }
+                    
+                    
+                }
+                document.getElementById('rentalLengthError'+errorLocation).innerHTML = errorMsg;
+                
+            }
+             
+             function SelectedPTfunc(recNum){
+       
+              document.getElementById('SelectedPT').value = recNum;
+             }
+             
+              function SelectedPSfunc(recNum){
+              
+              document.getElementById('SelectedPS').value = recNum;
+             }
+             
+             function showCapacityPopUp(){
+                document.getElementById('capacityLookupPopupId').style.display = '';
+             }
+             function changeRowColorInCapacityDblClk(x,inputId,Id){
+                document.getElementById(Id).value = inputId;
+                hideCapacityPopUp();
+                okCapacityPopUp();
+             }
+            
+             function changeRowColorInCapacity(x,inputId,Id){
+                document.getElementById(Id).value = inputId;
+                
+                var tbl = document.getElementById("capacityLookup_grid");
+                 
+                for (var i = 0; i < tbl.rows.length; i++) {                
+                       tbl.rows[i].style.backgroundColor = "#F2F2F2";
+                }       
+                document.getElementById('CapacityDivEnable').style.display = '';
+                document.getElementById('CapacityDivDisable').style.display = 'none';
+                colorChangeFun(x);
+             }
+             
+             function hideCancelcapacityLookupPopUp(){
+                document.getElementById('capacitySelactedValue').value = '';
+                document.getElementById('capacityLookupPopupId').style.display = 'none';
+             }
+             function hideCapacityPopUp(){
+                document.getElementById('capacityLookupPopupId').style.display = 'none';
+             }
+             
+             function DiscoverySectionValidate() {
+                var Whydoyouneedstorage = document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhydoyouneedstorageMain:Whydoyouneedstorage').value; 
+                var Whenwillyouneedyourunit = document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhenwillyouneedyourunitMain:Whenwillyouneedyourunit').value;
+                var Whatwillyoubestoring = document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhatwillyoubestoringMain:Whatwillyoubestoring').value;
+                var Howoftenwillyouneedtoaccess = document.getElementById('quickquote:formId:lockblock:DiscoverySection:HowoftenwillyouneedtoaccessMain:Howoftenwillyouneedtoaccess').value;
+                var Howlongwillyouneedyourunit = document.getElementById('quickquote:formId:lockblock:DiscoverySection:HowlongwillyouneedyourunitMain:Howlongwillyouneedyourunit').value;
+                var Whoisgoingtobeaccessingyourunit = document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhoisgoingtobeaccessingyourunitMain:Whoisgoingtobeaccessingyourunit').value;
+                
+                if(Whydoyouneedstorage == ''){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhydoyouneedstorageMain:Whydoyouneedstorage').focus();
+                    return false;
+                }else if(Whenwillyouneedyourunit == ''){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhenwillyouneedyourunitMain:Whenwillyouneedyourunit').focus();
+                    return false;
+                }
+                else if(Whatwillyoubestoring == ''){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhatwillyoubestoringMain:Whatwillyoubestoring').focus();
+                    return false;
+                }
+                else if(Howoftenwillyouneedtoaccess == '--None--'){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:HowoftenwillyouneedtoaccessMain:Howoftenwillyouneedtoaccess').focus();
+                    return false;
+                }
+                else if(Howlongwillyouneedyourunit == '--None--'){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:HowlongwillyouneedyourunitMain:Howlongwillyouneedyourunit').focus();
+                    return false;
+                }
+                else if(Whoisgoingtobeaccessingyourunit == ''){
+                    document.getElementById('CrossSError').style.display = 'block';
+                    document.getElementById('quickquote:formId:lockblock:DiscoverySection:WhoisgoingtobeaccessingyourunitMain:Whoisgoingtobeaccessingyourunit').focus();
+                    return false;
+                }
+                else{
+                    document.getElementById('CrossSError').style.display = 'none';
+                    saveQuickQuote();
+                    return true;
+                }
+                
+             }
+             
+        </script>
+        
+
+        <apex:form id="formId" >
+        
+        <apex:outputPanel id="fulfillingError">
+            <apex:messages id="mainErrorMsg" styleClass="errorMsg" style="font-family:georgia,garamond,serif;" />
+        </apex:outputPanel>
+            
+        <apex:actionFunction name="SelectedBranchMethod" action="{!SelectedBranchMethod}" status="LoadBranch"  reRender="duraId,addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,panelid,fid, dfbId,deliveryZone, crossfId,mv1,mv2,mv3,mv4,viewBranchIdShanshort,locksection,prodsecid,modifId,deliveryDateId,Whenwillyouneedyourunit,RefreshButton,RefreshNewRatesButton,SaveId,suggestedPriceId,branchGid,customerTotalid,sellpId,marketId,totalTid,lockTid,errorMsgsec"/>
+        <apex:actionFunction name="FulfillingBranchSelected" action="{!FulfillingBranchSelected}" status="loginStatus"  reRender="panelid,fid, dfbId,deliveryZone, crossfId,addId,zipCode,States,cityid,addressValidateError,noZoneBtn,noZoneBtnOP"/>
+        <apex:actionFunction name="TaxPopUpSave"  status="loginStatus"  action="{!SelectedAddressId}" rerender="validatebutton,prodsecid,RefreshButton,RefreshNewRatesButton,SaveId,fulfillingBranchPanel,duraId,States,cityid"/>
+        <apex:actionFunction name="SelectedProduct"  status="ProductSelection"  action="{!SelectedProduct}" reRender="defCodeError,prodsecid,duraId,PPEPanel,LLWPanel,DeliveryPanel,PickupPanel,LockPanel,TaxPanel,FuelPanel,PUFuelPanel,CODPanel,RefreshButton,RefreshNewRatesButton,ReoccuringPanel,SaveId,rateId,StandardRate,BaseRate,CompositeRate,errorMsgsec"/>
+        <apex:actionFunction name="HideSelectBranch" action="{!CancelFulfillingBranchSelected}" immediate="true" rerender="panelid"/> 
+        <apex:actionFunction name="TaxPopUpCancel"  status="loginStatus"  action="{!CancelSelectedAddressId}" immediate="true" rerender="panelid"/>
+        <apex:actionFunction name="showdispBranchPopUp" action="{!showdispBranchPopUp}" immediate="true" rerender="branchSearchPanel"/>
+        <apex:actionFunction name="hidedispBranchPopUp" action="{!hidedispBranchPopUp}" status="LoadBranch" immediate="true" rerender="branchSearchPanel"/>
+         <apex:actionFunction name="ProductsSelection" action="{!ProductsSelection}"  reRender="propanelid"/>
+         <apex:actionFunction name="SelectFulfillingBranch"  action="{!SelectFulfillingBranch}" reRender="fulfillingBranchPanel,panelid"/>
+         <apex:actionFunction name="hideError"  action="{!hideError}" reRender="errorPanel1"/>
+         <apex:actionFunction name="disableSaveButton"  action="{!disableSaveButton}" reRender="SaveId,RefreshButton,RefreshNewRatesButton"/>
+         <apex:actionFunction name="disableReCalculateButton"  action="{!disableReCalcButton}" reRender="SaveId,RefreshButton,RefreshNewRatesButton"/>
+         
+         <apex:actionFunction name="changeIncludeLLW"  action="{!changeIncludeLLW}" reRender="SaveId,includeLLWid,duraId"/>
+         <apex:actionFunction name="makeAddAvailable"  action="{!makeAddAvailable}" rerender="validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid"/>
+       <apex:actionFunction name="getSpecificProductDetail" action="{!getSpecificProductDetail}" reRender="locksection,prodsecid,duraId,PPEPanel,LLWPanel,DeliveryPanel,PickupPanel,LockPanel,TaxPanel,FuelPanel,PUFuelPanel,CODPanel,RefreshButton,RefreshNewRatesButton,ReoccuringPanel,SaveId,rateId,StandardRate,BaseRate,CompositeRate,errorMsgsec"/> 
+        
+        <apex:actionFunction name="Refresh" action="{!Refresh}" reRender="SaveId"/>
+        
+          <apex:actionFunction status="RentalperiodStatus" name="getRateOnDurationChange" action="{!getRateOnDurationChange}" rerender="SaveId,RefreshButton,RefreshNewRatesButton,rateId,StandardRate,BaseRate,CompositeRate"/>
+
+        <apex:actionFunction name="okCapacityPopUp" action="{!CapacityIdSelected}" reRender="CapacityLookupPanel,deliveryDatePanelId,deliveryDateid,Whenwillyouneedyourunit,DueDate,delvDateAfterSave,errorMessageTop"/>
+        
+         <input type="hidden" id="selectedAddr" name="selectedAddr" />
+         <input type="hidden" id="selectedTex" name="selectedTex" />
+         <input type="hidden" id="selectedBranch" name="selectedBranch" />
+         <input type="hidden" id="selectedProd" name="selectedProd" />
+         <input type="hidden" id="prodCode" name="prodCode" />
+         
+         <input type="hidden" id="SelectedPT" name="SelectedPT" />
+         <input type="hidden" id="SelectedPS" name="SelectedPS" />
+         <input type="hidden" id="capacitySelactedValue" name="capacitySelactedValue" />
+        
+        <apex:actionStatus id="onloadStatus" >  
+                                <apex:facet name="start">
+                                <apex:outputPanel styleClass="popupBackground1" layout="block" />
+                    
+                    <apex:outputPanel style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px;" styleClass="custPopup12" layout="block">                       
+                     <br/>
+                                    <div align="center">
+                                        <img src="{!$Resource.Loading}" />
+                                        <br/><br/>
+                                        <font color="Red"><b>Loading....</b></font>
+                                    </div>     
+                                    </apex:outputPanel>                          
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+         </apex:actionStatus>   
+                            
+                            
+            <apex:actionFunction name="CalculateTotals" action="{!CalculateTotals}" rerender="formid, QuotePanel,CODPanel,LockPanel,LLWPanel,lockPanel,FuelPanel,PickupPanel,DeliveryPanel,PPEPanel"/> 
+            <apex:actionFunction name="ajaxSetClientLoaded" action="{!setClientLoaded}" immediate="true" rerender="formId"/>
+            <apex:actionFunction name="callwscountry" action="{!LoadWBs}" status="onloadStatus"  reRender="formId"/>
+            
+                <apex:outputPanel id="DeferredLoad">                
+                     <apex:outputPanel >
+                <center> 
+                 <apex:outputLabel rendered="{!salesRepErr}"><font color="red">Sales rep with Non numeric id can not create a quick quote [Sales rep id should be numeric]</font>
+                 </apex:outputLabel>
+                 </center>
+            <apex:pageBlock id="lockblock"  mode="maindetail">
+            
+                <apex:pageBlockSection title="Contact Information" collapsible="true" id="ConInfoId">
+                    <apex:pageBlockSectionItem >    
+                        <apex:outputLabel value="Contact First Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block">
+                         <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputText value="{!qqWrapper.oppContactName}" />
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >    
+                        <apex:outputLabel value="Contact Last Name" />
+                         <apex:outputPanel styleClass="requiredInput" layout="block">
+                         <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputText value="{!qqWrapper.oppContactLastName}" />
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>  
+                    
+                     <apex:pageBlockSectionItem id="ttypesec">
+                        <apex:outputLabel value="Phone No." />
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                         <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputText value="{!qqWrapper.oppContactPhone}" maxlength="20" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="conMob">
+                        <apex:outputLabel value="Mobile No." />
+                        <apex:outputPanel >
+                            <apex:inputText value="{!qqWrapper.oppContactMob}"  maxlength="20" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="conEmail">
+                        <apex:outputLabel value="Email" />
+                        <apex:outputPanel >
+                            <apex:inputText value="{!qqWrapper.oppContactEmail}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                                                      
+                </apex:pageBlockSection>
+                
+                
+                <apex:pageBlockSection title="" collapsible="false" id="typeselectid">
+                    <apex:pageBlockSectionItem >    
+                        <apex:outputLabel value="Type" />                   
+                        <apex:selectList value="{!qqType}" size="1" id="ttyepe" title="Rental or Sales">
+                         <apex:selectOption itemValue="Rental" itemLabel="Rental"/>  
+                           <apex:selectOption itemValue="Sales" itemLabel="Sales"/> 
+
+                             <apex:actionsupport event="onchange"  status="sts1" action="{!onTypeChangePageRedi}"/>
+                            </apex:selectList> 
+                    </apex:pageBlockSectionItem>  
+                    
+                     <apex:pageBlockSectionItem id="ttypesec">
+                        <apex:outputLabel value="Transaction Type" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!qqWrapper.TransactionType}" size="1" id="trasSecId" onchange="onTransactionChange();" title="Type of Document">
+                            <apex:selectOptions value="{!TransactionOptionsList}"/>
+                             <apex:actionsupport event="onchange"  status="sts1" rerender="validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,includeLLWid" />
+                        
+                        </apex:selectList> 
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                                                      
+                </apex:pageBlockSection>
+            
+            
+            
+                <apex:pageBlockSection title="Lead Information" rendered="{!if(LeadRef.Name = null,false,true)}" collapsible="true">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Lead Name" />                  
+                            <!-- <apex:outputLink value="/{!LeadRef.id}" target="_blank">{!LeadRef.Name}</apex:outputLink> -->
+                            <apex:outputLabel value="{!LeadRef.Name}" style="text-decoration: underline;cursor:pointer;" onclick="openRecord('{!LeadRef.id}');" />
+                    </apex:pageBlockSectionItem>                
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Opportunity Information" collapsible="true" rendered="{!if(OppRef.Name = null,false,true)}">
+                    <apex:pageBlockSectionItem >    
+                        <apex:outputLabel value="Opp Name" />                   
+                            <!-- <apex:outputLink value="/{!OppRef.id}" target="_blank">{!OppRef.Name}</apex:outputLink> -->
+                            <apex:outputLabel value="{!OppRef.Name}" style="text-decoration: underline;cursor:pointer;" onclick="openRecord('{!OppRef.id}');" />
+                    </apex:pageBlockSectionItem>                                
+                </apex:pageBlockSection>
+                
+                 <apex:pageBlockSection title="Account Information" collapsible="true" rendered="{!!if((OppRef.Name = null) && (LeadRef.Name = null),false,true)}">
+                    <apex:pageBlockSectionItem >    
+                        <apex:outputLabel value="Account Name" />                   
+                            <!-- <apex:outputLink value="/{!AccRef.id}" target="_blank">{!AccRef.Name}</apex:outputLink> -->
+                            <apex:outputLabel value="{!AccRef.Name}" style="text-decoration: underline;cursor:pointer;" onclick="openRecord('{!AccRef.id}');" />
+                    </apex:pageBlockSectionItem>                                
+                </apex:pageBlockSection>
+                
+                <br/><br/>
+                
+                
+             <!--   <apex:pageBlockSection title="Transaction Type" id="trasSecId">
+                    <apex:pageBlockSectionItem id="ttypesec">
+                        <apex:outputLabel value="Transaction Type" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList value="{!qqWrapper.TransactionType}" size="1" id="ttyepe" onchange="onTransactionChange();">
+                            <apex:selectOptions value="{!TransactionOptionsList}"/>
+                             <apex:actionsupport event="onchange"  status="sts1" rerender="validatebutton,RefreshButton,proSelect,SaveId,prodsecid,includeLLWid" />
+                        
+                        </apex:selectList> 
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                                  
+                </apex:pageBlockSection>
+            -->
+              
+                 <apex:pageBlockSection title="Discovery" collapsible="true" id="DiscoverySection">
+                     <apex:pageBlockSectionItem >
+                         <div id="CrossSError" style="display:none"><span style="float:right; "> <font color="red">Please Fill discovery section value</font></span></div>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem id="WhydoyouneedstorageMain">
+                        <apex:outputLabel value="Storage Use" />
+                        <apex:outputPanel >
+                            <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:selectList value="{!qqWrapper.Whydoyouneedstorage}" size="1" >
+                                <apex:selectOptions value="{!storageUseOptionsList}" id="Whydoyouneedstorage"/>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="WhenwillyouneedyourunitMain">
+                        <apex:outputLabel value="When will you need your unit?" />
+                            <apex:inputField value="{!proRef.When_will_you_need_your_unit__c}" id="Whenwillyouneedyourunit"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem id="WhatwillyoubestoringMain">
+                        <apex:outputLabel value="What will you be storing?" />
+                            <apex:inputTextArea value="{!qqwrapper.Whatwillyoubestoring}" id="Whatwillyoubestoring"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem id="HowoftenwillyouneedtoaccessMain">
+                        <apex:outputLabel value="How often will you need to access?" />
+                            <apex:selectList value="{!qqwrapper.Howoftenwillyouneedtoaccess}" multiselect="false" size="1" id="Howoftenwillyouneedtoaccess">
+                                <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                <apex:selectOption itemValue="Daily" itemLabel="Daily"/>
+                                <apex:selectOption itemValue="Weekly" itemLabel="Weekly"/>
+                                <apex:selectOption itemValue="Monthly" itemLabel="Monthly"/>
+                                <apex:selectOption itemValue="Rarely" itemLabel="Rarely"/>
+                             </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem id="HowlongwillyouneedyourunitMain">
+                        <apex:outputLabel value="How long will you need your unit?" />
+                            <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                <apex:selectList value="{!qqwrapper.Howlongwillyouneedyourunit}" multiselect="false" size="1" id="Howlongwillyouneedyourunit">
+                                    <!-- <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                    <apex:selectOption itemValue="1 Month" itemLabel="1 Month"/>
+                                    <apex:selectOption itemValue="2 -6 Months" itemLabel="2 -6 Months"/>
+                                    <apex:selectOption itemValue="6-12 months" itemLabel="6-12 months"/>
+                                    <apex:selectOption itemValue="13+ months" itemLabel="13+ months"/>
+                                    <apex:selectOption itemValue="Contractor" itemLabel="Contractor"/> -->
+                                    <apex:selectOptions value="{!HowLongWillYouNeedTheUnitOptionsList}" id="HowLongWillU"/>
+                                 </apex:selectList>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem id="WhoisgoingtobeaccessingyourunitMain">
+                        <apex:outputLabel value="Who is going to be accessing your unit?" />
+                            <apex:inputTextArea value="{!qqwrapper.Whoisgoingtobeaccessingyourunit}" id="Whoisgoingtobeaccessingyourunit"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Shipping Address Details" collapsible="true" id="shippingadd">
+                
+          <apex:pageBlockSectionItem > <div id="ZipError" style="display:none"><span style="float:right; "> <font color="red">Missing or Invalid Zip Code</font></span></div>
+                                        <div id="ttypeError" style="display:none"><span style="float:right; "> <font color="red">Please Select Transaction Type </font></span></div>
+          </apex:pageBlockSectionItem>  
+                          
+                              <apex:pageBlockSectionItem > </apex:pageBlockSectionItem>  
+                              
+                              
+                
+            
+                              
+                                
+                    <!-- <apex:pageBlockSectionItem id="addSec">
+                        <apex:outputLabel value="Address" >
+                       </apex:outputLabel>
+                       <apex:outputPanel styleClass="requiredInput" layout="block">  
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/> 
+                        <apex:inputTextArea value="{!qqWrapper.Address}" id="addId">
+                          <apex:actionsupport event="onchange"   status="sts1"  action="{!makeAddAvailable}" rerender="validatebutton,RefreshButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:inputTextArea>
+                         </apex:outputpanel>  
+                    </apex:pageBlockSectionItem>  
+                      
+                       
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="City" />
+                         <apex:inputText value="{!qqWrapper.City}" >
+                        <apex:actionsupport event="onchange"    status="sts1"  action="{!makeAddAvailable}" rerender="validatebutton,RefreshButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:inputText>
+                    </apex:pageBlockSectionItem>
+                    
+                     <apex:pageBlockSectionItem id="contsec">
+                     <apex:outputpanel >
+                        <apex:outputLabel value="Country" />   
+                                     </apex:outputpanel>
+                          <apex:outputPanel styleClass="requiredInput" layout="block">  
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>       
+                         <apex:selectList value="{!qqWrapper.Country}"  multiselect="false" size="1"  id="countries">                   
+                           <apex:selectOptions value="{!CountryOptions}"/>
+                            <apex:actionsupport event="onchange"  action="{!StatesList}" rerender="validatebutton,stateId,RefreshButton,proSelect,SaveId,prodsecid,duraId" status="countryStatus"/>
+                        </apex:selectList>
+                         </apex:outputpanel>  
+                                                                   
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputpanel >
+                        <apex:outputLabel value="State" />
+                        </apex:outputpanel>
+                           
+                        <apex:outputPanel id="stateId" styleClass="requiredInput" layout="block">  
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>               
+                        <apex:selectList value="{!qqWrapper.State}" multiselect="false" size="1" id="States">                 
+                           <apex:selectOptions value="{!StateOptions}"/>
+                            <apex:actionsupport event="onchange"  status="sts1"  action="{!makeAddAvailable}" rerender="validatebutton,RefreshButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:selectList>   
+                         
+                        <apex:actionStatus id="countryStatus" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>   
+                             </apex:outputPanel>                                    
+                    </apex:pageBlockSectionItem>
+                    
+                   
+                    
+                    <apex:pageBlockSectionItem id="zipsec">
+                    <apex:outputpanel >
+                        <apex:outputLabel value="Zip Code" />
+                        </apex:outputpanel>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                          <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                             <apex:inputText id="zipCode" value="{!qqWrapper.ZipCode}">
+                             <apex:actionsupport event="onchange"   status="sts1"  action="{!makeAddAvailable}" rerender="validatebutton,RefreshButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:inputText>
+                     </apex:outputPanel>
+                                                           
+                    </apex:pageBlockSectionItem> 
+                       
+                    
+                    <apex:pageBlockSectionItem id="fulfillingBranchId">
+                        <apex:outputLabel value="Fulfilling Branch" />
+                        <apex:outputPanel id="fulfilPanelId">  
+                             <apex:inputText value="{!qqWrapper.FulfillingBranch}" id="fid"/>&nbsp;&nbsp;
+
+                            <apex:actionStatus id="LoadBranch">
+                                <apex:facet name="stop">
+                                  <apex:commandLink onclick="branchShow();"  action="{!showdispBranchPopUp}" reRender="branchSearchPanel" style="position:relative;top:5px;"> <apex:image height="18" width="18" value="{!$Resource.SearchImage}"/> </apex:commandLink>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="LoadBranch" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                            
+                                                 
+                            <apex:actionStatus id="sts" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Cross Streets" />
+                       <apex:inputText value="{!qqWrapper.CrossStreets}" id="crossfId"/ >
+                    </apex:pageBlockSectionItem>
+                     -->
+                     
+                     
+                     <apex:pageBlockSectionItem id="addSec">
+                        <apex:outputLabel value="Address" >
+                       </apex:outputLabel>
+                      
+                        <apex:inputTextArea value="{!qqWrapper.Address}" id="addId" title="Default= Delivery Address if Present, otherwise Address Data from Address Information Section">
+    <!--                       <apex:actionsupport event="onchange"   status="sts1"  action="{!makeAddAvailable}" rerender="addressValidateError,validatebutton,RefreshButton,proSelect,SaveId,prodsecid,duraId"/> -->
+                        </apex:inputTextArea>
+                     
+                    </apex:pageBlockSectionItem>  
+                      
+                       
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="City" />
+                         <apex:inputText value="{!qqWrapper.City}" id="cityid">
+                        <apex:actionsupport event="onchange"    status="sts1"  action="{!makeAddAvailable}" rerender="addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:inputText>
+                    </apex:pageBlockSectionItem>
+                    
+                     <apex:pageBlockSectionItem id="contsec">
+                     <apex:outputpanel >
+                        <apex:outputLabel value="Country" />   
+                                     </apex:outputpanel>
+                          <apex:outputPanel styleClass="requiredInput" layout="block">  
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>       
+                         <apex:selectList value="{!qqWrapper.Country}"  multiselect="false" size="1"  id="countries">                   
+                           <apex:selectOptions value="{!CountryOptions}"/>
+                            <apex:actionsupport event="onchange"  action="{!StatesList}" rerender="validatebutton,stateId,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId" status="countryStatus"/>
+                        </apex:selectList>
+                         </apex:outputpanel>  
+                                                                   
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputpanel >
+                        <apex:outputLabel value="State" />
+                        </apex:outputpanel>
+                           
+                        <apex:outputPanel id="stateId" >         
+                        <apex:selectList value="{!qqWrapper.State}" multiselect="false" size="1" id="States">                 
+                           <apex:selectOptions value="{!StateOptions}"/>
+                            <apex:actionsupport event="onchange"  status="sts1"  action="{!makeAddAvailable}" rerender="addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:selectList>   
+                         
+                        <apex:actionStatus id="countryStatus" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>   
+                             </apex:outputPanel>                                    
+                    </apex:pageBlockSectionItem>
+                    
+                   
+                    
+                    <apex:pageBlockSectionItem id="zipsec">
+                    <apex:outputpanel >
+                        <apex:outputLabel value="Zip Code" /></apex:outputpanel>
+                        <apex:outputPanel >
+                             <apex:inputText id="zipCode" value="{!qqWrapper.ZipCode}">
+                             <apex:actionsupport event="onchange"   status="sts1"  action="{!ClearFullFillBrnch}" rerender="fid,dfbId,deliveryZone,addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId"/>
+                        </apex:inputText>
+                            <apex:actionStatus id="zipCodeFinderMain" > 
+                             <apex:facet name="stop">
+                                   <apex:commandButton value="Address Fill" id="ZipCodeFinder" action="{!ZipCodeFinder}" reRender="addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId,countries,stateId,cityid" status="zipCodeFinderMain"/>
+                              </apex:facet>
+                              <apex:facet name="start">
+                                  <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="zipCodeFinderMain" />
+                              </apex:facet>                      
+                          </apex:actionStatus>                                            
+                     </apex:outputPanel>
+                    </apex:pageBlockSectionItem> 
+                       
+                    
+                    <apex:pageBlockSectionItem id="fulfillingBranchId">
+                        <apex:outputLabel value="Fulfilling Branch" />
+                        <apex:outputPanel id="fulfilPanelId">  
+                             <apex:inputText value="{!qqWrapper.FulfillingBranch}" id="fid" title="Servicing Branch">
+                                <apex:actionSupport status="LoadBranch" event="onchange" action="{!onChangeFulfillingBranchId}" reRender="fulfillingError,fulfilPanelId,addressValidateError,dfbId,deliveryZone,validatebutton,RefreshButton,RefreshNewRatesButton,SaveId" />
+                            </apex:inputText>&nbsp;&nbsp;
+
+                            <apex:actionStatus id="LoadBranch">
+                                <apex:facet name="stop">
+                                  <apex:commandLink onclick="branchShow();"  action="{!showdispBranchPopUp}" reRender="branchSearchPanel" style="position:relative;top:5px;"> <apex:image height="18" width="18" value="{!$Resource.SearchImage}"/> </apex:commandLink>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="LoadBranch" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                            <div ><apex:outputText value="{!addressErrorMessage}" id="addressValidateError" /></div>
+                                                 
+                            <apex:actionStatus id="sts" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem id="crossPBId">
+                        <apex:outputLabel value="Cross Streets" />
+                        
+                         <apex:outputPanel >
+                          
+                            <apex:inputText value="{!qqWrapper.CrossStreets}" id="crossfId" >
+                             <apex:actionsupport event="onchange"   status="sts1"  action="{!makeAddAvailable}" rerender="addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId"/>
+                            </apex:inputText>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                     
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Distance from branch" />
+                        <apex:inputText value="{!qqWrapper.distanceFromBranch}" id="dfbId" title="Distance in miles the Shipping Address is from the Fulfiling Branch"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel ></apex:outputLabel>
+                        <apex:outputPanel >
+                      <!--   <apex:outputtext value="{!!showValidateAddress}"/> --> 
+                      <apex:actionStatus id="loginStatus">
+                                <apex:facet name="stop">
+                                
+                               <!--   hideshowDescretePopUp('descreteAddDiv'); -->
+                                      <apex:commandButton id="validatebutton" value="Validate Address"  onclick=" PostalCodevalidate();" disabled="{!!qqwrapper.showValidateAddress}" status="loginStatus"  reRender="xx"/>
+                                 </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Validating..." styleclass="readmore" disabled="true" status="loginStatus" />
+        
+                                </apex:facet>
+                            </apex:actionStatus>
+                             
+                            <apex:actionStatus id="sts1" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>
+                            
+
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Delivery Zone" />
+                        <apex:inputText value="{!qqWrapper.DeveloperZone}" id="deliveryZone"/ >
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <apex:actionStatus id="capLookup">
+                                <apex:facet name="stop">
+                                    <apex:commandbutton value="Capacity Lookup" action="{!callCapacityLookupWebservice}" status="capLookup" onclick="showCapacityPopUp();" rerender="CapacityLookupPanel,errorMessageTop" tabindex="26"/>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="capLookup" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                            <apex:outputPanel id="noZoneBtnOP">
+                            
+                                <apex:actionStatus id="noZoneEmail">
+                                    <apex:facet name="stop">
+                                        <apex:commandbutton id="noZoneBtn" value="No Zone - Get Delivery Rates" disabled="{!isknowZoneRatesBtnDisabled}" action="{!NoDelZoneRates}" status="noZoneEmail" rerender="noZoneBtnOP,emailErrorMsg,emailErrorMessage" />
+                                    </apex:facet>
+                                    <apex:facet name="start">
+                                        <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="noZoneEmail" />
+                                    </apex:facet>
+                                </apex:actionStatus>
+                            </apex:outputPanel>
+                            <br/><apex:pageMessages id="emailErrorMessage" />
+                            <br/>
+                            <apex:outputLabel value="Delivery Slot" />
+                            <apex:selectList value="{!qqWrapper.deliverySlot}"  multiselect="false" size="1">
+                                  <apex:selectOption itemValue="AM" itemLabel="AM"/>
+                                  <apex:selectOption itemValue="PM" itemLabel="PM"/>
+                             </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                                 
+                </apex:pageBlockSection>   
+                 
+               
+                <apex:pageBlockSection title="Other Details" collapsible="true" id="locksection">
+                   
+                    <apex:outputPanel id="ClosePopPanel" styleClass="popupBackground1" layout="block" rendered="{!qqWrapper.DisplayErrorPopUp}" />
+                          <apex:outputPanel id="errorPanel1" style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px;" styleClass="custPopup1" layout="block" rendered="{!qqWrapper.DisplayErrorPopUp}">
+                          <apex:pageblock title="Error Occured">
+                            <apex:messages styleClass="errorMsg" style="font-family:georgia,garamond,serif;" /> <br/>
+                            <apex:commandbutton value="Close" rerender="out3,errorMsgsec" action="{!hideError}" onclick="hideErrorMsg();"></apex:commandbutton>
+                            </apex:pageblock>
+                          </apex:outputPanel>
+                   
+                     <apex:messages id="errorMsgsec" styleClass="errorMsg" style="font-family:georgia,garamond,serif;"  rendered="{!!salesRepErr}"/>
+                      
+                      <apex:outputPanel id="defCodeError"><apex:messages id="errorMsgsec1" styleClass="errorMsg" style="font-family:georgia,garamond,serif;"  rendered="{!!salesRepErr}"/></apex:outputPanel>
+                      
+                      
+                    <apex:pageBlockSectionItem id="prodSec">
+                    <apex:outputPanel > 
+                        <apex:outputLabel value="Product" />
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel id="prodsecid" styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputText value="{!qqWrapper.Product}" disabled="{!!qqwrapper.showProdSelect}" onchange="productTabOff();" id="prodinId" title="Item Code Being Quoted">
+                        <!--    <apex:actionsupport event="onkeyup" action="{!disableSaveButton}" rerender="SaveId,RefreshButton"/>
+                            <apex:actionsupport event="onchange" action="{!getSpecificProductDetail}" reRender="formId,rateId,SaveId,RefreshButton"/>  -->
+                            </apex:inputText>&nbsp;&nbsp; <apex:image value="{!$Resource.SearchImage}"  height="18" width="18" rendered="{!!qqwrapper.showProdSelect}" style="position:relative;top:5px;" id="proSelectDIS"/>
+                            
+                            <apex:actionStatus id="ProductSelection">
+                                <apex:facet name="stop">
+                                     
+                                     <apex:commandLink id="proSelect" onclick="showProductSearch();" status="ProductSelection" reRender="errorMsgsec,propanelid"  rendered="{!qqwrapper.showProdSelect}" style="position:relative;top:5px;"> <apex:image value="{!$Resource.SearchImage}"  height="18" width="18" />  </apex:commandLink>
+                                <!--   <apex:commandLink value="Select" id="proSelect" action="{!ProductsSelection}"  onclick="showProductSearch();" status="ProductSelection" reRender="propanelid" disabled="{!!qqwrapper.showProdSelect}"/>-->
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="ProductSelection" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                              
+                            
+                            <apex:actionStatus id="sts2" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>                      
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Rate(28 Days)" />
+                        <apex:outputPanel >
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.Rate}" id="rateId" title="Rental Rate"> 
+                             <apex:actionsupport event="onchange" action="{!disableSaveButton}" rerender="SaveId,RefreshNewRatesButton" >
+                                <apex:param id="productRate" name="prodRate" value="edited"/>
+                             </apex:actionsupport>
+                             </apex:inputText>
+                             &nbsp;&nbsp;
+                             <apex:outputLabel rendered="{!IF(qqWrapper.TransactionType = 'SECO', true,false)}" value="Security Deposit" />
+                             &nbsp;&nbsp;<apex:inputText id="securityDepositRate" rendered="{!IF(qqWrapper.TransactionType = 'SECO', true,false)}" style="width:80px;" value="{!qqWrapper.securityDeposit}" disabled="true" title="Security Deposit" />
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="qtysec">
+                        <apex:outputLabel value="# of Units on Opp" style="position:relative;font-weight:bold;" ></apex:outputLabel>
+                        <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:outputpanel >
+                            <apex:inputText value="{!qqWrapper.Quantity}" onkeypress="return onlyNumbers(event)" Style="width:20px;position:relative;top:0px;" id="qty" maxlength="2">
+                            <apex:actionsupport event="onchange" action="{!disableSaveButton}" rerender="SaveId" />
+                             </apex:inputText>
+                             <!-- <apex:image url="{!$Resource.SortAsc}" onclick="increseqty();" width="20" height="20" style=" text-decoration: none; position:relative;left:7px;"/> 
+                            <apex:image url="{!$Resource.SortDesc}" onclick="decreseqty();" width="20" height="20" style=" text-decoration: none; position:relative;top:3px;right:12px;" /> -->
+                            <apex:image url="{!$Resource.SortArrowDown}" onclick="increseqty();" width="10" height="10" style=" text-decoration: none; position:relative;left:7px;top:-5px; transform:rotate(180deg); -moz-transform:rotate(180deg); -webkit-transform:rotate(180deg); -o-transform:rotate(180deg); -ms-transform:rotate(180deg);" /> 
+                            <apex:image url="{!$Resource.SortArrowDown}" onclick="decreseqty();" width="10" height="10" style=" text-decoration: none; position:relative;top:5px;left:-3px;" />
+                            <!-- <apex:outputlabel value="?" onclick="increseqty();" style=" text-decoration: none; position:relative;top:-7px;" > </apex:outputlabel>
+                           <apex:outputlabel value="?" onclick="decreseqty(); "  style=" text-decoration: none; position:relative;top:3px;right:12px;" ></apex:outputlabel> -->
+                           </apex:outputpanel>
+                       </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Standard Rate" />
+                         <apex:outputPanel id="StandardRateOp">
+                            <apex:inputText id="StandardRate" style="width:80px;" value="{!qqWrapper.Rate1}"  title="Standard Rate" disabled="true"/>&nbsp;&nbsp;
+                            <apex:outputLabel style="font-weight:bold; color: #F00;" value="Do not use Standard Rate" />
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Base Rate" />
+                         <apex:outputPanel id="BaseRateOp">
+                            <apex:inputText id="BaseRate" style="width:80px;border: 5px solid #F00;" value="{!qqWrapper.Rate5}"  title="Base Rate" disabled="true"/>
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Composite Rate" />
+                         <apex:outputPanel id="CompositeRateOp">
+                            <apex:inputText id="CompositeRate" style="width:80px;" value="{!qqWrapper.Rate7}"  title="Composite Rate" disabled="true"/>
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                 
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Delivery Date" ></apex:outputLabel>
+                    <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField id="deliveryDateid" value="{!proRef.Date_From__c}" >
+                         <apex:actionsupport event="onchange" action="{!onChangeDelivery}" rerender="SaveId,Whenwillyouneedyourunit"/>
+                         </apex:inputField>
+                         </apex:outputpanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="PPE" />
+                        <apex:outputPanel id="PPEPanel"> 
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.Rental_PP_E}" disabled="true" title="Personal Property Expense Fee"/>
+
+                         <!--    &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!Rental_PP_E_Total}" disabled="true" /> -->
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                     
+                    
+                  <!--   <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Duration" ></apex:outputLabel>
+
+                        <apex:selectList value="{!qqWrapper.Duration}" size="1" disabled="{!!enableDuration}" id="duraId">
+                           <apex:selectOptions value="{!durationOptions}" /> 
+                            <apex:actionsupport event="onchange" action="{!getRateOnDurationChange}" rerender="SaveId,RefreshButton,rateId"/>
+                         
+                        </apex:selectList>        
+                    </apex:pageBlockSectionItem> -->
+                    
+                     <apex:pageBlockSectionItem id="rentalSectionId" >
+                        <!-- <apex:outputLabel value="Duration" />
+                        <apex:outputPanel id="rentalPeriodPanel">
+                                
+                            <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                                <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                <apex:InputText value="{!qqWrapper.Duration}"  style="width:85px;"  onchange="checkRentalLength(this,'2');"  id="duraId" title="Length of Rental in Periods (28 Days/Period)">
+                                </apex:InputText>&nbsp;&nbsp; period(s)
+                            </apex:outputPanel>
+                            <apex:actionStatus id="RentalperiodStatus" > 
+                                <apex:facet name="start">
+                                     <apex:image value="{!$Resource.Loading}" width="20" height="20"/>                          
+                               </apex:facet>
+                               <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>
+                            &nbsp;&nbsp;<div id="rentalLengthError2" style="color:#F00;" ></div>
+                                 
+                        </apex:outputPanel>  --> 
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="LLW Total" />
+                         <apex:outputPanel id="LLWPanel">   
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.LLW}" disabled="true" title="LLW= Loss Limitation Waiver"/>
+                           <!--  &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!LLWTotal}" disabled="true" /> -->
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    
+                    
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Del+Fuel" />
+                        <apex:outputPanel id="DeliveryPanel"> 
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.DeliveryTotal}" onchange="disableReCalculateButton();" title="Delivery Fee + Fuel Surcharge"/>
+                           <!--  &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!DeliveryTotal}" disabled="true" /> -->
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem> 
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Include LLW" />
+                        <apex:inputCheckbox value="{!qqWrapper.isIncludeLLW}" id="includeLLWid" disabled="true"/> 
+                      <!--   <apex:actionsupport event="onchange" action="{!disableSaveButton}" rerender="SaveId"/> -->
+                                              
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Pick Up +Fuel"/>
+                        <apex:outputPanel id="PickupPanel"> 
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.PickUpTotal}"  onchange="disableReCalculateButton();" title="Transport Fee of Pick Up + Fuel Surcharge"/>                   
+                           <!--  &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!PickUpTotal}" disabled="true" /> --> 
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem >                    
+                         <apex:outputLabel value="Fuel Surcharge" /> 
+                         <apex:inputCheckbox value="{!qqWrapper.isFuelSurcharge}"> 
+                         <apex:actionsupport event="onchange" action="{!disableSaveButton}" rerender="SaveId"/>
+                         </apex:inputCheckbox>                         
+                    </apex:pageBlockSectionItem>
+                    
+                     <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Locks Total" />
+                         <apex:outputPanel id="LockPanel">
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.LocksAmount}"  onchange="disableReCalculateButton();" title="Price of Locks"/>
+                          <!--   &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!LocksAmountTotal}" disabled="true" /> -->
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="locksec">                    
+                         <apex:outputLabel value="Locks" ></apex:outputLabel>  
+                         <apex:outputPanel id="lockPanel">
+                             <!--<apex:panelGrid columns="2">-->
+                              
+                                 <apex:inputText value="{!qqWrapper.Locks}" onkeypress="return onlyNumbers(event)" Style="width:20px;position:relative;"  id="lock" maxlength="2"> 
+                              <apex:actionsupport event="onchange" action="{!disableSaveButton}" rerender="SaveId"/>
+                              </apex:inputText>      
+                                 <!--<apex:panelGrid columns="1"> -->                           
+                                      
+                                      <!--  <a href="" value="?" onclick="increse()" style=" text-decoration: none; position:relative;top:-7px;" >?</a>
+                                       <a href="" value="?" onclick="decrese()"  style=" text-decoration: none; position:relative;top:3px;right:15px;">?</a> -->
+                                        <apex:image url="{!$Resource.SortArrowDown}" onclick="increse();" width="10" height="10" style=" text-decoration: none; position:relative;left:7px;top:-5px; -moz-transform:rotate(180deg); -webkit-transform:rotate(180deg); -o-transform:rotate(180deg); -ms-transform:rotate(180deg);" /> 
+                                        <apex:image url="{!$Resource.SortArrowDown}" onclick="decrese();" width="10" height="10" style=" text-decoration: none; position:relative;top:5px;left:-3px;" />
+                                        <!-- <apex:outputlabel value="?" onclick="increse()" style=" text-decoration: none; position:relative;top:-7px;" ></apex:outputlabel>
+                                       <apex:outputlabel value="?" onclick="decrese()"  style=" text-decoration: none; position:relative;top:3px;right:12px;" ></apex:outputlabel> -->
+                                <!--</apex:panelGrid>-->
+                             <!--</apex:panelGrid>-->
+                         </apex:outputPanel>                                        
+                    </apex:pageBlockSectionItem>
+      
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Tax Total" />
+                         <apex:outputPanel id="TaxPanel">                        
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.Tax}" disabled="true" title="Tax Total"/>
+                          <!--   &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!TaxTotal}" disabled="true" /> -->
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem> 
+                    
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                     <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Del Fuel Surcharge" />
+                        <apex:outputPanel id="FuelPanel">
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.delFuelSurcharge}"  onchange="disableReCalculateButton();" title="Delivery Fuel Surcharge Only"/>                    
+                            <!-- &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!FuelSurchargeTotal}" disabled="true" /> -->  
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem > </apex:pageBlockSectionItem> 
+                        
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="PU Fuel Surcharge" />
+                        <apex:outputPanel id="PUFuelPanel">
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.pickupFuelSurcharge}"  onchange="disableReCalculateButton();" title="Pick Up Fuel Surcharge Only"/>                    
+                            <!-- &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!FuelSurchargeTotal}" disabled="true" /> -->  
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                      
+                     <apex:pageBlockSectionItem >
+                        <apex:outputLabel ></apex:outputLabel>
+                        <apex:outputPanel >
+                        
+                        
+                        <apex:actionStatus id="RefreshStatus">
+                                <apex:facet name="stop">
+                                    <apex:commandButton value="Refresh Rates" id="RefreshButton" action="{!Refresh}" disabled="{!!qqWrapper.showRefreshQUote}" rerender="formid,saveButtonPanelId,errorPanel1,lockblock,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId" status="RefreshStatus"/>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="RefreshStatus" />
+                                </apex:facet>
+                            </apex:actionStatus>&nbsp;&nbsp;
+                            <apex:actionStatus id="RefreshNewRates">
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Re-Calculate New Rates" id="RefreshNewRatesButton" action="{!reCalculatePrice}" disabled="{!qqWrapper.disableReCalcBtn}" rerender="formid,saveButtonPanelId,errorPanel1,lockblock,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId" status="RefreshNewRates"/>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="RefreshNewRates" />
+                            </apex:facet>
+                        </apex:actionStatus>
+                            
+                        <apex:actionStatus id="QuoteRefreshStatus" > 
+                                <apex:facet name="start">
+                                    <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                </apex:facet>
+                                <apex:facet name="stop"></apex:facet>                     
+                            </apex:actionStatus>
+                       </apex:outputPanel> 
+                    </apex:pageBlockSectionItem>              
+                   
+                  
+                     <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="1st Month (COD)" />
+                         <apex:outputPanel id="CODPanel">                        
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.COD}" disabled="true" title="Total Charges for First Period (Excluding Tax)"/>
+                          <!--   &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!CODTotal}" disabled="true" /> -->
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>                     
+                    
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Recurring Charges" />
+                         <apex:outputPanel id="ReoccuringPanel"> 
+                            <apex:inputText style="width:80px;" value="{!qqWrapper.RecurringMonthlyCharges}" disabled="true" title="Rental Rate+PPE+LLW+Tax"/>
+                          <!--   &nbsp;&nbsp;<apex:inputText style="width:50px;" value="{!RecurringMonthlyChargesTotal}" disabled="true" /> -->
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>  
+                    
+                </apex:pageBlockSection>
+                
+             
+
+               <apex:pageBlockSection title="Additional Information" collapsible="true" id="AdditionalInformation">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Quote Comments" />
+                         <!-- <apex:inputText value="{!qqwrapper.QuoteComments}" /> -->
+                         <apex:inputTextArea rows="8" cols="50" value="{!qqwrapper.QuoteComments}" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Opp Close Date" />
+                     <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        
+                         <apex:inputField value="{!proRef.Close_Date__c}" />
+                         </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Residential/On Site" />
+                        <apex:inputCheckBox value="{!qqwrapper.ResidentialOnSite}" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Follow Up Task Date" />
+                        <apex:outputPanel styleClass="requiredInput" layout="block"> 
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputField value="{!OppRef.Next_Activity_Date__c}" />
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>  
+                    
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Follow Up Task Comments" />
+                         <apex:inputTextArea rows="8" cols="50" value="{!qqwrapper.followUpTaskComments}" />
+                    </apex:pageBlockSectionItem>
+                 
+                </apex:pageBlockSection>
+                
+           <div id="TaxDiv" style="display:none;"> 
+            <apex:outputPanel id="panelid">
+                               
+                    <apex:outputPanel styleClass="popupBackground" layout="block" />
+                    
+                    <apex:outputPanel style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px;" styleClass="custPopup" layout="block">                       
+                     <br/>
+                    <!--  <apex:outputtext value="{!DispAddressPopUp}"/> -->
+                     <apex:commandLink onclick="hideTaxPopUp();" reRender="panelid,fulfillingBranchPanel" >
+                          <apex:image style="position:relative;left:700px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                       </apex:commandLink>
+                     <br/>
+                     <center>
+                     <apex:outputPanel rendered="{!!DispAddressPopUp}">
+                      <div align="center">
+                            <img src="{!$Resource.Loading}" />
+                            <br/><br/>
+                            <font color="Red"><b>Loading....</b></font>
+                        </div>                  
+                    </apex:outputPanel> 
+                      <apex:pageblock rendered="{!DispAddressPopUp}" title="Select Tax Id"> 
+                      <apex:messages styleClass="errorMsg" style="font-family:georgia,garamond,serif;" /> <br/> 
+                           <!--   <apex:pageBlockTable value="{!AddressInnerClassList}" var="l">
+                                   <apex:column >
+                                      <input type="radio" name="SelectedRadio1" value="{!l.RecUniqId}" />        
+                                   </apex:column>   
+                                   <apex:column headerValue="Tax Id">
+                                       <apex:outputText value="{!l.Id}" />      
+                                   </apex:column>
+                                   <apex:column headerValue="TaxAreaStatus"> 
+                                       <apex:outputText value="{!l.taxAreaStatus}" />       
+                                   </apex:column>
+                                   <apex:column headerValue="Country">
+                                       <apex:outputText value="{!l.country}" />     
+                                   </apex:column>
+                                   <apex:column headerValue="CountryDescription">
+                                       <apex:outputText value="{!l.countryDescription}" />      
+                                   </apex:column>
+                                   <apex:column headerValue="State">
+                                       <apex:outputText value="{!l.state}" />       
+                                   </apex:column>
+                                   <apex:column headerValue="StateDescription">
+                                       <apex:outputText value="{!l.stateDescription}" />        
+                                   </apex:column>
+                                   <apex:column headerValue="City">
+                                       <apex:outputText value="{!l.city}" />        
+                                   </apex:column>
+                              </apex:pageBlockTable> -->
+                              
+                              <div style="overflow:scroll; width:100%; height:200px;">
+                                                 
+                                 <table id="selectTax_grid" width="100%"> 
+                                
+                                    <tr bgcolor="#F8F8F8">
+                                            
+                                            
+                                            <td><b>Tax Id </b></td>
+                                            <td><b>TaxAreaStatus</b></td>
+                                            <td><b>Country</b></td>
+                                            <td><b>CountryDescription Id</b></td>
+                                            <td><b>State</b></td>
+                                            <td><b>StateDescription</b></td>
+                                            <td><b>City</b></td>
+                                            
+                                    </tr>
+                                    
+                                    <apex:repeat value="{!AddressInnerClassList}" var="l">                                                  
+                                                                                            
+                                        <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.Id}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.taxAreaStatus}" />
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.country}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.countryDescription}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.state}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.stateDescription}" /> 
+                                            </td>
+                                            <td ondblclick="getSelectedRowValueTaxondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" onclick="getSelectedRowValueTax(this.parentNode.id,'{!l.RecUniqId}','selectedTex','selectTax_grid')" >
+                                                <apex:outputText value="{!l.city}" /> 
+                                            </td>
+                                            
+                                        </tr>
+                                    
+                                    </apex:repeat>
+                                    
+                                </table>
+                          
+                            </div> 
+                              
+                              <br/>
+                         
+
+                          <center>
+                              <apex:commandButton value="Ok"  onclick="hideTaxPopUpSave();" reRender="panelid,fulfillingBranchPanel,States,cityid,noZoneBtn,noZoneBtnOP" disabled="{!disableTaxOkButton}"/>&nbsp;
+                              <apex:commandButton value="Cancel" onclick="hideTaxPopUp();" reRender="panelid,fulfillingBranchPanel,noZoneBtn,noZoneBtnOP"/>      
+                          </center>
+                              </apex:pageblock>
+                               </center> 
+
+                          <br/>
+                    </apex:outputPanel>  
+                </apex:outputPanel>
+            </div>
+            <!--
+             <br/><br/>
+              <div class="borderbox">    
+                <br/><br/>
+                <b><apex:outputLabel style="font-size:14px;position:relative;left:15px;" value="Quick Rental Quote"/></b>--> 
+                <br/>
+                <table width="100%" style="position:relative;left:20px;">                
+                    <tr>                                      
+                        <td width="50%">&nbsp;</td>
+                        <td >&nbsp;</td>
+                        <td colspan="2">
+                           <!-- <apex:outputLabel style="position:relative;left:10px;" value="*Fuel Surcharge includes Delivery and Pickup" />   -->
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>               
+                </table>
+                <apex:outputPanel style="position:relative;left:150px;" id="saveButtonPanelId">
+                    &nbsp;&nbsp; 
+                    <apex:actionStatus id="SaveStatus">
+                                <apex:facet name="stop">
+                                <apex:commandButton value="Save" id="SaveId" disabled="{!!qqWrapper.showSaveButton}" action="{!saveQuickQuote}" status="SaveStatus"  reRender="formId"/>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:commandButton value="Saving..." styleclass="readmore" disabled="true" status="SaveStatus" />
+                                </apex:facet>
+                            </apex:actionStatus>
+                    
+                    &nbsp;
+                  <!--   &nbsp;&nbsp; <apex:commandButton value="No-Sale" action="{!NoSale}" reRender="formId" /> &nbsp; -->
+    <!--                 &nbsp;&nbsp; <apex:commandButton value="Raise a Sales Quote" action="{!RaiseSalesQuote}" reRender="formId" disabled="true" /> &nbsp; -->
+    <!--                 &nbsp;&nbsp; <apex:commandButton value="Convert to Rental Quote" action="{!ConvertToRentalQuote}" reRender="formId"  disabled="true"/> &nbsp; -->
+                    &nbsp;&nbsp; <apex:commandButton value="Cancel" action="{!cancelFullQuote}" />                
+                </apex:outputPanel>
+                <br/><br/><br/>
+                <div id="ProductSearchId" style="display:none;" >
+                  <apex:outputPanel id="propanelid" >
+                      <apex:outputPanel styleClass="popupBackground1" layout="block"/>
+                      <apex:outputPanel style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px; " styleClass="custPopupProduct" layout="block" >
+                          <br/>
+                          
+                            <apex:commandLink action="{!CloseProductPopUp}"  onclick="hideProductSearch();"  reRender="propanelid">
+                                <apex:image style="position:relative;left:1150px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                            </apex:commandLink>
+                          <br/>
+                          
+                          
+                          <br/>
+                          
+                           <apex:outputPanel rendered="{!!DispProductPopUp}">
+                      <div align="center">
+                            <img src="{!$Resource.Loading}" />
+                            <br/><br/>
+                            <font color="Red"><b>Loading....</b></font>
+                        </div>                  
+                    </apex:outputPanel> 
+                    <apex:outputPanel rendered="{!DispProductPopUp}">
+                          <apex:pageblock title="Search for products"  rendered="{!DispProductPopUp}">
+                           <center> 
+                           <font color="red">Either Search with pattern or select primary only.</font></center> 
+                           <apex:messages styleClass="errorMsg" style="font-family:georgia,garamond,serif;" rendered="{!DispProductPopUp}"/> <br/>
+                          <center>                        
+                                    
+                                <div class="popupborderbox1">                           
+                                      <br/>
+       
+                                      <table align="center" width="80%">
+                                          <tr>
+                                              <td colspan="4" align="center">
+                                                 <apex:outputLabel value="Search Pattern" />&nbsp;&nbsp;&nbsp;
+                                                 <apex:inputText style="width:200px;" value="{!qqWrapper.productSearchWord}" />
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td>&nbsp;</td>
+                                              <td>&nbsp;</td>
+                                              <td>&nbsp;</td>
+                                              <td>&nbsp;</td>
+                                          </tr>
+                                          <tr>   
+                                                
+                                                <td>
+                                                   <apex:outputLabel value="Product Type" />                                       
+                                              </td>
+                                                                                 
+                                              <td align="left">    
+
+                                                 
+                                                 <!--  <apex:selectList value="{!qqWrapper.ProductType}" size="1">
+                                                  <apex:selectOptions value="{!productTypeOptions}" /> 
+                                                  </apex:selectList>  -->
+                                                 
+                                                  <apex:repeat value="{!productTypesListNew}" var="l">  
+                                                  <input type="radio" name="SelectedRadioPT" value="{!l.RecUniqId}" onclick="SelectedPTfunc('{!l.RecUniqId}');"/>
+                                                  &nbsp;&nbsp; <apex:outputText value="{!l.productType}" /> 
+                                                   <br/>
+                                                   </apex:repeat>
+                                              </td>
+                                              
+                                               <td>
+                                                   <apex:outputLabel value="Product Size" />                                     
+                                              </td>
+                                              <td align="left">
+                                                 
+                                                <!--   <apex:selectList value="{!qqWrapper.ProductSize}" size="1">
+                                                      <apex:selectOptions value="{!productSizeOptions}" /> 
+                                                  </apex:selectList> --> 
+                                                 
+                                                  <apex:repeat value="{!productSizesListNew}" var="l">  
+                                                  <input type="radio" name="SelectedRadioPS" value="{!l.RecUniqId}" onclick="SelectedPSfunc('{!l.RecUniqId}');"/>
+                                                   &nbsp;&nbsp; <apex:outputText value="{!l.productSize}" /> 
+                                                   <br/>
+                                                   </apex:repeat>
+                                                  <br/><br/>
+                                                  <apex:outputLabel value="Primary Only" />&nbsp;&nbsp;
+                                                  <apex:inputCheckbox value="{!qqWrapper.PrimaryOnly}"/> 
+                                              </td>
+                                              <td>
+                                                   <!-- &nbsp;&nbsp;<apex:outputLabel value="Product Features" />       -->                                     
+                                              </td>
+                                              <td align="left">
+                                                   <!-- <apex:inputCheckbox value="{!qqWrapper.SideRollDoors}" disabled="true" />&nbsp;&nbsp;
+                                                   <apex:outputLabel value="Side Roll Doors" /><br/>
+                                                   <apex:inputCheckbox value="{!qqWrapper.EndRollDoors}" disabled="true"/>&nbsp;&nbsp;
+                                                   <apex:outputLabel value="End Roll Doors" /><br/>                                            
+                                                   <apex:inputCheckbox value="{!qqWrapper.RecordStorage}" disabled="true"/>&nbsp;&nbsp;
+                                                   <apex:outputLabel value="Record Storage" /><br/>
+                                                   <apex:inputCheckbox value="{!qqWrapper.HighCubes}" disabled="true"/>&nbsp;&nbsp;
+                                                   <apex:outputLabel value="High Cubes" /><br/>
+                                                   <apex:inputCheckbox value="{!qqWrapper.Shelving}" disabled="true"/>&nbsp;&nbsp;
+                                                   <apex:outputLabel value="Shelving" /><br/> -->
+                                              </td>
+                                          </tr>
+                                      </table>
+                                      <br/>
+                                      <apex:actionStatus id="SearchLoad">
+                                        <apex:facet name="stop">
+                                            <apex:commandButton value="Search" action="{!ProductSearch}" status="SearchLoad" reRender="propanelid"/>
+                                        </apex:facet>
+                                        <apex:facet name="start">
+                                            <apex:commandButton value="Loading..." styleclass="readmore" disabled="true" status="SearchLoad" />
+                                        </apex:facet>
+                                    </apex:actionStatus>
+                                      
+                                      <apex:actionStatus id="sts4" > 
+                                        <apex:facet name="start">
+                                            <apex:image value="{!$Resource.Loading}" width="25" height="25"/>                               
+                                        </apex:facet>
+                                        <apex:facet name="stop"></apex:facet>                     
+                                    </apex:actionStatus>
+                                      <br/><br/> 
+                                     </div>
+                              <br/><br/>  
+
+                              <apex:outputpanel id="out1" rendered="{!ShowProduct}">
+                        
+                            
+                                <table  style="table-layout: fixed; width: 100%;"> 
+                                    <tr bgcolor="#F8F8F8" width="90%">
+                                        
+                                            <td width="8%"><b>Main Feature</b></td>
+                                            <td width="8%"><b>Item Code</b></td>
+                                            <td width="15%"><b>Description</b></td>
+                                            <td width="5%"><b>QtyAvail</b></td>
+                                            <td width="8%"><b>Reserved</b></td>
+                                            <td width="8%"><b>Hold&amp;Inspect
+                                            +Light RM</b></td>
+                                            <td width="5%"><b>ORNPU</b></td>
+                                            <td width="5%"><b>Util%</b></td>
+    <!--                                         <td><b>Off Rent Not P.U.</b></td> -->
+                                            <!-- <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','2-6 Period','1 Period')}"></apex:outputLabel></b></td>
+                                            <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','7-12 Period','2-6 Period')}"></apex:outputLabel></b></td>
+                                            <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','13-24 Period','7-12 Period')}"></apex:outputLabel></b></td>
+                                            <td width="7%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','25+ Periods','13+ Periods')}"></apex:outputLabel></b></td>
+                                            <td width="5%"><b>Contractor</b></td> -->
+                                            <td width="12%"><b>Standard Rate</b></td>
+                                            <td width="12%"><b>Base Rate</b></td>
+                                            <td width="12%"><b>Composite Rate</b></td>
+                                            
+                                            
+                                    </tr>
+                                    <tr>
+                                    
+                                    <td colspan="13" >
+                                                <div style="overflow:scroll;  height:220px;">
+                                                    <table   style="table-layout: fixed; width: 100%;" id="selectProd1_grid">
+                                    
+                                    <apex:repeat value="{!InnerProductsList}" var="l">                                                  
+                                                                                            
+                                        <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.mainFeature}" /> 
+                                            </td>
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PID}" />
+                                            </td>
+                                            
+                                            <td width="15%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PDescription}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PQtyAvail}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PQtyReserved}" />
+                                            </td>
+                                                
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.pHILRM}" />
+                                            </td>
+                                            <td  width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.pORNPU}" />
+                                            </td>
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.pUtilPercent}" />
+                                            </td>
+                                            
+                                            <!-- <td  width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PRate1}" />
+                                            </td>
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PRate2}" />
+                                            </td>
+                                            
+                                            <td  width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PRate3}" />
+                                            </td>
+                                            
+                                            <td width="7%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PRate4}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd1_grid')" >
+                                                <apex:outputText value="{!l.PRate5}" />
+                                            </td> -->
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate1}" />
+                                            </td>
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate5}" />
+                                            </td>
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate7}" />
+                                            </td>
+                                            
+                                            
+                                        </tr>
+                                    </apex:repeat>
+                                    
+                                       </table>
+                                        </div>
+                                      </td>
+                                    
+                                    </tr>
+                                </table>
+                    
+                              </apex:outputpanel>
+                              
+                              <apex:outputpanel id="out2" rendered="{!!ShowProduct}">
+                     
+                       
+                           
+                                    <table  style="table-layout: fixed; width: 100%;"> 
+                                    <tr bgcolor="#F8F8F8" width="90%">
+                                        
+                                            <td width="8%"><b>Main Feature</b></td>
+                                            <td width="8%"><b>Item Code</b></td>
+                                            <td width="15%"><b>Description</b></td>
+                                            <td width="5%"><b>QtyAvail</b></td>
+                                            <td width="8%"><b>Reserved</b></td>
+                                            <td width="8%"><b>Hold&amp;Inspect
+                                            +Light RM</b></td>
+                                            <td width="5%"><b>ORNPU</b></td>
+                                            <td width="5%"><b>Util%</b></td>
+    <!--                                         <td><b>Off Rent Not P.U.</b></td> -->
+                                            <!-- <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','2-6 Period','1 Period')}"></apex:outputLabel></b></td>
+                                            <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','7-12 Period','2-6 Period')}"></apex:outputLabel></b></td>
+                                            <td width="8%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','13-24 Period','7-12 Period')}"></apex:outputLabel></b></td>
+                                            <td width="7%"><b><apex:outputLabel value="{!IF(qqWrapper.TransactionType ='MOBO' || qqWrapper.TransactionType = 'SECO','25+ Periods','13+ Periods')}"></apex:outputLabel></b></td>
+                                            <td width="5%"><b>Contractor</b></td> -->
+                                            <td width="12%"><b>Standard Rate</b></td>
+                                            <td width="12%"><b>Base Rate</b></td>
+                                            <td width="12%"><b>Composite Rate</b></td>
+                                            
+                                            
+                                    </tr>
+                                    <tr>
+                                    
+                                    <td colspan="13" >
+                                                <div style="overflow:scroll;  height:220px;">
+                                                    <table  style="table-layout: fixed; width: 100%;" id="selectProd2_grid">
+                                    
+                                    <apex:repeat value="{!InnerProductSearchList}" var="l">                                                 
+                                                                                            
+                                        <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.mainFeature}" /> 
+                                            </td>
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PID}" />
+                                            </td>
+                                            
+                                            <td width="15%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PDescription}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PQtyAvail}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PQtyReserved}" />
+                                            </td>
+                                                
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.pHILRM}" />
+                                            </td>
+                                            <td  width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.pORNPU}" />
+                                            </td>
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.pUtilPercent}" />
+                                            </td>
+                                            
+                                            <!-- <td  width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate1}" />
+                                            </td>
+                                            
+                                            <td width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate2}" />
+                                            </td>
+                                            
+                                            <td  width="8%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate3}" />
+                                            </td>
+                                            
+                                            <td width="7%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate4}" />
+                                            </td>
+                                            
+                                            <td width="5%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate5}" />
+                                            </td> -->
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate1}" />
+                                            </td>
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate5}" />
+                                            </td>
+                                            <td width="12%" ondblclick="getSelectedRowValueProdondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" onclick="getSelectedRowValueProd(this.parentNode.id,'{!l.RecUniqId}','selectedProd','selectProd2_grid')" >
+                                                <apex:outputText value="{!l.PRate7}" />
+                                            </td>
+                                            
+                                            
+                                        </tr>
+                                    </apex:repeat>
+                                    
+                                    </table>
+                                        </div>
+                                      </td>
+                                    
+                                    </tr>
+                                    
+                                </table>
+                              
+                             
+                              </apex:outputpanel>
+                          </center> 
+                          <center>
+                            <br/>
+                                <apex:commandButton value="Ok" status="ProductSelection"  action="{!SelectedProduct}" onclick="hideProductSearch();" reRender="defCodeError,prodsecid,duraId,PPEPanel,LLWPanel,DeliveryPanel,PickupPanel,LockPanel,TaxPanel,FuelPanel,PUFuelPanel,CODPanel,RefreshButton,RefreshNewRatesButton,ReoccuringPanel,SaveId,rateId,StandardRate,BaseRate,CompositeRate,errorMsgsec"/>&nbsp;&nbsp;
+                                <apex:commandButton value="Cancel" status="ProductSelection"  action="{!CloseProductPopUp}"  onclick="hideProductSearch();"  reRender="propanelid"/>
+                            <br/>
+                          </center>
+                          </apex:pageblock> 
+                         </apex:outputPanel>
+                      </apex:outputPanel>    
+                  </apex:outputPanel>
+                  </div>
+                  
+                  
+                  
+                  
+            <div id="descreteAddDiv" style="display:none;">
+                  <apex:outputPanel styleClass="DescAddresspopupBackground" layout="block" />
+                      <apex:outputPanel id="fulfillingBranchPanel" style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px;" styleClass="custDescAddressPopup" layout="block" >
+                      <br/> 
+                   <apex:commandLink status="loginStatus" action="{!CancelFulfillingBranchSelected}"  onclick="hideshowDescretePopUpHide('descreteAddDiv');" rerender="fulfillingBranchPanel,TaxDiv">
+                 
+                     <apex:image style="position:relative;left:700px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                      </apex:commandLink>
+                      <br/>
+                      
+                      <apex:outputPanel rendered="{!!DispDescProductPopUp}" id="addressImage">
+                      <div align="center">
+                      
+                            <img src="{!$Resource.Loading}" rendered="{!!DispDescProductPopUp}"/>
+                            <br/><br/>
+                            <font color="Red"><b>Loading....</b></font>
+                        </div>                  
+                    </apex:outputPanel> 
+                     
+                      <apex:pageblock title="Select an Address" rendered="{!DispDescProductPopUp}" id="selecAdd">           
+                           <br/>  
+                              <apex:messages styleClass="errorMsg" style="font-family:georgia,garamond,serif;" /> <br/>           
+                  
+                      <div style="overflow:scroll; width:100%; height:200px;">
+                                                 
+                                 <table id="selectAddr_grid" width="100%"> 
+                                
+                                    <tr bgcolor="#F8F8F8">
+                                            
+                                            
+                                            <td><b>Address </b></td>
+                                            <td><b>State</b></td>
+                                            <td><b>Zip Code</b></td>
+                                            <td><b>Country Id</b></td>
+                                            <td><b>Fulfilling Branch</b></td>
+                                            <td><b>Fulfilling Branch Name</b></td>
+                                            
+                                    </tr>
+                                    
+                                    <apex:repeat value="{!DescarteInnerClassList}" var="l">                                                 
+                                                                                            
+                                        <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.Address1}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.state}" />
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.ZipCode}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.CountryId}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.fulfillingBranch}" /> 
+                                            </td>
+                                            
+                                            <td ondblclick="getSelectedRowValueAddondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" onclick="getSelectedRowValueAdd(this.parentNode.id,'{!l.RecUniqId}','selectedAddr','selectAddr_grid')" >
+                                                <apex:outputText value="{!l.fulfillingBranchName}" /> 
+                                            </td>
+                                            
+                                        </tr>
+                                    
+                                    </apex:repeat>
+                                    
+                                </table>
+                          
+                            </div> 
+                      
+                      <br/>
+                      <center>    
+                          <apex:commandButton value="Ok" status="loginStatus"  action="{!FulfillingBranchSelected}" onclick="showTaxPopUp();" reRender="panelid,fid, dfbId,deliveryZone, crossfId,addId,zipCode,States,cityid,addressValidateError,noZoneBtn,noZoneBtnOP" disabled="{!!disableAddressOkButton}"/>
+                          <apex:commandButton value="Cancel"  status="loginStatus" action="{!CancelFulfillingBranchSelected}"  onclick="hideshowDescretePopUpHide('descreteAddDiv');" rerender="fulfillingBranchPanel,TaxDiv,noZoneBtn,noZoneBtnOP"/>
+                      </center>
+                      <br/>
+                      </apex:pageblock>
+                     
+                  </apex:outputPanel>
+                  </div>
+                  
+           <!--  </div>  -->
+           <div id="branchsearch" style="display:none;">
+           <apex:outputpanel id="branchSearchPanel">
+           <apex:outputPanel styleClass="DescAddresspopupBackground" layout="block"  />
+                      <apex:outputPanel style="-moz-border-radius: 15px;-webkit-border-radius: 15px;border-radius: 10px;" styleClass="custDescAddressPopup" layout="block" >
+                          <br/>  
+                          <apex:commandLink onclick="hideBranchSearch();" reRender="branchSearchPanel" >
+                              <apex:image style="position:relative;left:700px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                          </apex:commandLink>
+                          <br/>
+                          
+                          <apex:outputPanel rendered="{!!dispBranchPopUp}">
+                      <div align="center">
+                            <img src="{!$Resource.Loading}" />
+                            <br/><br/>
+                            <font color="Red"><b>Loading....</b></font>
+                        </div>                  
+                    </apex:outputPanel> 
+                    
+                     
+                      <apex:pageblock title="Select a Branch" rendered="{!dispBranchPopUp}">   
+                                   
+                      <apex:outputLabel value="Branch Id" />&nbsp;&nbsp;
+                      <apex:inputText value="{!qqWrapper.BranchIdSearchWord}" >
+                        <apex:actionsupport event="onkeyup" action="{!SearchDescAddress}" rerender="out3" />
+                      </apex:inputText>&nbsp;&nbsp;&nbsp;&nbsp;
+                      <apex:outputLabel value="Branch Name" />&nbsp;&nbsp;
+                      <apex:inputText value="{!qqWrapper.BranchNameSearchWord}" >
+                        <apex:actionsupport event="onkeyup" action="{!SearchDescAddress}" rerender="out3" />
+                      </apex:inputText>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <!--   <apex:commandButton value="Search" action="{!SearchDescAddress}" reRender="out3"/> -->
+                      <br/><br/>  
+                      <apex:outputpanel id="out3" >
+                     
+                                    
+                       <!--  <apex:pageBlockTable value="{!BranchIdNames}" var="l" rendered="{!!showSearchBranchIdTable}">
+                         <apex:column >
+                           <input type="radio" name="SelectedRadioBranch" value="{!l.RecUniqId}"/>         
+                         </apex:column>
+                                              
+                         <apex:column headerValue="Branch Id">
+                            <apex:outputText value="{!l.Id}" />        
+                         </apex:column>
+                            
+                            <apex:column headerValue="Name">
+                            <apex:outputText value="{!l.Name}" />        
+                         </apex:column> 
+                         
+                      </apex:pageBlockTable>
+                      
+                      <apex:pageBlockTable value="{!BranchSearchList}" var="l" rendered="{!showSearchBranchIdTable}">
+                         <apex:column >
+                           <input type="radio" name="SelectedRadioBranch"  value="{!l.RecUniqId}"/>         
+                         </apex:column>
+                                              
+                         <apex:column headerValue="Branch Id">
+                            <apex:outputText value="{!l.Id}" />        
+                         </apex:column>
+                            
+                            <apex:column headerValue="Name">
+                            <apex:outputText value="{!l.Name}" />        
+                         </apex:column> 
+                         
+                      </apex:pageBlockTable>  -->
+                      
+                      <apex:outputPanel rendered="{!!showSearchBranchIdTable}">
+                      <table  width="100%"> 
+                                    <tr bgcolor="#F8F8F8" >
+                                            
+                                            <td width="10%"><b>Branch Id</b></td>
+                                            <td width="90%" align="center"><b>Name</b></td>
+                                    </tr>
+                                     <tr >
+                                      <td colspan="3" >
+                                                <div style="overflow:scroll; width:100%; height:220px;">
+                                                    <table width="100%" id="selectBranch_grid">
+                                     
+                                         <apex:repeat value="{!BranchIdNames}" var="l">                                                  
+                                                                                            
+                                         <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td ondblclick="getSelectedRowValueBranchondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid')"  onclick="getSelectedRowValueBranch(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid')" >
+                                                <apex:outputText value="{!l.Id}" /> 
+                                            </td>
+                                            
+                                            <td align="center" ondblclick="getSelectedRowValueBranchondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid')"  onclick="getSelectedRowValueBranch(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid')" >
+                                                <apex:outputText value="{!l.Name}" />
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                                     </table>
+                                        </div>
+                                      </td>
+                                    
+                                    </tr>
+                                </table>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel rendered="{!showSearchBranchIdTable}">
+                      <table   width="100%"> 
+                                    <tr bgcolor="#F8F8F8" >
+                                            
+                                              <td width="10%"><b>Branch Id</b></td>
+                                            <td width="90%" align="center"><b>Name</b></td>
+                                    </tr>
+                                    
+                                     <tr >
+                                      <td colspan="3">
+                                                <div style="overflow:scroll; width:100%; height:220px;">
+                                                    <table width="100%" id="selectBranch_grid2">
+                                    <apex:repeat value="{!BranchSearchList}" var="l">                                                                                               
+                                        <tr id="{!l.RecUniqId}" bgcolor="#F2F2F2">
+                                            
+                                            <td ondblclick="getSelectedRowValueBranchondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid2')"  onclick="getSelectedRowValueBranch(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid2')" >
+                                                <apex:outputText value="{!l.Id}" /> 
+                                            </td> 
+                                            
+                                            <td align="center" ondblclick="getSelectedRowValueBranchondblclick(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid2')"  onclick="getSelectedRowValueBranch(this.parentNode.id,'{!l.RecUniqId}','selectedBranch','selectBranch_grid2')" >
+                                                <apex:outputText value="{!l.Name}" />
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                                     </table>
+                                        </div>
+                                      </td>
+                                    
+                                    </tr>
+                                </table>
+                      </apex:outputPanel>
+                      
+                      
+                     
+                      
+                      </apex:outputpanel>
+                      <br/>
+                      <center>    
+                          <apex:commandButton value="Ok"  status="LoadBranch"  action="{!SelectedBranchMethod}" onclick="selectedBranchId();" reRender="panelid, fid, dfbId,deliveryZone, crossfId,addressValidateError,validatebutton,RefreshButton,RefreshNewRatesButton,proSelect,SaveId,prodsecid,duraId"/> 
+                          <apex:commandButton value="Cancel"  onclick="hideBranchSearch();" reRender="branchSearchPanel"/>
+                      </center>
+                      <br/>
+                      </apex:pageblock>
+                  </apex:outputPanel>
+                  </apex:outputpanel>
+                  </div>
+                  
+                  <!------------- capacity lookup popups ---------->
+                        <div id="capacityLookupPopupId" style="display:none;">
+                         <apex:outputpanel id="CapacityLookupPanel">
+                               <apex:outputPanel styleClass="DescAddresspopupBackground" layout="block" />
+                               <apex:outputPanel styleClass="custDescAddressPopup" layout="block" >                             
+                                     
+                                       <apex:commandLink action="{!hideCapacitylookupPop}" reRender="CapacityLookupPanel" onclick="hideCancelcapacityLookupPopUp();">
+                                           <apex:image style="position:relative;left:700px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                                       </apex:commandLink>
+                                                                       
+                                      <apex:outputPanel rendered="{!!isShowcapacityLookupPopUp}"> 
+                                          <div align="center">
+                                              <img src="{!$Resource.Loading}" />
+                                              <br/><br/>
+                                              <font color="Red"><b>Loading....</b></font>
+                                          </div>                    
+                                      </apex:outputPanel> 
+                                    
+                                      <apex:pageblock id="CapacityLookupPBTableId" title="Capacity Lookup" rendered="{!isShowcapacityLookupPopUp}">  
+                                                
+                                            <div style="overflow:scroll; width:100%; height:200px;">
+                                                
+                                                <table id="capacityLookup_grid" width="100%"> 
+                                                    
+                                                    <tr bgcolor="#F8F8F8">                                                  
+                                                        <td><b>Date</b></td>
+                                                        <td><b>mileage</b></td>
+                                                        <td><b>storeNumber</b></td>
+                                                        <td><b>storeType</b></td>
+                                                        <td><b>depotGroup</b></td>
+                                                        <td><b>amCapacity</b></td>
+                                                        <td><b>pmCapacity</b></td>
+                                                        <td><b>noPrefCapacity</b></td>
+                                                    </tr>
+                                                                                                    
+                                                    <apex:repeat value="{!CapacityLookupList}" var="l" >
+                                                        <tr id="{!l.dateVal}" bgcolor="#F2F2F2">
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText value="{!l.dateVal}" />
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText value="{!l.mileage}" />
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText value="{!l.storeNumber}" />
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText value="{!l.storeType}" />
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText value="{!l.depotGroup}" />
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText style="color:{!if(l.amCapacity = '0' ,'red','')}" value="{!l.amCapacity}"/>
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText style="color:{!if(l.pmCapacity = '0' ,'red','')}"  value="{!l.pmCapacity}"/>
+                                                            </td>
+                                                            <td ondblClick="changeRowColorInCapacityDblClk(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" onclick="changeRowColorInCapacity(document.getElementById('{!l.dateVal}'),'{!l.dateVal}','capacitySelactedValue');" >
+                                                                <apex:outputText style="color:{!if(l.noPrefCapacity = '0' ,'red','')}" value="{!l.noPrefCapacity}"/>
+                                                            </td>
+                                                        </tr> 
+                                                    </apex:repeat>  
+                                                </table>                                            
+                                            </div>    
+                                            <br/>
+                                            <center>
+                                                <div  id="CapacityDivEnable" style="display:none; width: 50%;" > 
+                                                    <apex:commandButton value="Ok" action="{!CapacityIdSelected}" onclick="hideCapacityPopUp();"  reRender="CapacityLookupPanel,deliveryDateid,Whenwillyouneedyourunit"/>                                          
+                                                    <apex:commandButton value="Cancel"  action="{!hideCapacitylookupPop}" onclick="hideCancelcapacityLookupPopUp();" reRender="CapacityLookupPanel,errorMessageTop"/>
+                                                </div>   
+                                                <div  id="CapacityDivDisable" >
+                                                    <apex:commandButton value="Ok" disabled="true" action="{!CapacityIdSelected}" onclick="hideCapacityPopUp();" reRender="CapacityLookupPanel,deliveryDatePanelId,deliveryDateid,Whenwillyouneedyourunit,DueDate,delvDateAfterSave,errorMessageTop"/>                                           
+                                                    <apex:commandButton value="Cancel"  action="{!hideCapacitylookupPop}" onclick="hideCancelcapacityLookupPopUp();" reRender="CapacityLookupPanel,errorMessageTop"/>
+                                                </div>
+                                            </center>
+                                            
+                                      </apex:pageblock>
+                                                                            
+                               </apex:outputPanel>
+                         </apex:outputpanel>
+                     </div> 
+                  
+           </apex:pageBlock>
+           </apex:outputPanel> 
+          </apex:outputPanel> 
+        </apex:form> 
+        
+    </apex:page>

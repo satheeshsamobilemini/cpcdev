@@ -1,0 +1,5 @@
+<apex:page Controller="SalesInvImageController" showHeader="false" sidebar="false" >
+
+<apex:image id="theImage" value="data:image/png;base64,{!ImageUrl}" />
+
+</apex:page>

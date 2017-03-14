@@ -1,0 +1,77 @@
+<apex:component id="CustomerBillingTabComponent"> 
+    
+    <apex:attribute name="fullQuote" type="MMI_Full_Quotes_UK__c" description="Full Quote Object" required="true"/>
+    <apex:attribute name="SearchRep" type="ApexPages.Action" description="Search rep button action" required="true"/>
+    <apex:attribute name="SearchContact" type="ApexPages.Action" description="Search contact button action" required="true"/>
+    <apex:attribute name="billingConatctId" type="String" description="Billing Conatct ID" required="true" />
+    <apex:attribute name="ContactSearchButton" type="Boolean" description="Enable or Disable search button for contact details"/>
+    <apex:attribute name="markAsRequired" type="Boolean" description="Enable or Disable required fields"/> 
+          
+        <apex:pageBlockSection id="pBSBillingDetails" title="Billing Details" columns="2" collapsible="false">
+            
+            <apex:inputField id="billingCompanyName" taborderhint="1" value="{!fullQuote.Billing_Company_Name__c}"/>
+                    
+            
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Rep ID" for="repID"/>
+                <apex:outputPanel layout="block">
+                <apex:actionRegion >
+                  <apex:inputText size="05" id="repID" styleClass="repId" value="{!fullQuote.Rep_ID__c}" tabindex="70" required="{!markAsRequired}" />
+                  <apex:inputField style="width : 150px" styleClass="repId" id="repName" value="{!fullQuote.Rep_Name__c}" taborderhint="8" required="{!markAsRequired}" />
+                      <apex:commandButton onclick="search('{!$Component.repID}','{!$Component.repName}', '{!$Component.theHiddenInput}');" 
+                                          tabindex="90" rerender="test" value="Search" />
+                  </apex:actionRegion>
+              </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:inputField id="billingAddress" taborderhint="2" style="width: 167px" value="{!fullQuote.Billing_Address__c}" required="{!markAsRequired}"/>
+            
+            <apex:outputPanel layout="block">
+            <apex:outputText styleClass="fieldSectionLabelC" value="Customer Details"/>
+                <apex:actionRegion >
+                     <apex:inputHidden id="billingContactId" value="{!billingConatctId}" />
+                     <apex:commandButton style="margin-left: 3.6%; margin-top: 1%; width: 14%"  value="Search" tabindex="100"
+                                         disabled="{!ContactSearchButton}" onclick="openContactSelection('{!$Component.billingContactId}');" reRender="true"/>
+                      <apex:actionFunction action="{!SearchContact}" name="openContactSelection1" reRender="outputPanelFirstName,lname,phone,mobile,email,fax">
+                           <apex:param name="conId" value="{!billingConatctId}" assignTo="{!billingContactID}"/>
+                      </apex:actionFunction>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            
+            
+            <apex:inputField id="billingCity" value="{!fullQuote.Billing_City__c}" taborderhint="3" required="{!markAsRequired}"/>
+            
+            <apex:pageBlockSectionItem >
+              <apex:outputLabel value="First Name" for="billingFirstName"/>
+                 <apex:outputPanel id="outputPanelFirstName">
+                      <apex:inputField id="billingFirstName" value="{!fullQuote.Billing_First_Name__c}" taborderhint="11" required="{!markAsRequired}"/>
+                 </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:inputField id="billingCounty" value="{!fullQuote.Billing_County__c}" taborderhint="4" />
+            
+            <apex:inputField value="{!fullQuote.Billing_Last_Name__c}" id="lname" taborderhint="12" required="{!markAsRequired}"/>
+            
+            <!-- Post Code lookup Button is not required as it will be a auto complete field -->
+            <apex:inputField id="postcode" value="{!fullQuote.Billing_Postcode__c}" taborderhint="5" required="{!markAsRequired}"/>
+                        
+            <apex:inputField value="{!fullQuote.Billing_Phone__c}" id="phone" taborderhint="13" required="{!markAsRequired}"/>
+            
+            <apex:inputField id="billingCountry" value="{!fullQuote.Billing_Country__c}" taborderhint="6" />
+            
+            <apex:inputField value="{!fullQuote.Billing_Mobile__c}" id="mobile" taborderhint="14" required="{!markAsRequired}"/><br/>
+            
+            <apex:inputField value="{!fullQuote.Billing_Email__c}" id="email" taborderhint="15" required="{!markAsRequired}"/><br/>
+            
+            <apex:inputField value="{!fullQuote.Billing_Fax__c}" id="fax" taborderhint="16"/>   
+            
+        </apex:pageBlockSection>
+          
+        <apex:pageBlockSection title="Additional Info" columns="2" collapsible="false">
+            <apex:inputField value="{!fullQuote.Industry__c}" id="industy" taborderhint="17" required="{!markAsRequired}"/>
+             <apex:inputField value="{!fullQuote.Type__c}" required="{!markAsRequired}" id="type"/>
+            <apex:inputField value="{!fullQuote.Unit_Purpose__c}" id="unitPurpose" taborderhint="18" required="{!markAsRequired}"/>
+        </apex:pageBlockSection>
+    
+</apex:component>

@@ -1,0 +1,5 @@
+<apex:page standardController="Opportunity" extensions="BRNSHRK.BrainsharksActionController" action="{!initPage}">
+
+<c:BrainsharksAction recordId="{!Opportunity.Id}"/>
+
+</apex:page>

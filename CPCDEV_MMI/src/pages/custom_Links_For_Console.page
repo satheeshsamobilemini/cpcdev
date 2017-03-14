@@ -1,0 +1,233 @@
+<apex:page sidebar="false" showHeader="false"  controller="CustomLinksController">
+<style>
+
+pre.exception {
+    font-size: 145%;
+}
+
+body, td {
+    margin:0px;
+    color:#333;
+}
+
+body {
+    background-repeat: repeat-x;
+    background-position: left top;
+    font-size: 75%;
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background-color: #FFF;
+}
+
+a {
+    color:#333;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+th {
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+form {
+    margin:0px;
+    padding:0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Verdana', 'Geneva', sans-serif;
+    font-size: 100%;
+    margin:0px;
+    display:inline;
+}
+
+.sidebarModule {
+    background-color:#E8E8E8;
+    margin: 0 0 2px 0;
+    overflow: hidden;
+}
+
+.sidebarModule .requiredMark {
+    color: #E8E8E8; /* Hide in background */
+}
+
+.sidebarModuleHeader {
+    padding: 15px 8px 2px 15px;
+    font-weight: bold;
+}
+
+.sidebarModuleBody,
+.sidebarModuleBodyNoHeader {
+    padding: 0 6px 16px 11px;
+}
+
+.sidebarModuleBodyNoHeader {
+    padding-top: 15px;
+}
+
+.sidebarModuleBody select {
+    font-size: 91%;
+}
+
+.sidebarModuleTag {
+    vertical-align:top;
+}
+
+.sidebarModuleTag img {
+    padding-right:.5em;
+    vertical-align:bottom;
+}
+
+/* - Image - */
+.imageModule .sidebarModuleBody {
+    margin: auto;
+    padding-left: 0;
+    padding-right: 0;
+    width: 185px;
+}
+
+
+/* - Nested Base - */
+.nestedModule {
+    background-color: #E8E8E8;
+    background-image:  url("/img/bgmMessage.gif");
+    background-repeat: no-repeat;
+    background-position: left top;
+    border-color: #E8E8E8; /* Match the background color */
+    border-style: solid;
+    border-width: 10px 0;
+    margin-top: -2px; /* Eat up the margin spacing that's normally present */
+    padding:0px 15px 0px 13px;
+}
+
+.nestedModuleInner {
+    background-color: #FFF;
+    margin-bottom: 0;
+}
+
+.nestedModule .sidebarModuleHeader {
+    padding-top: 7px;
+    padding-bottom: 5px;
+}
+
+.nestedModule .sidebarModuleBody {
+    border-top: 1px solid #CCC;
+    line-height:1.6em;
+    margin: 0 10px 8px;
+    padding: 0px 3px 0 5px;
+}
+
+/* - Custom Links - */
+.linksModule ul {
+    padding: 2px 0 1px 10px;
+    margin: 0;
+}
+
+.linksModule li {
+    list-style: disc;
+    padding: 0;
+    line-height: 1.3em;
+    margin: 0;
+}
+
+</style>
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<script>
+  function reloadWindow(obj){
+    
+     if (sforce.console.isInConsole()) {
+        testGetFocusedPrimaryTabId(obj); 
+    }else{
+        window.parent.location.href = obj;
+    }
+       
+  }
+  
+  function testGetFocusedPrimaryTabId(pUrl) {
+            
+            sforce.console.getFocusedPrimaryTabId(function showTabId(result) {
+                //Display the tab ID
+                //alert(pUrl);
+                result.calledUrl = pUrl;
+                //alert('Tab ID: ' + result.id);
+                var primaryTabId = result.id;
+                sforce.console.openSubtab(primaryTabId , result.calledUrl, true, 
+                    'Custom link result', null,openSuccess, 'salesforceSubtab');
+            });
+        }
+       
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            /*if (result.success == true) {
+                alert('subtab successfully opened');
+            } else {
+                alert('subtab cannot be opened');
+            }*/
+        };
+  
+  
+  
+  
+</script>
+
+
+
+<div class="nestedModule linksModule" style="width:100%;height:100%;padding:10px" >
+    
+    <div class="sidebarModule nestedModuleInner" style="width:100%;height:100%">   
+        
+        <div class="sidebarModuleHeader">
+            <h2></h2>
+        </div>
+        
+        <div class="sidebarModuleBody"  >
+            <b>  My Daily Priorities   </b>  
+            <ul>
+            
+              <li><a href="#"   onclick="reloadWindow('/00Q?fcf=00B80000006zPHO')">My Open Hot Leads</a><label style="color:red"><b><apex:outputText value=" ({!myOpenHotLeads})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/006?fcf=00B80000008Yva9')">My Open Opportunity Closing Today</a> <label style="color:red"><b><apex:outputText value=" ({!myOpenOpps})" escape="false" /></b></label></li>
+              <li><a href="#" onclick="reloadWindow('/00O80000003OGyO')">My Open tasks</a> <label style="color:red"><b> <apex:outputText value=" ({!myOverdueTasks})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/a0T?fcf=00B80000008YvaJ')">My Job Profile Coverage</a> <b><apex:outputText value=" ({!myOpenjbCoverage})" escape="false" /></b></li>
+              <li><a href="#"   onclick="reloadWindow('/00Q?fcf=00B80000007pFCM')">Warm Dodge Leads</a> <label style="color:red"><b><apex:outputText value="({!myOpenWarmDodgeLeads})" escape="false" /></b></label></li>
+              <li><a href="#"   onclick="reloadWindow('/00Q?fcf=00B800000089HkS')">Open Campaign Leads</a> <label style="color:red"><b><apex:outputText value="({!MyOpenCampaignLeads})" escape="false" /></b></label></li>  
+            </ul>
+              <br/>
+                <b> Clean My Room </b>  
+          <ul>
+           
+           <li><a href="#"   onclick="reloadWindow('/00Q?fcf=00B80000008YyVl')">Hot Leads Not Called</a> <label style="color:red"><b><apex:outputText value="({!HotLeadsNotCalled})" escape="false" /></b></label></li>  
+           <li><a href="#"   onclick="reloadWindow('/00O80000005UvuY')">Swept Opportunity Not Called</a> <label style="color:red"><b><apex:outputText value="({!SweptOppsNotCalled})" escape="false" /></b></label></li>  
+           <li><a href="#"   onclick="reloadWindow('/a0T?fcf=00B80000008YvaE')">JP's Past Completion Date</a> <label style="color:red"><b><apex:outputText value="({!JPsPassedCompletionDate})" escape="false" /></b></label></li>
+           <li><a href="#" onclick="reloadWindow('/00O80000003fUF8')">My Accounts without a Scheduled Callback</a><label style="color:red"><b> <apex:outputText value=" ({!myAccountsWithNoCallbacks})" escape="false" /></b></label></li>  
+           <li><a href="#" onclick="reloadWindow('/00O80000005V2dQ')">Accounts Not Contacted in 90 days </a><label style="color:red"><b> <apex:outputText value=" ({!AccountsNotContacted})" escape="false" /></b></label></li>
+           
+          </ul>
+            <br/>
+                <b> MMI Quick Links </b>  
+          <ul>
+           <li><a href="#" onclick="reloadWindow('/001?fcf=00B80000006WoCo')">My Accounts</a><label><b> <apex:outputText value=" ({!myAccounts})" escape="false" /></b></label></li>  
+              <li><a href="#" onclick="reloadWindow('/00O80000005UF14?pv0={!currentUsersTerritoryId}')">Accounts in My Territory</a></li>  
+              <li><a href="#" onclick="reloadWindow('/006?fcf=00B80000006zPWY')">My Open Opportunities</a><label><b> <apex:outputText value=" ({!myOpenOpportunities})" escape="false" /></b></label></li>  
+              <li><a href="#" onclick="reloadWindow('/{!$Label.CL_OpportunitiesAtBranch}?pv1={!currentUsersBranchId}&pv2={!currentUsersBranchId}')">Opportunities at My Branch</a></li>  
+          
+          </ul>
+          
+          <!--  MSM 82 :  MMI Quick Links..  [Removed Ones]
+          <li><a href="/003?fcf=00B80000006zPR0" onclick="reloadWindow('/003?fcf=00B80000006zPR0')">My Contacts</a><label><b> <apex:outputText value=" ({!myContacts})" escape="false" /></b></label></li>
+          <li><a href="#" onclick="reloadWindow('/{!$Label.CL_MyCreatedOppByInbound}')">My Opps Created by Inbound</a><label style="color:red"><b> <apex:outputText value=" ({!myCreatedOppByInbound})" escape="false" /></b></label></li>
+          <li><a href="/001?fcf=00B80000008WZFL"   onclick="reloadWindow('/001?fcf=00B80000008WZFL')">My Core Accounts</a> <label style="color:red"><b><apex:outputText value="({!MyCoreAccounts})" escape="false" /></b></label></li>
+          <li><a href="/001?fcf=00B80000008YQTK"   onclick="reloadWindow('/001?fcf=00B80000008YQTK')">My Potential Accounts</a> <label style="color:red"><b><apex:outputText value="({!MyPotentialAccounts})" escape="false" /></b></label></li>
+          <li><a href="/a1I?fcf=00BS0000001qFV6" target="_blank">My Open Quick Quotes</a></li>
+          <li><a href="/a1Y?fcf=00BS0000001qFV1" target="_blank" >My Open Full Quotes</a></li>
+         
+          -->
+           <br /> <br/>
+        </div>
+    </div>
+
+</div>
+
+</apex:page>

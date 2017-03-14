@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>25.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>The Configuration Page for CloudAmp&apos;s Campaign Tracker for Google Adwords and Analytics.</description>
+    <label>GA Campaign Tracker</label>
+</ApexPage>

@@ -1,0 +1,106 @@
+<apex:page standardController="Job_Profile__c" tabStyle="Job_Profile__c" id="pg" extensions="NewJobProfileController" >
+<script>
+    window.onload = function(){ setProject(); };
+    function setProject(){
+       if('{!projectType}' == 'Dodge'){ 
+        if(document.getElementById('pg:frm:pgb:pgbs2:dodgeProject')!=null){
+            document.getElementById('pg:frm:pgb:pgbs2:dodgeProject').value = unescape("{!dodgeProjectName}");
+        }
+        if(document.getElementById('pg:frm:pgb:pgbs2:dodgeProject_lkid')!=null){
+            document.getElementById('pg:frm:pgb:pgbs2:dodgeProject_lkid').value= unescape("{!dodgeProjectId}");
+        }
+       }else if('{!projectType}' == 'Glenigan'){
+        if(document.getElementById('pg:frm:pgb:pgbs2:GleniganProject')!=null){
+            document.getElementById('pg:frm:pgb:pgbs2:GleniganProject').value = unescape("{!GleniganProjectName}");
+        }
+        if(document.getElementById('pg:frm:pgb:pgbs2:GleniganProject_lkid')!=null){
+            document.getElementById('pg:frm:pgb:pgbs2:GleniganProject_lkid').value= unescape("{!GleniganProjectId}");
+        }
+       }
+     }
+     
+     function againSetProjectName(){
+        if('{!projectType}'=='Dodge'){
+            if(document.getElementById('pg:frm:pgb:pgbs2:dodgeProject')!=null && document.getElementById('pg:frm:pgb:pgbs2:dodgeProject').value ==unescape("{!dodgeProjectName}")){
+                document.getElementById('pg:frm:pgb:pgbs2:dodgeProject').value = unescape("{!dodgeProjectNm}");
+            if(document.getElementById('pg:frm:pgb:pgbs2:dodgeProject_lkid')!=null){
+                document.getElementById('pg:frm:pgb:pgbs2:dodgeProject_lkid').value= unescape("{!dodgeProjectId}");
+            }
+         }
+        }else if('{!projectType}'=='Glenigan'){
+            if(document.getElementById('pg:frm:pgb:pgbs2:GleniganProject')!=null && document.getElementById('pg:frm:pgb:pgbs2:GleniganProject').value ==unescape("{!GleniganProjectName}")){
+                document.getElementById('pg:frm:pgb:pgbs2:GleniganProject').value = unescape("{!GleniganProjectNm}");
+            if(document.getElementById('pg:frm:pgb:pgbs2:GleniganProject_lkid')!=null){
+                document.getElementById('pg:frm:pgb:pgbs2:GleniganProject_lkid').value= unescape("{!GleniganProjectId}");
+            }
+         }
+        }
+     }
+</script>   
+    <apex:form id="frm">
+        <apex:sectionHeader title="Job Profile Edit" subtitle="New Job Profile" />
+        <apex:pagemessages id="mesg" />
+        <apex:pageBlock title="Job Profile Edit" id="pgb" mode="edit">
+            <apex:pageBlockButtons id="pgbb">
+                <apex:commandButton value="Save" action="{!saveJobProfile}" onclick="againSetProjectName();" />
+                <apex:commandButton value="Save & New" action="{!saveAndNewJobProfile}" onclick="againSetProjectName();" />
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>         
+            <apex:pageBlockSection title="Information" collapsible="false" id="pgbs1">
+               <apex:inputField value="{!JobProfile.name}" required="true" id="name"/>
+               <apex:outputField value="{!JobProfile.ownerId}" id="ownerId"/>
+               <apex:outputLabel />
+               <apex:inputField value="{!JobProfile.Branch_ID__c}" id="BranchId"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Project Information" collapsible="false" id="pgbs2">
+                <apex:inputField value="{!JobProfile.Referral_Source__c}" Id="Referral_source__c"/>
+                <apex:inputField value="{!JobProfile.Project_Valuation_Low__c}" id="Project_Valuation_Low__c" rendered="{!IF(projectType =='Glenigan',false,true)}"/>
+                <apex:inputField value="{!JobProfile.Glenigan_Value__c}" id="Glenigan_Value__c" rendered="{!IF(projectType =='Glenigan',true,false)}"/>             
+                <apex:inputField value="{!JobProfile.Dodge_Project__c}" id="dodgeProject" rendered="{!IF(projectType =='Dodge',true,false)}" />
+                <apex:inputField value="{!JobProfile.Glenigan_Project__c}" id="GleniganProject" rendered="{!IF(projectType =='Glenigan',true,false)}" />
+                <apex:inputField value="{!JobProfile.Project_Valuation_High__c}" id="Project_Valuation_High__c" rendered="{!IF(projectType =='Glenigan',false,true)}"/>
+
+                <apex:inputField value="{!JobProfile.Project_Stage_Status__c}" id="projectStatus" />
+                <apex:inputField value="{!JobProfile.Award_Date__c}" id="awardDate" />
+
+                <apex:inputField value="{!JobProfile.Territory_Sales_Mgr__c}" id="OutSideSalesRep"/>
+                <apex:inputField value="{!JobProfile.Target_Start_Date__c}" id="TargetSD"/>
+                <apex:inputField value="{!JobProfile.Bid_Date__c}" id="BidDate"/>
+                <apex:inputField value="{!JobProfile.Expected_Completion_Date__c}" id="expectedCompletionDate" required="true"/>
+                 
+            </apex:pageBlockSection>
+            <apex:outputPanel id="dodgeAddressPanel" rendered="{!IF(projectType =='Dodge',true,false)}" >
+            <apex:pageBlockSection title="Job Site Information" collapsible="false" columns="1" id="pgbs3" >
+                <apex:inputField value="{!JobProfile.Job_Site_Address__c}" style="width:90%;rows:5" id="JSAddress"/>
+                <apex:inputField value="{!JobProfile.Job_Site_City__c}" style="width:90%" id="JSCity"/>
+                <apex:inputField value="{!JobProfile.Job_Site_State__c}" style="width:90%"id="JSState"/>
+                <apex:inputField value="{!JobProfile.Job_Site_County__c}" style="width:90%" id="JSCounty"/>
+                <apex:inputField value="{!JobProfile.Job_Site_Zip__c}" style="width:90%" id="JSZip" required="true"/>
+                <apex:inputField value="{!JobProfile.Job_Site_Country__c}" style="width:90%" id="JSCountry" required="true"/>
+            </apex:pageBlockSection>
+            </apex:outputPanel>
+            <apex:outputPanel id="GleniganAddressPanel" rendered="{!IF(projectType =='Glenigan',true,false)}" >
+            <apex:pageBlockSection title="Job Site Information" collapsible="false" columns="1" id="Gleniganpgbs3" >
+                <apex:inputField value="{!JobProfile.Site_Address__c}" style="width:90%;rows:5" id="JSAddress"/>
+                <apex:inputField value="{!JobProfile.Address_Line_2__c}" style="width:90%" id="JSAddressLine2"/>
+                <apex:inputField value="{!JobProfile.Address_Line_3__c}" style="width:90%"id="JSAddressLine3"/>
+                <apex:inputField value="{!JobProfile.Address_Line_4__c}" style="width:90%" id="JSAddressLine4"/>
+                <apex:inputField value="{!JobProfile.Site_Postcode__c}" style="width:90%" id="JSZip" required="true"/>
+                <apex:inputField value="{!JobProfile.Site_Country__c}" style="width:90%" id="JSGleniganCountry" required="true"/>
+            </apex:pageBlockSection>
+            </apex:outputPanel>
+            <apex:pageBlockSection title="Contact Information" collapsible="false" id="pgbs4">
+                <apex:inputField value="{!JobProfile.Contact_Title__c}" id="ConactTitle"/>
+                <apex:inputField value="{!JobProfile.Contact_Phone__c}" id="ContactPhone"/>
+                <apex:inputField value="{!JobProfile.Contact_First_Name__c}" id="ContactFName"/>
+                <apex:inputField value="{!JobProfile.Contact_Fax__c}" id="ContactFax"/>
+                <apex:inputField value="{!JobProfile.Contact_Last_Name__c}" id="ContactLName" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Comments" collapsible="false" columns="1" id="pgbs5">
+                <apex:inputField value="{!JobProfile.Owners_Comments__c}" style="width:90%;rows:5" id="OwnerComments"/>
+                <apex:inputField value="{!JobProfile.Branch_Manager_Comments__c}" style="width:90%;rows:5" id="BMComment"/>
+                <apex:inputField value="{!JobProfile.Competition_Notes__c}" style="width:90%;rows:5" id="CompetitionNotes"/>
+           </apex:pageBlockSection>
+       </apex:pageBlock>
+    </apex:form>
+</apex:page>

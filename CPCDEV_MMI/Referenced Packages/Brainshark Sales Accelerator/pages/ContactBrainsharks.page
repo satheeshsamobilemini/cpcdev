@@ -1,0 +1,5 @@
+<apex:page standardController="Contact" extensions="BRNSHRK.BrainsharksController" action="{!initPage}">
+
+<c:Brainsharks recordId="{!Contact.Id}" searchConfiguration="{!searchConfiguration}"/>
+
+</apex:page>

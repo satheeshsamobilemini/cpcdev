@@ -1,0 +1,5 @@
+<apex:page standardController="Opportunity" extensions="BRNSHRK.BrainsharksController" action="{!initPage}">
+
+<c:Brainsharks recordId="{!Opportunity.Id}" searchConfiguration="{!searchConfiguration}" isSalesforceOne="true"/>
+
+</apex:page>

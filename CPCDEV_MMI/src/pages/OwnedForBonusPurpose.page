@@ -1,0 +1,14 @@
+<apex:page standardController="Account" extensions="BonusPurposeAndTSMController">
+<apex:pageBlock title="Bonus Purpose Account Request">
+   <apex:form id="form">
+        <apex:pageMessage id="msg" severity="Error" rendered="{!showBPMessage}" summary="This account doesnt satisfy the conditions to be submitted for this kind of approval."/>
+        <apex:pageMessage id="errmsg" severity="Error" rendered="{!showErrorMessage}" summary="This account is either already in approval process or there is no matching Approval process available. It's also possible that there is no manager setup for the logged in User"/>
+        <apex:selectRadio value="{!requestVal}">
+            <apex:selectOptions value="{!bonusItems}"/>
+            </apex:selectRadio><p/>
+            <apex:commandButton value="Submit for Approval" action="{!submitForBonusApproval}" status="status" reRender="form, msg, errmsg"/>
+         <apex:commandButton value="Go Back" action="{!goBack}"/>
+        <apex:actionstatus id="status" startText="Submitting for Approval..."/> 
+     </apex:form>
+</apex:pageBlock>
+</apex:page>

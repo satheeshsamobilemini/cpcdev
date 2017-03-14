@@ -1,0 +1,16 @@
+<apex:page controller="JobProfileAccounts" sidebar="false" showheader="false">
+ <apex:form >  
+  <apex:pageBlock title="Please select the Sub Contractor for this new Task">
+  	<apex:pageBlockButtons location="top">
+		<apex:commandButton action="{!next}" value="Next"/> 
+	</apex:pageBlockButtons>
+		 <apex:pageMessages id="Message" />
+  
+	   <apex:selectRadio value="{!selectedAccount}" layout="pageDirection" >
+			<apex:selectOptions value="{!accounts}"/>
+		</apex:selectRadio>
+		
+	
+  </apex:pageBlock>  
+  </apex:form>
+</apex:page>

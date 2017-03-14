@@ -1,0 +1,83 @@
+<apex:page standardController="Safety_Topic__c"  renderAs="PDF" standardStyleSheets="false">
+<apex:stylesheet value="{!$Resource.SafetyTopicPDFStyle}" />
+    <apex:pageBlock >
+        <div style="text-align:center;width:100%;border:1px solid black" >  
+            <b><apex:outputField value="{!Safety_Topic__c.Name}"/> </b>
+        </div>
+        <br/>
+        <br/>
+        <div style="width:100%;border:1px solid black;" >   
+            <b><apex:outputField value="{!Safety_Topic__c.Description__c}"/> </b>
+            <br/>
+        </div>
+        <br/><br/>
+        <table width="100%" cellpadding="2" cellSpacing="2">
+            <tr>
+                <td align="right" width="20%">Employee Type :</td>
+                <td><apex:outputField value="{!Safety_Topic__c.Employee_Type__c}"/></td>
+                <td align="right" width="20%">Date:</td>
+                <td><apex:outputField value="{!Safety_Topic__c.Date__c}"/></td>
+                <td align="right" width="20%">Week of the Year:</td>
+                <td><apex:outputField value="{!Safety_Topic__c.Week_of_the_Year__c}"/></td>
+                
+            </tr>
+        </table>
+            <br/>
+        <table width="70%" align="center">
+            <tr>
+                <td align="right" width="20%" >Branch :</td>
+                <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputField value="{!Safety_Topic__c.Branch__c}"/></td>
+                <td align="right" width="30%" >Signature Date:</td>
+                <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputField value="{!Safety_Topic__c.Signature_Date__c}"/></td>
+            </tr>
+        </table>
+        <br/><br/>
+        
+        <table width="100%" cellspacing="20" >
+            <tr>
+                <td align="center">Print Name</td>
+                <td align="center">Sign</td>
+                <td align="center">Print Name</td>
+                <td align="center">Sign</td>
+            </tr>
+            <tr>      
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  
+             </tr>
+             <tr>     
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  
+             </tr>
+             <tr>     
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              </tr>
+              <tr>    
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              </tr>
+              <tr>    
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td class="underline_td">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              </tr>
+          </table>
+          
+    </apex:pageBlock>
+    <br/><br/><br/><br/>
+    <!--  <apex:outputpanel styleclass="footer_center" layout="block">
+          <apex:outputLabel value="{!UPPER(Safety_Topic__c.Footer_text__c)}"/> 
+    </apex:outputpanel> -->
+    
+</apex:page>

@@ -1,0 +1,1227 @@
+<!--
+     (c) 2015 TEKsystems Global Services
+    
+     Name                : AccountDashboard
+     Standard Controller : Account
+     Extensions          : AccountDashboardCntrl
+     Created Date        : 27 July, 2015 @ 1130
+     Created By          : Shankar Rao
+     Purpose             : Dashboard used as VF component in Account page layouts.
+-->
+<apex:page id="accountDashboard" standardController="Account" extensions="AccountDashboardCntrl" sidebar="false" showHeader="false" 
+           showQuickActionVfHeader="false" showChat="false" applyBodyTag="false">
+  
+  <apex:includeScript value="/support/console/33.0/integration.js"/>
+  <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+  <apex:includeScript value="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"/>
+  <apex:stylesheet value="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css"/>
+  <apex:stylesheet value="{!URLFOR($Resource.BootStrapUKZip, 'bootstrap.css')}"/>
+  <style>
+      body{ 
+           height:600px; 
+           position: relative;
+      }
+      .dashBoardClass{
+              height: 500px;
+              width: 100%;
+              position: relative;
+      }
+      .mainHeader{
+              height: 35px;
+              background-color: #006FBA;
+              text-align: center;             
+      }
+      .newQuoteButton{
+              float: left;
+              position: absolute;
+              top: 4px;
+              left: 10px;
+              height: 26px;
+              cursor: pointer;
+              padding: 6px px;
+      }
+      .cloneQuoteButton{
+              float: left;
+              position: absolute;
+              top: 4px;
+              left: 100px;
+              height: 26px;
+              cursor: pointer;
+              padding: 6px px;
+      }
+      .mainHeaderLabel{
+              color: white;
+              font-size: 30px;
+              font-family: sans-serif;
+              font-weight: bolder;
+      }
+      .searchFieldClass{
+              position: absolute;
+              right: 10px;
+              top: 6px;
+              border-radius: 30px;
+              padding-left: 5px;
+      }
+      .gridPanel{
+              border: 2px solid;
+      }
+      .dashboardGridClass{
+              height: 400px;
+      }
+      .dBGridColClass{
+              border: 2px solid black;
+              width: 50%;
+              vertical-align: top;
+      }
+      .gridGroupTitleClass{
+              text-align: center;
+              padding-top: 2px;
+              border-bottom: 2px solid black;
+              background-color: #006FBA;
+              color: white;
+              font-weight: bolder;
+              font-size: 16px;
+              box-shadow: 2px 4px 4px grey;
+      }
+      .subTitleClass{
+              font-size: 15px;
+              font-weight: bolder;
+              text-shadow: 2px 2px 4px grey;
+      }
+      .moreLink{
+              float: right;
+              margin-right: 10px;
+              color: blue;
+      }
+      .contractTableLabel, .quoteTableLabel, .casesTableLabel, .serviceORTableLabel, .npsTableLabel{
+              margin: 5px;
+              font-size: 14px;
+              font-weight: bolder;
+      }
+      .customerDetailsTable{
+              font-weight: bolder;
+              margin: 15px 0 10px 5px;
+              width: 98%;
+      }
+      .fsQuarterByYearTable{
+              font-weight: bolder;
+              margin: 15px 0 10px 0;
+              font-size: 15px;
+              width: 100%;       
+      }
+      table.fsQuarterByYearTable td{
+              width: 10%;
+      }
+      .fsQuarterByYearClass{
+              width:100%;
+              text-align: center;
+      }
+      table.table td{
+              padding: 0 !important;
+              line-height: 22px;
+      }
+      table.table{
+              width: 99% !important;
+      }
+      
+      td.childTableClass{
+              display: none;
+      }
+      table.fsQuarterByYearTable td {
+              padding: 5px;
+      }
+      table.revenueDetailTableClass td {
+              padding: 5px;
+      }
+      .emptyTableMsg{
+              text-align: center;
+              color: grey;
+              font-size: 12px;
+              padding: 10%;
+              font-weight: bold;
+      }
+      .finemptyTableMsg{
+              text-align: center;
+              color: grey;
+              font-size: 13px;
+              padding-left: 20%;
+              font-weight: bold;
+      }
+      .nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+      .buttonStyle
+      {
+     height:26px;
+             }  
+      
+  </style> 
+  <script type="text/javascript">
+  
+    function localdate(){  
+     var date=console.log(date.toLocaleDateString());
+      return date;
+      }
+      
+  </script>
+  
+  
+  <script>
+  //Sreenivas - Search functionality within all tables
+        $(document).ready(function() {
+            $('#global_filter').keyup(function() {
+                searchTable($(this).val());
+                searchTable1($(this).val());
+                searchTable2($(this).val());
+            });
+        });
+        
+        function searchTable(inputVal) {
+            var table = $('.table');
+            table.find('tr').each(function(index, row) {
+                var allCells = $(row).find('td');
+                if(allCells.length > 0) {
+                    var found = false;
+                    allCells.each(function(index, td) {
+                        var regExp = new RegExp(inputVal, 'i');
+                        if(regExp.test($(td).text())) {
+                            found = true;
+                            return false;
+                        }
+                    });
+                    if(found == true) $(row).show();
+                    else $(row).hide();
+                }
+            });
+        }
+        
+        function searchTable1(inputVal) {
+            var table = $('.fsQuarterByYearTable');
+            table.find('tr').each(function(index, row) {
+                var allCells = $(row).find('td');
+                if(allCells.length > 0) {
+                    var found = false;
+                    allCells.each(function(index, td) {
+                        var regExp = new RegExp(inputVal, 'i');
+                        if(regExp.test($(td).text())) {
+                            found = true;
+                            return false;
+                        }
+                    });
+                    if(found == true) $(row).show();
+                    else $(row).hide();
+                }
+            });
+        }
+        
+        function searchTable2(inputVal) {
+            var table = $('.customerDetailsTable');
+            table.find('tr').each(function(index, row) {
+                var allCells = $(row).find('td');
+                if(allCells.length > 0) {
+                    var found = false;
+                    allCells.each(function(index, td) {
+                        var regExp = new RegExp(inputVal, 'i');
+                        if(regExp.test($(td).text())) {
+                            found = true;
+                            return false;
+                        }
+                    });
+                    if(found == true) $(row).show();
+                    else $(row).hide();
+                }
+            });
+        }
+    
+    </script>
+  <Body>
+  <div id="dashBoard" class="dashBoardClass bs">
+  <apex:form id="dBForm">
+  
+  <apex:outputPanel id="oppidref">
+      <script>
+      //alert('opp'+'{!oppId}');
+          var oppidd = '{!oppId}';
+          if(oppidd!=null && oppidd!=''){
+          //alert('opp2'+ oppidd);
+          var left = (screen.width/2)-(900/2); 
+          var top = (screen.height/2)-(500/2); 
+          var sOrg = '{!salesOrgID}'; 
+          if (sOrg != '' && sOrg != null){         
+                //window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+             window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+          } 
+          //window.open('{!$Page.SelectConatctPopup}?id='+accountIdd+'&FromAccount=true&accDashboard=true&opportunityid='+oppidd, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+          //window.open('{!$Page.SelectConatctPopup}?id='+accountIdd+'&FromAccount=true&accDashboard=true&opportunityid='+oppidd+'&Sales_Org='+'{!salesOrgID}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+          //alert('opp'+'{!oppId}');
+          }
+      </script>
+      </apex:outputPanel>
+      
+  <!--<apex:actionFunction name="callLost" action="{!LostQuoteStatus}" rerender="quoteTableDate">       
+  <apex:param id="anode" name="node" value="" />
+  </apex:actionFunction>-->
+  
+  <apex:actionFunction name="createopportunity" action="{!Createopportunity}" reRender="none">
+  </apex:actionFunction>
+ 
+ <input type="hidden"  name="hiddenQuoteID" id="hiddenQuoteID" /> 
+ <input type="hidden"  name="hiddenContractID" id="hiddenContractID" /> 
+ 
+<apex:actionstatus id="cloneredirect" >
+   <apex:facet name="start">
+       <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+           <div class="waitingHolder" >
+               <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                <font color="Red"><b>Creating Opportunity and redirecting to CPC....</b></font> 
+            </div>
+        </div>
+    </apex:facet>
+</apex:actionstatus> 
+
+<apex:actionFunction name="callCreateOpp" action="{!Createopportunity}" reRender="redirectClone" status="cloneredirect"> 
+ <apex:param id="selectedquote" name="selectedquote" value="" />
+</apex:actionFunction>
+<apex:outputPanel id="redirectClone">
+<apex:outputPanel id="clonepanel" rendered="{!redirectClone}">
+    <script>
+        var oppid = '{!oppId}';
+        var quoteid = document.getElementById('hiddenQuoteID').value;
+        window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity='+oppid);          
+    </script>
+</apex:outputPanel>
+</apex:outputPanel>
+      
+<apex:actionFunction name="callCreateOppForContract" action="{!Createopportunity}" reRender="redirectCloneContract" status="cloneredirect"> 
+</apex:actionFunction>
+<apex:outputPanel id="redirectCloneContract">
+<apex:outputPanel id="clonepanelContract" rendered="{!redirectClone}">
+    <script>
+        var oppid = '{!oppId}';
+        var contractID = document.getElementById('hiddenContractID').value;
+        window.open('{!cpqURL}'+'/edit_contract?contractId='+contractID+'&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity='+oppid);      
+    </script>
+</apex:outputPanel>
+</apex:outputPanel>      
+                      
+      <div id="mainHeader" class="mainHeader">
+          <button id="newQuoteButton" class="btn btn-danger newQuoteButton nopadding" type="button" onClick="createNewQuote('{!currentAccount.Id}')">New Quote</button>
+          <button id="cloneQuoteButton" class="btn btn-danger cloneQuoteButton nopadding" type="button" onClick="cloneQuoteFromDiffAccount('{!currentAccount.Id}')">Clone Quote(Diff Account)</button>
+          <Label id="mainHeaderLabel" class="mainHeaderLabel">Account Dashboard</Label>
+          <input type="search" id="global_filter" class="searchFieldClass" placeholder="search" name="Search" size="25" value=""/>
+      </div>
+      
+      <div id="gridPanel" class="gridPanel">
+          <apex:panelGrid columns="2" rules="all" width="100%" styleClass="dashboardGridClass" rowClasses="dBGridRowClass"  columnClasses="dBGridColClass" 
+                          captionClass="dashboardGridCaptionClass">
+              <apex:panelGroup id="contractsQuotesGroup" layout="block">
+                  <apex:outputPanel id="contractsQuotesLabel" styleClass="gridGroupTitleClass" layout="block">Contracts &amp; Quotes</apex:outputPanel>
+                  
+                  <apex:outputPanel id="contractTable" layout="block">
+                      <apex:outputPanel id="contractTableLabel" styleClass="contractTableLabel" layout="block">
+                          <apex:outputText value="Contracts" style="font-size:14"/> &nbsp;<apex:outputText value="(Click on a Contract to see all the information)" style="font-size:12px"/>
+                          <apex:outputLink styleClass="moreLink" value="/apex/Quote_More?accId={!currentAccount.id}&from=CS&isQuote=false&salesorg={!salesOrgID}" target="_blank" rendered="{!(IF(latestContractsList.size > 0, true, false))}">
+                              more 
+                          </apex:outputLink>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="contractTabelEmptyMsg" layout="block" styleClass="emptyTableMsg" rendered="{!(IF(latestContractsList.size <=0, true, false))}">
+                          <apex:outputText rendered="{!isConServiceAvailable}">No Contracts found for this Account.</apex:outputText>
+                          <apex:outputText rendered="{!!isConServiceAvailable}">{!serviceErrorMessage}</apex:outputText>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="contractTableDate" layout="block" rendered="{!(IF(latestContractsList.size > 0 && salesOrgID != '1200', true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>Contract #</th>
+                                    <th>Purchase #</th>
+                                    <th>Plant</th> 
+                                    <th>Material</th>
+                                    <th>Credit Block</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Postal Code</th>
+                                    <th>Delivery Date</th>
+                                    <th>Invoice Date</th>
+                                    <th>Action</th>
+                                    
+                              <!--      <th>Action</th>  -->
+                                    
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!latestContractsList}" var="cntrct" rows="5">
+                                    <tr>
+                                        <td>
+                                            &nbsp;
+                                            <apex:outputLink value="javascript:void(0)" styleClass="contractTable{!cntrct.CONTRACT}" onclick="toggleChildRow('contractTable{!cntrct.CONTRACT}')">  
+                                            + 
+                                            </apex:outputLink>&nbsp;
+                                            <apex:outputLink target="_blank" onclick="openContracts('{!cntrct.CONTRACT}',null);return false;" value="javascript:void(0)">{!cntrct.CONTRACT}</apex:outputLink>
+                                        </td>
+                                        <td>{!cntrct.PURCH_NO_C}</td>
+                                        <td>{!cntrct.plant}</td> 
+                                        <td>{!cntrct.material}</td> 
+                                        <td style="padding-left: 3%;"> 
+                                           <apex:OutputLabel value="Yes"  rendered="{!if(cntrct.creditBlock == 'X',true,false)}"  />  
+                                           <apex:OutputLabel value="No"  rendered="{!if(cntrct.creditBlock != 'X',true,false)}"/>        
+                                        </td>  
+                                        <td>{!cntrct.CITY}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!cntrct.REGION}</td> 
+                                        <td>{!cntrct.POSTL_CODE}</td>
+                                        <td>{!cntrct.goodsIssueDate}</td>
+                                        <td>{!cntrct.con_st_dat}</td>
+                                        <td><apex:outputLink target="_blank" onclick="cloneContract('{!cntrct.CONTRACT}','{!currentAccount.Id}');return false;" value="javascript:void(0)">[Clone]</apex:outputLink></td>   
+                                       
+                                   <!--         <td><apex:outputLink onclick="openpopup()" value="javascript:void(0)">[Copy]</apex:outputLink></td>  -->
+                               
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9" class="childTableClass" id="contractTable{!cntrct.CONTRACT}">
+                                          <table id="" class="table-bordered" align="center" cellspacing="0" style="margin: 10px;" width="97%">
+                                            <thead>
+                                                <tr style="background-color: #E6E6FA;">
+                                                
+                                                    <th>Status</th>
+                                                    <th>Material</th>
+                                                    <th>Serial #</th>
+                                                    <th>Description</th>
+                                                    <th>Rate</th>
+                                                    <th>Delivery Date</th>
+                                                    <th>Invoice Date</th>
+                                                    <th>End Date</th>
+                                                <!--    <th colspan="2">Action</th>  -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <apex:repeat value="{!cntrct.contractItems}" var="ci">
+                                                    <tr style="background-color:#FAEBD7;">
+                                                 
+                                                        <td>{!ci.STATUS} </td>
+                                                        <td>{!ci.MATERIAL} </td>
+                                                        <td>{!ci.SERIAL_NUMBER} </td>
+                                                        <td>{!ci.SHORT_TEXT} </td>
+                                                        <td>{!ci.RATE} </td>
+                                                        <td>{!ci.goodsIssueDate} </td>
+                                                        <td>{!ci.CON_ST_DAT} </td>
+                                                        <td>{!ci.CON_EN_DAT} </td> <!--
+                                                        <td> <apex:outputLink target="_blank" onclick="openContracts('{!ci.CONTRACT}','{!ci.ITM_NUMBER}')" value="javascript:void(0)">[Pickup]</apex:outputLink>
+                                                        </td>
+                                                        <td> <apex:outputLink target="_blank" onclick="openContracts('{!ci.CONTRACT}','SOR')" value="javascript:void(0)">[SOR]</apex:outputLink>
+                                                        </td>  -->
+                                                    </tr>
+                                                </apex:repeat>
+                                            </tbody>
+                                          </table>      
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </apex:repeat>
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                      
+                      
+                      <apex:outputPanel id="contractTableDateUK" layout="block" rendered="{!(IF(latestContractsList.size > 0 && salesOrgID == '1200' , true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>Contract #</th>
+                                    <th>Purchase #</th>
+                                    <th>Plant</th> 
+                                    <th>Fulfilling depot</th>
+                                    <th>Material</th>
+                                    <th>Credit Block</th>
+                                    <th>City</th>
+                                    <th>Postal Code</th>
+                                    <th>Delivery Date</th>
+                                    <th>Invoice Date</th>
+                                    <th>Action</th>
+                                    
+                              <!--      <th>Action</th>  -->
+                                    
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!latestContractsList}" var="cntrct" rows="5">
+                                    <tr>
+                                        <td>
+                                            &nbsp;
+                                            <apex:outputLink value="javascript:void(0)" styleClass="contractTable{!cntrct.CONTRACT}" onclick="toggleChildRow('contractTable{!cntrct.CONTRACT}')">  
+                                            + 
+                                            </apex:outputLink>&nbsp;
+                                            <apex:outputLink target="_blank" onclick="openContracts('{!cntrct.CONTRACT}',null);return false;" value="javascript:void(0)">{!cntrct.CONTRACT}</apex:outputLink>
+                                        </td>
+                                        <td>{!cntrct.PURCH_NO_C}</td>
+                                        <td>{!cntrct.plant}</td> 
+                                        <td>{!cntrct.fulDepot}</td>
+                                        <td>{!cntrct.material}</td> 
+                                        <td style="padding-left: 3%;"> 
+                                           <apex:OutputLabel value="Yes"  rendered="{!if(cntrct.creditBlock == 'X',true,false)}"  />  
+                                           <apex:OutputLabel value="No"  rendered="{!if(cntrct.creditBlock != 'X',true,false)}"/>        
+                                        </td> 
+                                        <td>{!cntrct.CITY}</td>
+                                        <td>{!cntrct.POSTL_CODE}</td>
+                                        <td>{!cntrct.goodsIssueDate}</td>
+                                        <td>{!cntrct.con_st_dat}</td>
+                                        <td><apex:outputLink target="_blank" onclick="cloneContract('{!cntrct.CONTRACT}','{!currentAccount.Id}');return false;" value="javascript:void(0)">[Clone]</apex:outputLink></td>   
+                                       
+                                   <!--         <td><apex:outputLink onclick="openpopup()" value="javascript:void(0)">[Copy]</apex:outputLink></td>  -->
+                               
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9" class="childTableClass" id="contractTable{!cntrct.CONTRACT}">
+                                          <table id="" class="table-bordered" align="center" cellspacing="0" style="margin: 10px;" width="97%">
+                                            <thead>
+                                                <tr style="background-color: #E6E6FA;">
+                                                
+                                                    <th>Status</th>
+                                                    <th>Material</th>
+                                                    <th>Serial #</th>
+                                                    <th>Description</th>
+                                                    <th>Rate</th>
+                                                    <th>Delivery Date</th>
+                                                    <th>Invoice Date</th>
+                                                    <th>End Date</th>
+                                                <!--    <th colspan="2">Action</th>  -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <apex:repeat value="{!cntrct.contractItems}" var="ci">
+                                                    <tr style="background-color:#FAEBD7;">
+                                                 
+                                                        <td>{!ci.STATUS} </td>
+                                                        <td>{!ci.MATERIAL} </td>
+                                                        <td>{!ci.SERIAL_NUMBER} </td>
+                                                        <td>{!ci.SHORT_TEXT} </td>
+                                                        <td>{!ci.RATE} </td>
+                                                        <td>{!ci.goodsIssueDate} </td>
+                                                        <td>{!ci.CON_ST_DAT} </td>
+                                                        <td>{!ci.CON_EN_DAT} </td> <!--
+                                                        <td> <apex:outputLink target="_blank" onclick="openContracts('{!ci.CONTRACT}','{!ci.ITM_NUMBER}')" value="javascript:void(0)">[Pickup]</apex:outputLink>
+                                                        </td>
+                                                        <td> <apex:outputLink target="_blank" onclick="openContracts('{!ci.CONTRACT}','SOR')" value="javascript:void(0)">[SOR]</apex:outputLink>
+                                                        </td>  -->
+                                                    </tr>
+                                                </apex:repeat>
+                                            </tbody>
+                                          </table>      
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </apex:repeat>
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                      
+                  </apex:outputPanel>
+                 
+                  <apex:outputPanel id="quoteTable" layout="block">
+                      <apex:outputPanel id="quoteTableLabel" styleClass="quoteTableLabel" layout="block">
+                          <apex:outputText value="Quotes"/>
+                          <apex:outputLink target="_blank" styleClass="moreLink" value="/apex/Quote_More?accId={!currentAccount.id}&from=CS&isContract=false&salesorg={!salesOrgID}" rendered="{!(IF(listWrapQuoteHaeders.size > 0, true, false))}">
+                              more <!-- <sup>{{!listWrapQuoteHaeders.size}}</sup> -->
+                          </apex:outputLink>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="quoteTabelEmptyMsg" layout="block" styleClass="emptyTableMsg" rendered="{!(IF(listWrapQuoteHaeders.size <=0, true, false))}">
+                          No Quotes found for this Account.
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="quoteTableDate" layout="block" rendered="{!(IF(listWrapQuoteHaeders.size > 0, true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>Quote #</th>
+                                    <th>Status</th>
+                                    <th>Plant</th>
+                                    <th>Initial Charges</th>
+                                <!--    <th>Start Date</th>  -->
+                                    <th>Del Date</th>
+                                <!--    <th>Item</th>  -->
+                                <!--    <th>Rate</th> -->
+                                <!--    <th>Del Charge</th> -->
+                                    <th>Del City</th>
+                                    <th>Del State</th>&nbsp;&nbsp;
+                                    <th colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Actions</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!listWrapQuoteHaeders}" var="quoteWrap" rows="5">
+                                    <tr>
+                                        <td> 
+                                            &nbsp;
+                                            <apex:outputLink value="javascript:void(0)" styleClass="quoteTable{!quoteWrap.quoteHeader.Id}" onclick="toggleChildRow('quoteTable{!quoteWrap.quoteHeader.Id}')">
+                                                +
+                                                <!--  <sup>{5}</sup> -->
+                                            </apex:outputLink>
+                                            &nbsp;
+                                            <apex:outputLink target="_blank" onclick="openQuoteDetails('{!currentAccount.Id}','{!quoteWrap.quoteHeader.Status__c}','{!quoteWrap.quoteHeader.Opportunity__c}','{!quoteWrap.quoteHeader.Id}','{!quoteWrap.quoteHeader.Contact__c}','{!quoteWrap.plantCode}');return false;" value="javascript:void(0)">{!quoteWrap.quoteHeader.Name}</apex:outputLink>  
+                                        </td>
+                                        <td>&nbsp;&nbsp;{!quoteWrap.quoteHeader.Status__c}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!quoteWrap.plantCode}</td> 
+                                        <td>&nbsp;&nbsp;{!quoteWrap.quoteHeader.Total_Initial_Charges__c}</td>
+                                        <!-- <td><apex:outputText value="{0, date,d MMM yyyy}">
+                                                <apex:param value="{!quoteWrap.quoteHeader.Start_Date__c}"/>
+                                            </apex:outputText>
+                                        </td>
+                                        <td>{!quoteDates[quote.Id]}</td> -->
+                                      <!--  <td>&nbsp;&nbsp;{!quoteWrap.QHStartDate}</td>  -->
+                                        <td>&nbsp;&nbsp;{!quoteWrap.QHDelDate}</td>
+                                      <!--  <td>&nbsp;&nbsp;{!quoteWrap.prodId}</td>   -->
+                                      <!--  <td>&nbsp;{!quoteWrap.AclamtId}</td> -->
+                                      <!--  <td>&nbsp;&nbsp;&nbsp;&nbsp;{!quoteWrap.quoteHeader.Delivery_Charge__c}</td> -->
+                                        <td>&nbsp;&nbsp;{!quoteWrap.quoteHeader.Delivery_City__c}</td> 
+                                        <td>&nbsp;&nbsp;{!quoteWrap.quoteHeader.Shipto_State__c}</td>
+                                        <td><apex:outputLink target="_blank" value="javascript:void(0)" onclick="CloneQuote('{!currentAccount.Id}','{!quoteWrap.quoteHeader.Status__c}','{!quoteWrap.quoteHeader.Opportunity__c}','{!quoteWrap.quoteHeader.Id}','{!quoteWrap.quoteHeader.Contact__c}','{!quoteWrap.plantCode}');return false;" >[Clone]</apex:outputLink></td>
+                                        <td ><apex:outputLink target="_blank" onclick="convertQuote('{!currentAccount.Id}','{!quoteWrap.quoteHeader.Opportunity__c}','{!quoteWrap.quoteHeader.Id}','{!quoteWrap.quoteHeader.Contact__c}','{!quoteWrap.plantCode}');return false;" value="javascript:void(0)" rendered="{!IF(quoteWrap.quoteHeader.Status__c='Open',true,false)}">[Convert]</apex:outputLink></td>
+                                        <td><apex:outputLink target="_blank" value="javascript:void(0)" onclick="LostQuote('{!quoteWrap.quoteHeader.Id}','{!quoteWrap.quoteHeader.Opportunity__c}');return false;" rendered="{!IF(quoteWrap.quoteHeader.Status__c='Open',true,false)}">[Lost]</apex:outputLink></td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9" class="childTableClass" id="quoteTable{!quoteWrap.quoteHeader.Id}">
+                                          <table id="" class="table-bordered" align="center" cellspacing="0" style="margin: 10px;" width="97%">
+                                            <thead>
+                                                <tr style="background-color: #E6E6FA;">
+                                                    <th>Description</th>
+                                                    <th>Item</th>
+                                               <!--     <th>Unit Type</th>  -->
+                                                   <th>QTY</th>
+                                                   <th>Rate</th>
+                                               <!--     <th>Type</th>  -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <apex:repeat value="{!quoteWrap.quoteHeader.Quote_Item_Levels__r}" var="quote2">
+                                                    <tr style="background-color:#FAEBD7;">
+                                                        <td> 
+                                                            <apex:outputLink target="_blank" value="/{!quote2.Id}">{!quote2.Description__c}</apex:outputLink>
+                                                        </td>
+                                                        <td>{!quote2.Item_Code__c}</td>
+                                                        <td>{!quote2.Quantity__c}</td>
+                                                  <!--      <td>{!quote2.Unit_Type__c}</td>   -->
+                                                        <td>{!quote2.Actual_Amount__c}</td>
+                                                  <!--      <td>{!quote2.Type__c }</td>  -->
+                                                    </tr>
+                                                 </apex:repeat>
+                                            </tbody>
+                                          </table>      
+                                        </td>
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                  </apex:outputPanel>
+              </apex:panelGroup>
+              
+              <apex:panelGroup id="customerHealthGroup" layout="block">
+                  <apex:outputPanel id="customerHealthLabel" styleClass="gridGroupTitleClass" layout="block">Customer Health</apex:outputPanel>
+                  
+                  <apex:outputPanel id="casesTable" layout="block">
+                      <apex:outputPanel id="casesTableLabel" styleClass="casesTableLabel" layout="block">
+                          <apex:outputText value="Cases"/>&nbsp;&nbsp;
+                            <button id="buttonStyle" class="btn btn-danger buttonStyle nopadding" type="button" formtarget="_blank" Onclick="CreateNewCase('{!currentAccount.name}','{!currentAccount.Id}');">New Case</button>
+                          <apex:outputPanel id="caseTableStatusIndicator" layout="block" style="margin-left: 2%;display: inline-flex;" > <!-- rendered="{!(IF(latestCasesList.size!= 0, true, false))}" -->
+                              <apex:image alt="OK" value="{!$Resource.OKIcon}" height="22px" rendered="{!(IF(openCases == 0, true, false))}"/>
+                              <apex:image alt="Problem"  value="{!$Resource.ProblemIcon}" height="22px" rendered="{!(IF(openCases > 0, true, false))}"/>    <!-- title="{!openCases} case(s) still not closed or completed."  -->
+                          </apex:outputPanel>
+                        
+                          <apex:outputLink styleClass="moreLink" value="/apex/ViewMorePage?accId={!currentAccount.id}&from=CS" target="_blank" rendered="{!(IF(latestCasesList.size > 0, true, false))}">
+                              more <!-- <sup>{{!latestCasesList.size}}</sup> -->
+                          </apex:outputLink>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="caseTabelEmptyMsg" layout="block" style="padding: 5%;" styleClass="emptyTableMsg" rendered="{!(IF(latestCasesList.size <=0, true, false))}">
+                          No Cases found for this Account.
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="casesTableDate" layout="block" rendered="{!(IF(latestCasesList.size > 0, true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>Case #</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Record Type</th>
+                                    <th>Contact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               <apex:repeat value="{!latestCasesList}" var="case" rows="3">
+                                    <tr>
+                                        <td> &nbsp;&nbsp;
+                                            <apex:outputLink target="_blank"  value="{!URLFOR($Action.Service_Order_Request__c.View,case.Id)}">{!case.Name}</apex:outputLink>
+                                        </td>
+                                        <td>
+                                        &nbsp;&nbsp; 
+                                           <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!case.Date__c}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!case.Date__c}"/>
+                                           </apex:outputText>
+                                           <!-- {!sorDates[case.Id]} -->
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!case.Status__c}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!case.RecordType.name}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!case.Customer_Contact__r.name}</td> 
+                                    </tr>
+                                </apex:repeat>
+                            
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                  </apex:outputPanel>
+                  
+                  <apex:outputPanel id="serviceORTable" layout="block">
+                      <apex:outputPanel id="serviceORTableLabel" styleClass="serviceORTableLabel" layout="block">
+                          <apex:outputText value="Service Order Requests"/>
+                          <apex:outputPanel id="sorTableStatusIndicator" layout="block" style="margin-left: 2%;display: inline-flex;" > <!-- rendered="{!(IF(latestSORList.size !=0, true, false))}"  -->
+                              <apex:image alt="OK" value="{!$Resource.OKIcon}" height="22px" rendered="{!(IF(openSOR = 0, true, false))}"/>
+                              <apex:image alt="Problem" value="{!$Resource.ProblemIcon}" height="22px" rendered="{!(IF(openSOR > 0, true, false))}"/>   <!-- title="{!openSOR} SOR(s) still not Completed or Cancelled." -->   
+                          </apex:outputPanel>
+                         
+                          <apex:outputLink styleClass="moreLink" value="/apex/ViewMorePage?accId={!currentAccount.id}&from=SOR" target="_blank" 
+                                           rendered="{!(IF(latestSORList.size > 0, true, false))}">
+                               more <!-- <sup>{{!latestSORList.size}}</sup> -->
+                          </apex:outputLink>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="sorTabelEmptyMsg" layout="block" style="padding: 5%;" styleClass="emptyTableMsg" rendered="{!(IF(latestSORList.size <=0, true, false))}">
+                          No Service Order Requests(SOR) found for this Account.
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="sorTableDate" layout="block" rendered="{!(IF(latestSORList.size > 0, true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>SOR #</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Service Issue</th>
+                                    <th>Branch Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!latestSORList}" var="sorRecord" rows="3">
+                                    <tr>
+                                        <td> 
+                                           &nbsp;&nbsp; <apex:outputLink target="_blank" value="{!URLFOR($Action.Service_Order_Request__c.View,sorRecord.Id)}">{!sorRecord.Name}</apex:outputLink>
+                                        </td>
+                                        <td>
+                                           &nbsp;&nbsp; 
+                                      <!--     <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!sorRecord.Createddate}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!sorRecord.Createddate}"/>
+                                           </apex:outputText>  -->
+                                            {!sorRecord.Createddate} 
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!sorRecord.status}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!sorRecord.serviceIssue}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!sorRecord.branchID}</td>
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                  </apex:outputPanel>
+                  <script>
+                      //alert('Hi');
+                      //refreshStatusIcons();
+                  </script>
+                  <apex:outputPanel id="npsTable" layout="block">
+                      <apex:outputPanel id="npsTableLabel" styleClass="npsTableLabel" layout="block">
+                          <apex:outputText value="NPS"/>
+                          <apex:outputPanel rendered="{!(IF(latestNPSList.size != 0, true, false))}"> 
+                              <apex:image alt="OK" value="{!$Resource.OKIcon}" height="22px" style="margin-left: 2%;" rendered="{!(IF(currentAccount.NPS_Status__c != 'Red', true, false))}"/>
+                              <apex:image alt="Problem" value="{!$Resource.ProblemIcon}" height="22px" style="margin-left: 2%;" rendered="{!(IF(currentAccount.NPS_Status__c == 'Red', true, false))}"/>
+                          </apex:outputPanel> 
+                         
+                          <apex:outputLink styleClass="moreLink" value="/apex/ViewMorePage?accId={!currentAccount.id}&from=NPS" target="_blank" rendered="{!(IF(latestNPSList.size > 0, true, false))}">
+                              more <!-- <sup>{{!latestNPSList.size}}</sup> -->
+                          </apex:outputLink>
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="npsTabelEmptyMsg" layout="block" style="padding: 5%;" styleClass="emptyTableMsg" rendered="{!(IF(latestNPSList.size <=0, true, false))}">
+                          No Net Promoter Score (NPS) found for this Account.
+                      </apex:outputPanel>
+                      
+                      <apex:outputPanel id="npsTableDate" layout="block" rendered="{!(IF(latestNPSList.size > 0, true, false))}">
+                          <table id="" class="table" align="center" cellspacing="0" width="98%">
+                            <thead>
+                                <tr>
+                                    <th>Net Promoter Score ID</th>
+                                    <th>Created Date</th>
+                                    <th>Likely To Recommend</th>
+                                    <th>Customer Effort Score</th>
+                                    <th>Hot Sheet Generated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!latestNPSList}" var="npsRecord" rows="3">
+                                    <tr>
+                                        <td> 
+                                           &nbsp;&nbsp; <apex:outputLink target="_blank" value="/{!npsRecord.Id}">{!npsRecord.Name}</apex:outputLink>
+                                        </td>
+                                        <td>
+                                            &nbsp;&nbsp;
+                                            <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!npsRecord.Service_Date__c}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!npsRecord.Service_Date__c}"/>
+                                           </apex:outputText>
+                                            
+                                          
+                                         <!--   {!npsDates[npsRecord.Id]} -->
+                                        </td>
+                                        <td>&nbsp;&nbsp;{!npsRecord.Would_you_recommend_us__c}</td>
+                                        <td>&nbsp;&nbsp;{!npsRecord.Customer_Effort_Score__c}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;{!npsRecord.Hot_Sheet_Generated__c}</td>
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                          </table>
+                      </apex:outputPanel>
+                  </apex:outputPanel>
+              </apex:panelGroup>
+              
+              <apex:panelGroup id="financialSummaryGroup" layout="block">
+                  <apex:outputPanel id="financialSummaryLabel" styleClass="gridGroupTitleClass" layout="block">Financial Summary</apex:outputPanel>
+                  
+                  <apex:outputPanel styleClass="fsQuarterByYearClass" layout="block" >
+                      <table class="fsQuarterByYearTable" align="center" cellpadding="5">
+                          <tbody>
+                              <tr >
+                                  <td >&nbsp;</td>
+                                  <apex:repeat value="{!quarterTimelineYearsQuarterMap}" var="year">
+                                      <apex:variable value="{!quarterTimelineYearsQuarterMap[year]}"  var="yearMapSize"/>
+                                      <td colspan="{!yearMapSize.size}" style="text-align: center;">{!year}</td>
+                                  </apex:repeat>
+                                  
+                              </tr>
+                              <tr>
+                                  <td >&nbsp;</td>
+                                  <apex:repeat value="{!quarterTimelineYearsQuarterMap}" var="year">
+                                      <apex:repeat value="{!quarterTimelineYearsQuarterMap[year]}" var="quarter">
+                                          <td >{!quarter}</td>
+                                      </apex:repeat>
+                                  </apex:repeat>
+                              </tr>
+                              <tr>
+                                  <td style="text-align: right;">Activations</td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q1__c}<!-- &nbsp;  <apex:image value="{!$Resource.Blacksquare}" width="12" height="12" style="border-radius:3px;" rendered="{!currentAccount.Activations_Q1__c!=null}"/> --> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q2__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q2__c!=null,currentAccount.Activations_Q1__c!=null),if(currentAccount.Activations_Q2__c>=currentAccount.Activations_Q1__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q2__c!=null,currentAccount.Activations_Q1__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q3__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q3__c!=null,currentAccount.Activations_Q2__c!=null),if(currentAccount.Activations_Q3__c>=currentAccount.Activations_Q2__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q3__c!=null,currentAccount.Activations_Q2__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q4__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q4__c!=null,currentAccount.Activations_Q3__c!=null),if(currentAccount.Activations_Q4__c>=currentAccount.Activations_Q3__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q4__c!=null,currentAccount.Activations_Q3__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q5__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q5__c!=null,currentAccount.Activations_Q4__c!=null),if(currentAccount.Activations_Q5__c>=currentAccount.Activations_Q4__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q5__c!=null,currentAccount.Activations_Q4__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q6__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q6__c!=null,currentAccount.Activations_Q5__c!=null),if(currentAccount.Activations_Q6__c>=currentAccount.Activations_Q5__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q6__c!=null,currentAccount.Activations_Q5__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_Q7__c}  <apex:image value="{!if(AND(currentAccount.Activations_Q7__c!=null,currentAccount.Activations_Q6__c!=null),if(currentAccount.Activations_Q7__c>=currentAccount.Activations_Q6__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_Q7__c!=null,currentAccount.Activations_Q6__c!=null)}"/> </td>
+                                  <td style="font-weight: normal;font-size: 80%;">{!currentAccount.Activations_QC__c}  <apex:image value="{!if(AND(currentAccount.Activations_QC__c!=null,currentAccount.Activations_Q7__c!=null),if(currentAccount.Activations_QC__c>=currentAccount.Activations_Q7__c,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(currentAccount.Activations_QC__c!=null,currentAccount.Activations_Q7__c!=null)}"/> </td>
+                              </tr>
+                              <tr>
+                                  <td style="text-align: right;">Revenue</td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue1} <!-- &nbsp; <apex:image value="{!$Resource.Blacksquare}" width="10" height="10" style="border-radius:3px;" rendered="{!Revenue1!=null}" /> -->  </td>  
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue2} <apex:image value="{!if(AND(Revenue2!=null,Revenue1!=null),if(Revenue2>=Revenue1,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue2!=null,Revenue1!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue3} <apex:image value="{!if(AND(Revenue3!=null,Revenue2!=null),if(Revenue3>=Revenue2,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue3!=null,Revenue2!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue4} <apex:image value="{!if(AND(Revenue4!=null,Revenue3!=null),if(Revenue4>=Revenue3,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue4!=null,Revenue3!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue5} <apex:image value="{!if(AND(Revenue5!=null,Revenue4!=null),if(Revenue5>=Revenue4,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue5!=null,Revenue4!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue6} <apex:image value="{!if(AND(Revenue6!=null,Revenue5!=null),if(Revenue6>=Revenue5,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue6!=null,Revenue5!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue7} <apex:image value="{!if(AND(Revenue7!=null,Revenue6!=null),if(Revenue7>=Revenue6,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue7!=null,Revenue6!=null)}"/> </td>
+                                  <td style="font-weight: normal; font-size: 80%;"> {!Revenue8} <apex:image value="{!if(AND(Revenue8!=null,Revenue7!=null),if(Revenue8>=Revenue7,$Resource.Uparrow,$Resource.Downarrow),'')}" width="12" height="17" rendered="{!AND(Revenue8!=null,Revenue7!=null)}"/> </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </apex:outputPanel>
+                  <apex:outputPanel layout="block">
+                      <table class="revenueDetailTableClass" style="font-weight: bolder; margin: 3% 0 0 4%;" cellpadding="15">
+                          <tbody>
+                              <tr>
+                                  <td>Revenue LTM : </td>
+                                  <!--  <td>{!currentAccount.Life_To_Date__c} &nbsp; <apex:outputText value="{!currentAccount.CurrencyIsoCode}" rendered="{!(IF(ISBLANK(currentAccount.Life_To_Date__c), false, true))}"/>&nbsp;</td> -->
+                                  <td> <apex:outputText value="{!IF(BEGINS("GBP",currentAccount.CurrencyIsoCode),'£','$')}" rendered="{!(IF(ISBLANK(currentAccount.Revenue_LTM__c), false, true))}"/>  {!currentAccount.Revenue_LTM__c}</td>
+                              </tr>
+                              <tr>
+                                  <td>UOR Currently : </td>
+                                  <td>
+                                      <apex:outputLink onclick="currentUOR()" value="javascript:void(0)">{!OpenUOR} 
+                                          <apex:actionSupport event="onclick" action="{!click}"/>
+                                      </apex:outputLink>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </apex:outputPanel>
+              </apex:panelGroup>
+              
+              <apex:panelGroup id="customerSummaryGroup" layout="block">
+                  <apex:outputPanel id="customerSummaryLabel" styleClass="gridGroupTitleClass" layout="block">Customer Details</apex:outputPanel>
+                  <!--
+                  <apex:outputPanel id="finTabelEmptyMsg" layout="block" styleClass="emptyTableMsg" rendered="{!(IF(creditStAvlbl, false, true))}">
+                          No customer details found for this Account.
+                  </apex:outputPanel>  -->
+                  <apex:outputPanel styleClass="cd" >  <!-- rendered="{!creditStAvlbl}"  -->
+                  <table class="customerDetailsTable">
+                      <tbody>
+                          <tr >
+                              <td colspan="2" >
+                                  <apex:outputPanel styleClass="finemptyTableMsg" rendered="{!!isFinServiceAvailable}" >
+                                      {!finServiceErrorMessage} 
+                                  </apex:outputPanel> 
+                              </td>                
+                          </tr>
+                          <tr>
+                              <td >Credit Status : 
+                               <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.RISK_CAT_DESC} </apex:outputPanel>   
+                              </td>
+                              <td style="padding-left: 3%;" >Credit Status Icon : 
+                                  <apex:image alt=""  value="{!$Resource.OKIcon}"  rendered="{!creditStGreen}"  />  
+                                  <apex:image alt=""  value="{!$Resource.YellowIcon}"  rendered="{!creditStYellow}"  />  
+                                  <apex:image alt=""  value="{!$Resource.ProblemIcon}"  rendered="{!creditStRed}"  />        
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>&nbsp;</td>
+                              <td style="padding-left: 3%;"></td>
+                          </tr>
+                          <tr>
+                              <td>Certificate on File? : <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.CERTFCT_FILE} </apex:outputPanel></td>  <!-- {!currentAccount.LLW_Status__c}  -->
+                              <td style="padding-left: 3%;">Certificate Expiration Date : 
+                            <apex:outputPanel rendered="{!creditStAvlbl}" >
+                              <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                    <apex:param value="{!finSum.EXP_DATE}"/>
+                               </apex:outputText>
+                               <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                    <apex:param value="{!finSum.EXP_DATE}"/>
+                               </apex:outputText>
+                            </apex:outputPanel>  
+                             </td>
+                          </tr>
+                          <tr>
+                              <td>&nbsp;</td>
+                              <td style="padding-left: 3%;"></td>
+                          </tr>
+                          <tr>
+                              <td>Collector Name : <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.COLLECTOR_NAME} </apex:outputPanel> </td> <!-- {!currentAccount.Credit_Collector_Name__c} -->
+                              <td style="padding-left: 3%;">Last Invoice Date : 
+                            <apex:outputPanel rendered="{!creditStAvlbl}" >
+                              <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                    <apex:param value="{!finSum.LAST_INVOICE_DT}"/>
+                               </apex:outputText>
+                               <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                    <apex:param value="{!finSum.LAST_INVOICE_DT}"/>
+                               </apex:outputText>
+                            </apex:outputPanel>   
+                             </td>
+                          </tr>
+                          <tr>
+                              <td colspan="2">&nbsp;</td>
+                          </tr>
+                          <tr >
+                              <td colspan="2">
+                                  <table style="width: 100%;" align="center" cellpadding="30">
+                                      <thead style="font-size: 14px;font-weight: bolder;">
+                                          <tr>
+                                              <th colspan="5" style="text-align: center;">Current Aging(In Days)</th>
+                                          </tr>
+                                          <tr>
+                                              <th style="width:25%;">0-29</th>
+                                              <th style="width:25%;">30-59</th>
+                                              <th style="width:25%;">60-89</th>
+                                              <th style="width:25%;">90-119</th>
+                                              <th style="width:25%;">120+</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr>
+                                              <td><apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.DUE_0_TO_29} </apex:outputPanel> </td> <!-- {!currentAccount.Summary_balance_current__c} -->
+                                              <td><apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.DUE_30_TO_59} </apex:outputPanel> </td> <!-- {!currentAccount.Summary_balance_30_days__c}  -->
+                                              <td><apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.DUE_60_TO_89} </apex:outputPanel> </td> <!-- {!currentAccount.Summary_balance_60_days__c} -->
+                                              <td><apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.DUE_90_TO_119} </apex:outputPanel> </td> <!-- {!currentAccount.Summary_balance_90_days__c} -->
+                                              <td><apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.DUE_120_PLUS} </apex:outputPanel> </td> <!-- {!currentAccount.Summary_balance_120_days__c} -->
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td colspan="2">&nbsp;</td>
+                          </tr>
+                        
+                          
+                         <tr>
+                              <td colspan="2">Special Instructions: {!currentAccount.Special_Instructions__c} </td>
+                          </tr>
+                          <tr>
+                              <td colspan="2">&nbsp;</td>
+                          </tr>
+                          <tr>
+                              <td colspan="2">Special Billing Instructions: <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.BILLING_INST} </apex:outputPanel> </td> <!-- currentAccount.Special_Billing_Instructions__c -->
+                          </tr>
+                          <tr>
+                              <td colspan="2">&nbsp;</td>
+                          </tr>
+                          <tr>      
+                              <td colspan="2">Credit Limit: &nbsp;&nbsp;<apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.credit_limit} </apex:outputPanel> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              Credit Used: <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.credit_used} </apex:outputPanel> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
+                              Credit Available: <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.delta_credit} </apex:outputPanel></td>        
+                          </tr>
+                          <tr>
+                              <td colspan="2">&nbsp;</td>
+                              
+                          </tr>
+                          <tr> <!-- <td style="padding-left: 3%;"> -->
+                              <td colspan="2" >
+                              <apex:outputPanel rendered="{!IF(salesorgID != '1200',true,false)}">
+                                  <apex:outputLink onclick="invoicehistory('{!currentAccount.Id}')" value="javascript:void(0)">Invoice History</apex:outputLink>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terms: <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.PAY_TERMS} </apex:outputPanel> 
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLink value="/apex/CollectorNotes?sapBillTo={!currentAccount.SAP_Sold_To__c}&salesOrg={!salesOrgID}&sinceDate=&recType={!currentAccount.recordtype.name}" target="_blank">Collector Notes</apex:outputLink>
+                              </apex:outputPanel> 
+                              <apex:outputPanel rendered="{!IF(salesorgID == '1200',true,false)}">
+                                  <apex:outputLink onclick="invoicehistory('{!currentAccount.Id}')" value="javascript:void(0)">Invoice History</apex:outputLink>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terms: <apex:outputPanel rendered="{!creditStAvlbl}" > {!finSum.PAY_TERMS} </apex:outputPanel> 
+                                  <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLink value="/apex/CollectorNotes?sapBillTo={!currentAccount.SAP_Sold_To__c}&salesOrg={!salesOrgID}&sinceDate=&recType={!currentAccount.recordtype.name}" target="_blank">Collector Notes</apex:outputLink> -->
+                              </apex:outputPanel>   
+                              </td>
+                              
+                          </tr>
+                      </tbody>
+                  </table> </apex:outputPanel>
+              </apex:panelGroup> 
+          </apex:panelGrid>
+      </div>
+  </apex:form>
+  </div>
+  <form name="f" target="_blank" style="display:none" role="form" method="get" id="login-form" autocomplete="off" action="http://cpq-devweb/CPQ">
+       <div class="form-group">
+          <label for="email" class="login-labels">Email Address</label>
+          <input type="email" name="username" id="email" class="form-control" value="m@t" placeholder="youremail@gmail.com"/>
+          <span class="form-error" style="display: none;">Email is Required</span>
+       </div>
+       <div class="form-group">
+          <label for="password" class="login-labels">Password</label>
+          <input type="password" name="password" id="password" value="p" class="form-control" placeholder="Password"/><span class="form-error" style="display: none;">Password is Required</span>
+          <div class="forget-password" align="right">
+             <a href="#">Forgot password</a>
+          </div>
+          <input type="hidden" name="_csrf" value="bf8449c6-c267-42a9-944a-9a892bc3ce71"/>
+       </div>
+          <input type="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Login"/><i class="fa fa-chevron-right"></i> 
+    </form>
+  </Body>
+  <script type="text/javascript">
+      
+      //Shankar - Toggle the child items for Contract and Quote table.
+      function toggleChildRow(recordID){
+          var findClass = '.'+recordID;
+          recordID = '#'+recordID;
+          $( recordID ).toggle(function(){
+             var $varText = $(this).closest("tbody").find(findClass);
+             if($varText.text().indexOf("+") > -1){
+                 $varText.html("-");
+             }
+             else{
+                 $varText.html("+");
+             }
+          });
+      }
+      
+      var accountIdd;
+      
+      function cloneQuoteFromDiffAccount(accountId){
+          //alert('Implementation in progress');
+          var sOrg = '{!salesOrgID}';
+          var blState = "{!currentAccount.BillingState}";
+          if(sOrg != '1200'){
+              if(blState == '' || blState == null || blState.length != 2)
+              {
+                  alert("Please enter a valid capital two-letter billing state code"); 
+              }
+              else{
+                  window.open('{!$Page.SelectQuoteToClone}?id='+accountId+'&salesOrg={!salesOrgID}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');        
+              }
+          }
+          else
+              window.open('{!$Page.SelectQuoteToClone}?id='+accountId+'&salesOrg={!salesOrgID}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');        
+      }
+      
+      //Shankar - onClick function for new quote button
+      function createNewQuote(accountId){      
+         accountIdd = accountId;
+         //createopportunity();
+         //alert('{!oppid}');
+          var left = (screen.width/2)-(900/2); 
+          var top = (screen.height/2)-(500/2);  
+          
+          var sOrg = '{!salesOrgID}';  
+          var blState = "{!currentAccount.BillingState}";
+          if(sOrg != '1200'){
+              if(blState == '' || blState == null || blState.length != 2)
+              {
+                  alert("Please enter a valid capital two-letter billing state code"); 
+              }
+          }
+              
+          if(sOrg == '' || sOrg == null)
+          {
+              alert("Please enter the Sales Org ID on the user detail page");
+          }
+             
+          if ( (sOrg != '' && sOrg != null && blState != '' && blState != null && blState.length == 2 && (sOrg == '1000' || sOrg == '1100'))){         
+           //window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+           //window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+             window.open('{!$Page.OpenOppSelection}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500'); 
+          }else if(sOrg != '' && sOrg != null && sOrg == '1200'){
+             window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+          }else if(sOrg != '' && sOrg != null && (sOrg == '1500' || sOrg == '1501')){
+             window.open('{!$Page.OpenOppSelection}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+          }                 
+      }
+      
+    //Nagalakshmi - onClick function for new Case button
+      function CreateNewCase(AcName,AcId){
+      //window.open('/setup/ui/recordtypeselect.jsp?ent=01I80000000lLBL&retURL=/'+AcId+'&save_new_url=/a0d/e?retURL=/'+AcId+'&CF00N80000004mJY7='+AcName+'&CF00N80000004mJY7_lkid='+AcId);
+        window.open('/apex/SelectSORRecordType?id='+AcId+'&Name='+AcName)
+      }
+      
+      //Shankar - Onclick function to open invoices in CPQ
+      function invoicehistory(accountId){
+        var left = (screen.width/2)-(1000/2); 
+          var top = (screen.height/2)-(600/2);  
+          window.open('{!$Page.InvoiceHistory}?id='+accountId, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=500, height=300');
+         // document.getElementById('login-form').submit();
+      }
+      
+      //Shankar - Onclick function to open all contracts for the account
+      function openMoreContracts(accountId){
+          //TODO: Add logic
+          document.getElementById('login-form').submit();
+      }
+      
+      //Shankar - Onclick function to open contract details in CPQ
+      function openContractDetail(contractId){
+          //TODO: Add logic
+          document.getElementById('login-form').submit();
+      }
+      
+      //Nagalakshmi - Onclick function to open quote details in CPQ
+      function openQuoteDetails(accountId,QStatus,OppId,quoteid,contactid,plant){
+        if(OppId != '')
+        {
+           if(QStatus=='Open'){
+               //window.open('{!cpqURL}'+'?cpq=true&mode=edit&account='+accountId+'&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity='+OppId+'&contact='+contactid+'&quote='+quoteid+'&plant='+plant);
+               window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=edit');
+           }
+           else{
+               window.open('/'+quoteid);    
+           }    
+        }
+        else{
+            alert('Opportunity is blank for the selected quote!!');
+        }
+            
+     //   if(QStatus!='Open'){
+     //      window.open('{!cpqURL}'+'?cpq=true&mode=view&account='+accountId+'&opportunity='+OppId);
+           //window.open('http://google.com');
+     //  } 
+      }
+      
+      function CloneQuote(accountId,QStatus,OppId,quoteid,contactid,plant){
+           document.getElementById('hiddenQuoteID').value = quoteid;
+           //callCreateOpp(quoteid);
+           //window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=clone');
+             window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}'+'&quoteid='+quoteid, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');               
+      }
+      
+      function cloneContract(contractID,accountId){
+        document.getElementById('hiddenContractID').value = contractID;
+        //callCreateOppForContract();
+        //window.open('{!cpqURL}'+'/edit_contract?contractId='+contractID+'&uid={!$User.Id}&emailId={!$User.Email}&mode=clone&opportunity=');      
+          window.open('{!$Page.SelectConatctPopup}?id='+accountId+'&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid='+'{!oppId}'+'&contractid='+contractID, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+      }
+      
+      //Shankar - Onclick function to convert quote in CPQ
+      function convertQuote(accid,oppid,quoteid,contact,plant){
+          //TODO: Add logic
+          //window.open('{!cpqURL}'+'/?cpq=true&mode=convertToContract&account='+accid+'&uid='+ '{!$User.Email}' +'&salesorg='+ '{!salesOrgID}' +'&opportunity='+oppid+'&contact='+contact+'&quote='+quoteid+'&plant='+plant);
+          var isBillingFilled = '{!isBillingValid}';
+          var salesorg= "{!salesOrgID}";
+          
+          if( (isBillingFilled == 'true' && salesorg != '1200') || salesorg == '1200' ){
+              window.open('{!cpqURL}'+'/shipping?quoteId='+quoteid+ '&uid={!$User.Id}&emailId={!$User.Email}');  
+          }
+          else{
+              alert('Please fill the complete Billing Address(with valid uppercase two-letter state code) to proceed with quote conversion!');
+          }    
+          //document.getElementById('login-form').submit();
+          //window.open('http://google.com');
+      }
+      
+      //Shankar - Onclick function to open UOR in CPQ
+      function currentUOR(){
+          if({!OpenUOR}==0){
+              alert('No units on rent found');
+          }
+          else{
+          //TODO: Add logic
+          //document.getElementById('login-form').submit();
+          //window.open('{!cpqURL}'+'/?cpq=true&accountNo={!currentAccount.SAP_Bill_To__c}');  //'{!cpqURL}'+
+          window.open('{!cpqURL}'+'/contracts?customerId={!currentAccount.SAP_Bill_To__c}&accountId={!currentAccount.Id}&status=ON RENT&emailId={!$User.Email}&uid={!$User.Id}');
+          }
+      }
+      
+      function openpopup(){
+          alert('Functionality under construction');
+      }
+      
+      function openContracts(contractId,ItmNm){
+          var uidd = '{!$User.Email}';
+         var hidden = document.createElement("input");
+       //hidden.type = "hidden";
+          hidden.name = "contractid";
+          hidden.value = contractId;
+          // document.getElementById('login-form').submit();
+          var f = document.getElementById('login-form');
+          f.appendChild(hidden);
+          if(ItmNm != 'Copy' && ItmNm != null && ItmNm != 'SOR') {
+               window.open('{!cpqURL}'+'/?portal=true&module=pickup&contract='+contractId+'&lineitem='+ItmNm+'&uid='+uidd+'&account='+'{!currentAccount.Id}' );
+           } 
+       
+           else if(ItmNm == null)
+           {
+              // window.open('{!cpqURL}'+'/?cpq=true&mode=viewContract&contract='+contractId );  //'{!cpqURL}'+'
+              // window.open('{!cpqURL}'+'/contract='+contractId +'&uid='+uidd);
+              window.open('{!cpqURL}'+'/viewContract?contractId='+contractId +'&uid={!$User.Id}&emailId={!$User.Email}&accountId={!currentAccount.id}');
+           }
+           else if(ItmNm == 'SOR'){
+               window.open('{!cpqURL}'+'/contract='+contractId +'&uid='+uidd);    
+           }
+           else{
+               f.submit();
+           }
+      }
+            
+      function LostQuote(qid,oppid){
+          if(oppid != '' && oppid != null){
+             // callLost(qid);
+              var salesOrg = "{!salesOrgID}";
+              if(salesOrg == '1200')
+                  window.open('{!$Page.LostOppUK}?id='+oppid+'&quoteid='+qid);    
+              else
+                  window.open('{!$Page.LostOppReason}?id='+oppid+'&quoteid='+qid);
+          }
+          else
+          {
+              alert('Opportunity is blank for the selected quote!!');
+          }
+      }
+</script>
+</apex:page>

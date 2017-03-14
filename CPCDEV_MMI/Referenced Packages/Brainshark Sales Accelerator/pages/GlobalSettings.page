@@ -1,0 +1,54 @@
+<apex:page controller="BRNSHRK.GlobalSettingsController" action="{!initPage}">
+
+<apex:sectionHeader title="Brainshark for Salesforce" subtitle="API Settings"/>
+
+<apex:form >
+<apex:pageBlock id="settings">
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton value="Edit" action="{!edit}" rerender="settings" rendered="{!NOT(editMode)}"/>
+        <apex:actionStatus id="saveStatus" rendered="{!editMode}">
+            <apex:facet name="start">
+                <apex:commandButton value="Saving..." disabled="true"/>
+            </apex:facet>
+            <apex:facet name="stop">
+                <apex:commandButton value="Save" action="{!save}" rerender="settings" status="saveStatus"/>
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:commandButton value="Cancel" action="{!cancel}" rerender="settings" rendered="{!editMode}"/>
+        <apex:commandButton action="{!gotoTokenPage}" value="Add/Reset API Token" rerender="settings" rendered="{!NOT(editMode)}"></apex:commandButton>
+    </apex:pageBlockButtons>
+    
+    <apex:pageBlockSection columns="1">
+        <apex:inputField value="{!globalSettings.BRNSHRK__Login_Directory__c}" rendered="{!editMode}" style="width: 200px;"/>
+        <apex:outputField value="{!globalSettings.BRNSHRK__Login_Directory__c}" rendered="{!NOT(editMode)}" style="width: 200px;"/>
+
+    	<apex:inputField value="{!globalSettings.BRNSHRK__API_Host__c}" rendered="{!editMode}" style="width: 300px;"/>
+    	<apex:outputField value="{!globalSettings.BRNSHRK__API_Host__c}" rendered="{!NOT(editMode)}" style="width: 300px;"/>
+        <apex:inputField value="{!globalSettings.BRNSHRK__App_Host__c}" rendered="{!editMode}" style="width: 300px;"/>
+        <apex:outputField value="{!globalSettings.BRNSHRK__App_Host__c}" rendered="{!NOT(editMode)}" style="width: 300px;"/>
+        <apex:outputField value="{!globalSettings.BRNSHRK__Static_Host__c}" rendered="{!NOT(editMode)}" style="width: 300px;"/>
+        <apex:inputField value="{!globalSettings.BRNSHRK__Static_Host__c}" rendered="{!editMode}" style="width: 300px;"/>
+        <apex:inputField value="{!globalSettings.BRNSHRK__SlideShark_Host__c}" rendered="{!editMode}" style="width: 300px;"/>
+        <apex:outputField value="{!globalSettings.BRNSHRK__SlideShark_Host__c}" rendered="{!NOT(editMode)}" style="width: 300px;"/>
+        <apex:selectList value="{!globalSettings.BRNSHRK__Default_Record_Owner__c}" rendered="true" size="1" disabled="{!NOT(editMode)}" readonly="{!NOT(editMode)}" style="width: 300px;">
+            <apex:selectOptions value="{!ownerOptions}"/>
+        </apex:selectList>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel >Create Task On Send Presentation</apex:outputLabel>
+            <apex:outputPanel >
+                <apex:inputCheckbox disabled="{!NOT(editMode)}" value="{!globalSettings.BRNSHRK__Create_Task__c}" styleClass="js-chk-task"/>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:selectList value="{!globalSettings.BRNSHRK__Sent_Task_Type__c}" rendered="true" size="1" disabled="{!NOT(hasTaskType && editMode)}" readonly="{!NOT(hasTaskType && editMode)}" style="width: 300px;">
+            <apex:selectOptions value="{!taskTypeOptions}"/>
+        </apex:selectList>
+        <apex:outputField value="{!globalSettings.BRNSHRK__API_Token__c}" rendered="true" style="width: 300px;"/>
+        
+        <apex:inputField value="{!globalSettings.BRNSHRK__Brainshark_Chatter_App_Name__c}" rendered="{!editMode}" style="width: 300px;"/>
+        <apex:outputField value="{!globalSettings.BRNSHRK__Brainshark_Chatter_App_Name__c}" rendered="{!NOT(editMode)}" style="width: 300px;"/>
+        </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

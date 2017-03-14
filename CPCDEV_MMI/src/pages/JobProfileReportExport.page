@@ -1,0 +1,74 @@
+<apex:page controller="JobProfileReportController" contenttype="application/vnd.ms-excel#JobProfiles.xls" cache="true" showHeader="false" sidebar="false" 
+    standardStyleSheets="false" standardStylesheets="false">
+    
+        <H3><apex:outputLabel value="Filter Criteria"/></H3> 
+        <b><apex:outputLabel value="Branch:"/></b> 
+        <apex:outputText value="{!selectedbranch}" escape="false"  />
+        <br/>
+        <b><apex:outputLabel value="User:"/></b> 
+        <apex:outputText value="{!selectedUserName}"  escape="false" />
+        <br/>
+        <b><apex:outputLabel value="# Key Subs:"/></b> 
+        <apex:outputText value="{!selectedKeySub}"  escape="false" />
+        <br/>   <br/>
+        <H3><apex:outputLabel value="JobProfiles" /></H3>
+        <apex:datatable value="{!jobProfiles}" var="jobProfile" >
+          <apex:column headerValue="Job Profile Name" >
+          <apex:outputText value="{!jobProfile.jobProfile.Name}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="Territory" >      <!-- TFS  4581 -->
+          <apex:outputText value="{!jobProfile.jobProfile.Territory__c}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="Owner" >
+            <apex:outputText value="{!jobProfile.jobProfile.Owner.Name}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="Value Quadrant" >      <!-- TFS  7548 -->
+          <apex:outputText value="{!jobProfile.jobProfile.Value_Quadrant__c}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="Prioritization" >      <!-- TFS  7548 -->
+          <apex:outputText value="{!jobProfile.jobProfile.Stage_Flag__c}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="Start Date" >
+            <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+              <apex:param value="{!jobProfile.jobProfile.Target_Start_Date__c}" />
+            </apex:outputText>
+          </apex:column>
+          <apex:column headerValue="Valuation" >
+            <apex:outputText value="{!CEILING(jobProfile.jobProfile.Project_Valuation_High__c)}" escape="false" />
+          </apex:column>
+           <apex:column headerValue="Bid Date" >
+            <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+              <apex:param value="{!jobProfile.jobProfile.Bid_Date__c}" />
+            </apex:outputText>
+          </apex:column>
+          <apex:column headerValue="Mmi Stage Status" >
+            <apex:outputText value="{!jobProfile.jobProfile.Project_Stage_Status__c}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="City" >
+            <apex:outputText value="{!jobProfile.jobProfile.Job_Site_City__c}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="#GC" >
+            <apex:outputText value="{!CEILING(jobProfile.jobProfile.General_Contractors__c)}" escape="false" />
+          </apex:column>
+          <apex:column headerValue=" # Key Subs" >
+            <apex:outputText value="{!CEILING(jobProfile.jobProfile.Number_of_Key_Sub__c)}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="# total Subs" >
+            <apex:outputText value="{!CEILING(jobProfile.jobProfile.Sub_Contractors_All__c)}" escape="false" />
+          </apex:column>
+          <apex:column headerValue="LastActivityDate"  style="text-align:right">
+            <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+              <apex:param value="{!jobProfile.LastActivityDate}" />
+            </apex:outputText>
+          </apex:column>
+          <apex:column headerValue="Opps Won" value="{!jobProfile.wonOpp}" />
+          <apex:column headerValue="# of units" styleClass="integerColumn">
+            <apex:outputText value="{!CEILING(jobProfile.numOfUnits)}" escape="false" />
+          </apex:column>
+          <apex:column value="{!jobProfile.lostOpp}" headerValue="Opps Lost" />                
+          <apex:column value="{!jobProfile.openOpp}" headerValue="Open Opps" />
+          <apex:column value="{!jobProfile.closedActivities}" headerValue="Completed Activities" />
+          <apex:column value="{!jobProfile.openActivities}" headerValue="Open Activities" />
+          
+        </apex:datatable>
+</apex:page>

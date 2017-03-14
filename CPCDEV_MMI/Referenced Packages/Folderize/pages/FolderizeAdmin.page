@@ -1,0 +1,363 @@
+<apex:page controller="sharem.FolderizeAdminController" tabStyle="Folderize__tab" title="Folderize Administration">
+	
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/styles.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/folderizeAdmin.css')}"/>
+
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery-1.9.0.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/scripts.js')}"></script>
+
+
+	
+<script type="text/javascript">
+	//configure the "scripts.js" file
+	SMF_PAGE_OPTIONS.fixPageContainer = true;
+	
+	var CONFIRM_CHANGE_OF_DOC_TAGS = "Are you sure you want to change the \"Use Tags\" settings for your organization?";
+	
+	var documentTagsUsed = {!documentTagsUsed};
+	
+	function changeUseOfDocumentTags(radioButton)
+	{
+		//- determine a new value of the setting according to a selected radio button
+		var newValue_TagsUsed = (radioButton.value == "ON" ? true : false);
+		//- start the logic only if the setting is not in use already
+		if (newValue_TagsUsed != documentTagsUsed)
+		{
+			if (confirm(CONFIRM_CHANGE_OF_DOC_TAGS))
+			{
+				//- update value of the global variable and the checkbox
+				documentTagsUsed = newValue_TagsUsed;
+				$(".documentTagsUsed").prop("checked", documentTagsUsed);
+				//- call the action function
+				af_changeUseOfDocumentTags();
+			}
+			else
+			{
+				//- roll back the selection in radio buttons
+				radioButton.checked = false;
+				var oppositeRbId = (newValue_TagsUsed ? "#turnTags_Off" : "#turnTags_On");
+				$(oppositeRbId).prop("checked", true);
+			}
+		}
+	}
+</script>
+
+
+
+<!-- USAGE REPORTS MANAGER -->
+<c:UsageReportsManager />
+
+<div>
+	<span class="caption-logo smf-icon-logo-small"></span>
+	<span class="section-title">
+		Folderize Administration
+	</span>
+</div>
+
+<apex:outputPanel rendered="{!NOT(isAccessible_AdminPage)}">
+	You do not have access to this page. Please contact your administrator if access is necessary. 
+</apex:outputPanel>
+
+<apex:form id="form" rendered="{!isAccessible_AdminPage}">
+	
+	<apex:actionStatus id="statusLoader" onstart="statusLoader.showLoader();" onstop="statusLoader.hideLoader();" />
+	
+	
+	<apex:pageBlock title="Links">
+		<apex:outputLink value="{!$Page.sharem__SMF_TagFoldersAssociations}" styleClass="smf-button">
+			<span class="smf-button-icon smf-icon-arrow"></span>
+			Tags/Folders Overview
+		</apex:outputLink>
+		
+		<a href="{!$Page.SMF_LicenseManager}" class="smf-button">
+			<span class="smf-button-icon smf-icon-arrow"></span>
+			Folderize Edition Manager
+		</a>
+		
+		<a href="{!URL_ADMIN_GUIDE}" target="_blank" class="smf-button">
+			<span class="smf-button-icon smf-icon-arrow"></span>
+			Administration Guide
+		</a>
+	</apex:pageBlock>
+	
+	<!-- NOTIFICATIONS -->
+	<apex:pageBlock title="Notifications">
+		
+		<apex:outputPanel layout="block" styleClass="notification warning" rendered="{!showNotice_LimitOfDocsReached}">
+			*<span class="smf-icon-in-text16 smf-icon-warning16"></span>The document limit has been reached for this Folderize edition.
+		</apex:outputPanel>
+		
+		<apex:outputPanel layout="block" styleClass="notification" rendered="{!isLimitOfSmDocsEnabled}">
+			* This Folderize edition limits the number of documents used to maximum {!currentSmDocumentsLimit}.
+			For additional details on how limits work, see the <a href="{!URL_ADMIN_GUIDE}#limits" target="_blank">Administration Guide</a>
+			or contact <a href="mailto:folderize@sharemethods.com?subject=Folderize administration">ShareMethods</a>.
+		</apex:outputPanel>
+		
+		<div class="notification">
+			* Your organization now has {!smDocumentsCount} documents used in Folderize. You may or may not see
+			all of these in folders, depending on folder tags, direct mappings, and Library and Files sharing settings.
+		</div>
+		
+		<div class="notification">
+			* If you want to check or change your current edition please go to
+			<a href="{!$Page.sharem__SMF_LicenseManager}">Folderize Edition Manager</a>.
+		</div>
+		
+		<div class="notification">
+			* You are using version {!currentAppVersion}. To see if there is a newer version, go to the
+			<a href="https://appexchange.salesforce.com/listingDetail?listingId=a0N3000000B4caiEAB" target="_blank">AppExchange Folderize page</a>
+			and click the Details tab. To upgrade to the latest version, click "Get It Now".
+		</div>
+		
+		<apex:repeat value="{!dynamicNotifications}" var="notification">
+			<div class="notification">* {!notification}</div>
+		</apex:repeat>
+	</apex:pageBlock>
+	<br/>
+	
+	
+	<!-- SETTINGS -->
+	<apex:pageBlock id="panel_Settings" title="Settings">
+		<hr/>
+		<!-- Use Of Tags -->
+		<apex:actionRegion >
+			<apex:actionFunction action="{!changeUseOfDocumentTags}" reRender="panel_Settings" name="af_changeUseOfDocumentTags" status="statusLoader" />
+			
+			<script>
+				$(document).ready(function()
+				{
+					var activeRadioButtonId_TagsUsed = (documentTagsUsed ? "#turnTags_On" : "#turnTags_Off");
+					$(activeRadioButtonId_TagsUsed).prop("checked", true);
+				});
+			</script>
+			
+			<div class="form-row">
+				<div class="form-cell-label" style="width: 70px;">Use tags</div>
+				<div class="form-cell-value">
+					<label>
+						<input id="turnTags_On" type="radio" name="tagsUsed" value="ON" onclick="changeUseOfDocumentTags(this);" />ON
+					</label>
+					<label>
+						<input id="turnTags_Off" type="radio" name="tagsUsed" value="OFF" onclick="changeUseOfDocumentTags(this);" />OFF
+					</label>
+					<apex:inputCheckbox styleClass="documentTagsUsed" value="{!documentTagsUsed}" style="display: none;"/>
+				</div>
+				
+				<div class="info-panel">
+					<span title="Info" class="smf-icon-in-text16 smf-icon-info16"></span>
+					When ON: Tags saved in folder settings are used. Documents (from Files or any Library) having matching tags
+					automatically appear in the folder.  To enable this to work, a "sync" process will copy document tags into a
+					Folderize database.
+					<span style="text-decoration: underline;">Each document having one or more tags will count once toward any
+					Folderize document limit in effect, whether or not its tags match any folder settings.</span>
+				</div>
+			</div>
+			
+			<apex:outputPanel rendered="{!status_ChangeUseOfDocTags != null}" styleClass="sfc-messages" layout="block">
+				{!status_ChangeUseOfDocTags}
+			</apex:outputPanel>
+		</apex:actionRegion>
+		
+		
+		<!-- Change Folders Sorting -->
+		<hr/>
+		<apex:actionRegion >
+			<div class="form-item-h">
+				<div class="form-cell-label def-setting-label">Folders sorting field</div>
+				<div class="form-cell-value input-200">
+					<apex:selectList value="{!foldersSortingParameter.name}" size="1">
+						<apex:selectOption itemValue="Name" itemLabel="Name" />
+						<apex:selectOption itemValue="CreatedDate" itemLabel="Created Date" />
+						<apex:selectOption itemValue="LastModifiedDate" itemLabel="Last Update of Folder Name" /> 
+					</apex:selectList>
+				</div>
+			</div>
+			<div class="form-item-h">
+				<div class="form-cell-label def-setting-label">Folders sorting order</div>
+				<div class="form-cell-value input-200">
+					<apex:selectList value="{!foldersSortingParameter.sortingOrder}" size="1">
+						<apex:selectOption itemValue="{!ORDER_ASCENDING}" itemLabel="Ascending" />
+						<apex:selectOption itemValue="{!ORDER_DESCENDING}" itemLabel="Descending" />
+					</apex:selectList>
+				</div>
+			</div>
+			<div class="line-end"></div>
+			
+			<apex:outputPanel rendered="{!status_ChangeFoldersSorting != null}" styleClass="sfc-messages" layout="block">
+				{!status_ChangeFoldersSorting}
+			</apex:outputPanel>
+			<apex:commandButton action="{!changeFoldersSorting}" reRender="panel_Settings" status="statusLoader" value="Save" styleClass="settings-btn" />
+		</apex:actionRegion>
+		
+		
+		<!-- Change Documents Sorting -->
+		<hr/>
+		<apex:actionRegion >
+			<h3 class="setting-header">Default sorting of documents:</h3>
+			<div class="form-item-h">
+				<div class="form-cell-label def-setting-label">Sorting field</div>
+				<div class="form-cell-value input-200">
+					<apex:selectList value="{!docsSortingParameter.name}" size="1">
+						<apex:selectOption itemValue="title" itemLabel="Title" />
+						<apex:selectOption itemValue="origin" itemLabel="Origin" />
+						<apex:selectOption itemValue="fileType" itemLabel="Type" />
+						<apex:selectOption itemValue="fileSize" itemLabel="Size, KB" />
+						<apex:selectOption itemValue="modifiedDate" itemLabel="Modified" />
+						<apex:selectOption itemValue="ownerName" itemLabel="Owner" />
+						<apex:selectOption itemValue="tagCsv" itemLabel="Tags" />
+						
+					</apex:selectList>
+				</div>
+			</div>
+			<div class="form-item-h">
+				<div class="form-cell-label def-setting-label">Sorting order</div>
+				<div class="form-cell-value input-200">
+					<apex:selectList value="{!docsSortingParameter.sortingOrder}" size="1">
+						<apex:selectOption itemValue="{!ORDER_ASCENDING}" itemLabel="Ascending" />
+						<apex:selectOption itemValue="{!ORDER_DESCENDING}" itemLabel="Descending" /> 
+					</apex:selectList>
+				</div>
+			</div>
+			<div class="line-end"></div>
+			
+			<apex:outputPanel rendered="{!status_ChangeDocsSorting != null}" styleClass="sfc-messages" layout="block">
+				{!status_ChangeDocsSorting}
+			</apex:outputPanel>
+			<apex:commandButton action="{!changeDocsSorting}" reRender="panel_Settings" status="statusLoader" value="Save" styleClass="settings-btn" />
+		</apex:actionRegion>
+		
+		
+		<!-- Show Filter Toolbar -->
+		<hr/>
+		<apex:actionRegion >
+			<div class="form-item-h">
+				<div class="form-cell-label" style="width: 250px;">On the main page, show filter bar by default</div>
+				<div class="form-cell-value">
+					<apex:inputCheckbox value="{!showFilterToolbar}" />
+				</div>
+			</div>
+			<div class="line-end"></div>
+			
+			<div class="info-panel">
+				<span title="Info" class="smf-icon-in-text16 smf-icon-info16"></span>
+				When not shown, users may access the filter bar by an option in the settings menu.
+			</div>
+			
+			<apex:outputPanel rendered="{!status_ChangeFilterVisibility != null}" styleClass="sfc-messages" layout="block">
+				{!status_ChangeFilterVisibility}
+			</apex:outputPanel>
+			
+			<apex:commandButton action="{!changeFilterVisibility}" reRender="panel_Settings" status="statusLoader" value="Save" styleClass="settings-btn" />
+		</apex:actionRegion>
+		
+		
+		<!-- Visibility of Document Columns -->
+		<hr/>
+		<apex:actionRegion >
+			<h3 class="setting-header">Visibility of columns in document tables:</h3>
+			<table class="docColsTable" border="1">
+				<tr>
+					<th><label for="{!$Component.ch_ShowTitle}">Title</label></th>
+					<th><label for="{!$Component.ch_ShowOrigin}">Origin</label></th>
+					<th><label for="{!$Component.ch_ShowType}">Type</label></th>
+					<th><label for="{!$Component.ch_ShowSize}">Size, KB</label></th>
+					<th><label for="{!$Component.ch_ShowModified}">Modified</label></th>
+					<th><label for="{!$Component.ch_ShowOwner}">Owner</label></th>
+					<th><label for="{!$Component.ch_ShowTags}">Tags</label></th>
+					<th><label for="{!$Component.ch_ShowActions}">Actions</label></th>
+				</tr>
+				<tr>
+					<td><apex:inputCheckbox id="ch_ShowTitle" value="{!docColumnsVisibility['title']}" disabled="true"/></td>
+					<td><apex:inputCheckbox id="ch_ShowOrigin" value="{!docColumnsVisibility['origin']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowType" value="{!docColumnsVisibility['fileType']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowSize" value="{!docColumnsVisibility['fileSize']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowModified" value="{!docColumnsVisibility['modifiedDate']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowOwner" value="{!docColumnsVisibility['ownerName']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowTags" value="{!docColumnsVisibility['tagCsv']}"/></td>
+					<td><apex:inputCheckbox id="ch_ShowActions" value="{!docColumnsVisibility['actions']}" disabled="true"/></td>
+				</tr>
+			</table>
+			
+			<apex:outputPanel rendered="{!status_ChangeDocColsVisibility != null}" styleClass="sfc-messages" layout="block">
+				{!status_ChangeDocColsVisibility}
+			</apex:outputPanel>
+			<apex:commandButton action="{!changeDocColsVisibility}" reRender="panel_Settings" status="statusLoader" value="Save" styleClass="settings-btn" />
+		</apex:actionRegion>
+	</apex:pageBlock>
+	<br/>
+	
+	
+	<!-- ADVANCED SETTINGS -->
+	<apex:pageBlock id="panel_AdvancedSettings" title="Advanced Settings">
+		
+		<apex:commandLink action="{!activateAdvancedSettings}" reRender="panel_AdvancedSettings" status="statusLoader"
+			rendered="{!NOT(showAdvancedSettings)}" value="Click to show advanced settings"/>
+		
+		<apex:outputPanel rendered="{!showAdvancedSettings}">
+			<apex:actionRegion >
+				<div class="form-row">
+					<div class="form-cell-label">Maximum documents retrieved from server in one operation</div>
+					<div class="form-cell-value input-200">
+						<apex:inputText value="{!docsLimitInServerResponse}" />
+						<span class="form-note">* a correct value must be between 1000 and 30000</span>
+					</div>
+				</div>
+				<div class="line-end"></div>
+				
+				<apex:outputPanel rendered="{!status_ChangeDocsLimitInResponse != null}" styleClass="sfc-messages" layout="block">
+					{!status_ChangeDocsLimitInResponse}
+				</apex:outputPanel>
+				<apex:commandButton action="{!changeDocsLimitInServerResponse}" reRender="panel_AdvancedSettings" status="statusLoader" value="Save"/>
+			</apex:actionRegion>
+		</apex:outputPanel>
+		
+	</apex:pageBlock>
+	<br/>
+	
+	
+	<!-- ACTIONS -->
+	<apex:pageBlock title="Actions">
+		
+		<hr/>
+		<apex:outputPanel id="panel_ResetOfSyncResults">
+			<apex:commandButton action="{!startResetOfSyncResults}" reRender="panel_ResetOfSyncResults" status="statusLoader"
+				disabled="{!isResetOfSyncResultsStarted}" value="Re-Sync" onclick="if (!confirm('Are you sure you want to start this process?')) {return false;}" />
+			
+			<!-- description of the job is visible if its status is null -->
+			<apex:outputPanel rendered="{!status_ResetOfSyncResults == null}" layout="block" styleClass="info-panel">
+				<span title="Info" class="smf-icon-in-text16 smf-icon-info16"></span>
+				Re-Sync is not needed in normal use, as synchronization usually is automatic. See the
+				<a href="{!URL_ADMIN_GUIDE}#reach" target="_blank">Administration Guide</a> for information about special situations when this
+				might be needed. Re-Sync will temporarily delete document and tag data in the Folderize database, and then refresh it
+				according to the current state of your organization's Content and Files collections.
+			</apex:outputPanel>
+			
+			<apex:outputPanel rendered="{!status_ResetOfSyncResults != null}" styleClass="sfc-messages" layout="block">
+				{!status_ResetOfSyncResults}
+			</apex:outputPanel>
+		</apex:outputPanel>
+		<hr/>
+		
+		
+		<apex:outputPanel id="panel_CleanUnusedTags">
+			<apex:commandButton action="{!startCleaningOfUnusedTags}" reRender="panel_CleanUnusedTags" status="statusLoader"
+				disabled="{!isCleaningOfSmTagsStarted}" value="Clear Unused Tags" onclick="if (!confirm('Are you sure you want to start this process?')) {return false;}" />
+			
+			<!-- description of the job is visible only if its status is null -->
+			<apex:outputPanel rendered="{!status_CleaningOfSmTags == null}" layout="block" styleClass="info-panel">
+				<span title="Info" class="smf-icon-in-text16 smf-icon-info16"></span>
+				Tags used previously, but no longer, are retained by default in the Folderize database. This process clears them out, which
+				may help make Folderize work a bit faster. We recommend you do this every few months or if you have made lots of changes to
+				folder tags recently.
+			</apex:outputPanel>
+			
+			<apex:outputPanel rendered="{!status_CleaningOfSmTags != null}" styleClass="sfc-messages" layout="block">
+				{!status_CleaningOfSmTags}
+			</apex:outputPanel>
+		</apex:outputPanel>
+		
+	</apex:pageBlock>
+	
+</apex:form>
+	
+</apex:page>

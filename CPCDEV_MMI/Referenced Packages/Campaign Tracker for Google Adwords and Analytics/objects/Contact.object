@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Campaign_Cookie__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Raw data from the Campaign Tracker that is captured when a tracked visitor submits the web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Raw data from the Campaign Tracker that is captured when a tracked visitor submits the web-to-lead form.</inlineHelpText>
+        <label>Campaign Cookie</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>GAC_Campaign__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Campaign data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Campaign data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Campaign</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Keyword__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Keyword data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Keyword data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Keyword</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Medium__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Medium data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Medium data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Medium</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GAC_Source__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Source data from the Google Analytics Cookie</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Source data from the Google Analytics Cookie</inlineHelpText>
+        <label>GAC Source</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Campaign__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_campaign variable from Google Analytics Campaign URLs: The individual campaign name, slogan, promo code, etc. for a product. Mapped from the Lead custom field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_campaign variable from Google Analytics Campaign URLs: The individual campaign name, slogan, promo code, etc. for a product. Mapped from the Lead custom field.</inlineHelpText>
+        <label>GA Campaign</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Content__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_content variable from Google Analytics Campaign URLs: Used to differentiate similar content, or links within the same ad. For example, if you have two call-to-action links within the same email message, you can use utm_content and set different values for each so you can tell which version is more effective. Mapped from the lead custom field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_content variable from Google Analytics Campaign URLs: Used to differentiate similar content, or links within the same ad.</inlineHelpText>
+        <label>GA Content</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Medium__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_medium variable from Google Analytics Campaign URLs: The advertising or marketing medium, e.g.: cpc, banner, email newsletter. Mapped from the lead custom field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_medium variable from Google Analytics Campaign URLs: The advertising or marketing medium, e.g.: cpc, banner, email newsletter. Mapped from the lead custom field.</inlineHelpText>
+        <label>GA Medium</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Source__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_source variable from Google Analytics Campaign URLs: Identify the advertiser, site, publication, etc. that is sending traffic to your property, e.g. google, citysearch, newsletter4, billboard. Mapped from lead custom field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_source variable from Google Analytics Campaign URLs: Identify the advertiser, site, publication, etc. that is sending traffic to your property, e.g. google, citysearch, newsletter4, billboard. Mapped from lead custom field.</inlineHelpText>
+        <label>GA Source</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>GA_Term__c</fullName>
+        <deprecated>false</deprecated>
+        <description>utm_term variable from Google Analytics Campaign URLs: Identify paid search keywords. If you&apos;re manually tagging paid keyword campaigns, you should also use utm_term to specify the keyword. Mapped from lead custom field.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>utm_term variable from Google Analytics Campaign URLs: Identify paid search keywords. If you&apos;re manually tagging paid keyword campaigns, you should also use utm_term to specify the keyword. Mapped from lead custom field.</inlineHelpText>
+        <label>GA Term</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Keyword__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The search term that sent a visitor to your web site prior to them submitting a web-to-lead form. &apos;Not Provided&apos; means the keyword cannot be determined, usually due to Google encrypting searches from logged in Google users.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The search term that sent a visitor to your web site prior to them submitting a web-to-lead form. &apos;Not Provided&apos; means the keyword cannot be determined, usually due to Google encrypting searches from logged in Google users.</inlineHelpText>
+        <label>Keyword</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Paid_Search__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>If this is checked, it means that the click that sent a visitor to your web site prior to them submitting a web-to-lead form was on an advertisement (Adwords, Microsoft AdCenter, etc.). Unchecked means they clicked on an organic search result.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If this is checked, it means that the click that sent a visitor to your web site prior to them submitting a web-to-lead form was on an advertisement (Adwords, Microsoft AdCenter, etc.). Unchecked means they clicked on an organic search result.</inlineHelpText>
+        <label>Paid Search</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Referrer__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The Referring URL that a visitor came from to arrive on your web site, prior to submitting a web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Referring URL that a visitor came from to arrive on your web site, prior to submitting a web-to-lead form.</inlineHelpText>
+        <label>Referrer</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Search_Engine__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The search engine that a visitor used to find your site, prior to submitting the web-to-lead form.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The search engine that a visitor used to find your site, prior to submitting the web-to-lead form.</inlineHelpText>
+        <label>Search Engine</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackHistory>false</trackHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

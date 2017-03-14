@@ -1,0 +1,20 @@
+<apex:page standardController="Account" extensions="selectBranchForBMExt" title="Select Branch" tabStyle="Account">
+  <apex:form >
+  
+      <apex:pageBlock >
+          <apex:pageBlockSection title="Select Branch" collapsible="false">
+              
+              <apex:pageBlockSectionItem >
+                  <apex:outPutlabel >Branch</apex:outPutlabel>
+                  <apex:selectList value="{!selectedbranch}" multiselect="false" size="1">
+                      <apex:selectOptions value="{!BranchList}"/>
+                  </apex:selectList>              
+              </apex:pageBlockSectionItem>
+              {!selectedbranch}
+          </apex:pageblockSection>
+          <apex:pageBlockButtons location="bottom">
+             <apex:commandButton value="Select Branch" action="{!redirect}"/>
+          </apex:pageBlockButtons>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

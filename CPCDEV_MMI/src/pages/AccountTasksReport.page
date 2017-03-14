@@ -1,0 +1,131 @@
+<apex:page Controller="AccountTasksReportController" id="pg"  sidebar="false" >
+<apex:actionStatus startStyle="font-weight:Bold;color:#cc0000" startText="Please wait..." stopText="" id="loadingStatus" />
+<apex:form >
+    <apex:actionFunction action="{!sortData}" name="sortToDoData" status="loadingStatus" rerender="pbreport">
+        <apex:param name="sortField" assignTo="{!sortField}" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction action="{!applyBranchFilter}" name="fetchFilteredByBranch" status="loadingStatus" rerender="pbreport">
+    </apex:actionFunction>
+    <apex:actionFunction name="getNextAccounts" action="{!getNextAccounts}"  status="loadingStatus" rerender="pbreport" />
+
+    <apex:actionFunction name="getPrevAccounts" action="{!getPrevAccounts}"  status="loadingStatus" rerender="pbreport" />   
+
+    <apex:outputLabel value="Enter Branch Id: "></apex:outputLabel>
+    <apex:inputText value="{!branchId}"/>
+    <input type="button" onclick="fetchFilteredByBranch()" value="Go"/>
+    <br/>
+</apex:form>
+
+
+<apex:outputPanel id="pbreport" > 
+
+
+<div class="pcSubblock">
+     <div class="pbSubheader"  style="background-color: rgb(168, 85, 72);color: white;display: block;font-size: 11px;font-weight: bold;height: 13px;margin-bottom: 0px;margin-top: 15px;overflow-x: hidden;overflow-y: hidden;padding-bottom: 2px;padding-left: 5px;padding-right: 2px;padding-top: 2px;position: relative;width: 938px;">
+        <h3>My Accounts that do not have an Open Task (Records {!startIndex} to {!endIndex} of {!recordCount})</h3>
+     </div>
+     <div class="pbSubbody" style="display: block;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px;">
+         <div class="reportOutput" >
+             <apex:outputPanel >
+
+                   <table width="100%" >
+
+                      <tr>
+
+                        <td align="center" width="33%" style="vertical-align:middle;">
+
+                                <apex:outputLink value="javascript:void(0);" rendered="{!isPreviousPageAvailable}" onclick="getPrevAccounts();">&lt;&lt;Previous</apex:outputLink>
+
+                                     <span id="div_mid1" >&nbsp;<apex:outputLabel value="|" rendered="{!isPreviousPageAvailable && isNextPageAvailable}" /> &nbsp;</span>
+
+                                <apex:outputLink value="javascript:void(0);" rendered="{!isNextPageAvailable}" onclick="getNextAccounts();">Next&gt;&gt;</apex:outputLink>
+
+                          </td>   
+
+                        </tr>
+
+                  </table> 
+
+                </apex:outputPanel>
+                 <table style="-webkit-border-horizontal-spacing: 0px;-webkit-border-vertical-spacing: 0px;border-bottom-color: rgb(128, 128, 128);border-bottom-width: 0px;border-collapse: separate;border-left-color: rgb(128, 128, 128);border-left-width: 0px;border-right-color: rgb(128, 128, 128);border-right-width: 0px;border-top-color: rgb(128, 128, 128);border-top-width: 0px;display: table;margin-right: 40px;"> 
+                    <tr style="background-color: rgb(170, 170, 255);display: table-row;height: 36px;vertical-align: middle;width: 885px;">
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 219px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.Name');">Account Name<img src="{!IF(sortField = 'Account.Name',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                        </th>
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 79px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.Branch__c');">Branch Id<img src="{!IF(sortField = 'Account.Branch__c',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                         </th>
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 169px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.Owner.Name');">Owner<img src="{!IF(sortField = 'Account.Owner.Name',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                        </th>
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 169px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.Type');">Type<img src="{!IF(sortField = 'Account.Type',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                        </th>
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 74px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.Result_Id__c');">Result Id<img src="{!IF(sortField = 'Account.Result_Id__c',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                        </th>
+                        <th align="left" style="border-top-color: rgb(51, 51, 51);border-top-style: none;border-top-width: 0px;color: rgb(51, 51, 51);display: table-cell;font-weight: bold;height: 15px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;text-align: left;vertical-align: top;white-space: normal;width: 125px;">
+                            <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Account.LastActivityDate');">Last Activity Date<img src="{!IF(sortField = 'Account.LastActivityDate',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                             </apex:outputLink>
+                        </th>
+                        
+                    </tr>
+                    <apex:repeat var="account" value="{!accountList}" >
+                    <tr class="even" style="background-color: rgb(243, 243, 236);display: table-row;height: 21px;vertical-align: top;width: 885px;">
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 219px;">
+                            <a href="../{!account.Id}">{!account.Name}</a>
+                        </td>
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 79px;">
+                            <apex:outputField value="{!account.Branch__c}"/>
+                        </td>
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 169px;">
+                            <apex:outputField value="{!account.Owner.Name}"/>
+                        </td>
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 169px;">
+                            <apex:outputField value="{!account.Type}"/>
+                        </td>
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 74px;">
+                            <apex:outputField value="{!account.Result_Id__c}"/>
+                        </td>
+                        <td style="color: rgb(51, 51, 51);display: table-cell;height: 15px;margin-bottom: 0px;margin-left: 0px;margin-right: 0px;margin-top: 0px;padding-bottom: 3px;padding-left: 5px;padding-right: 2px;padding-top: 3px;vertical-align: top;white-space: normal;width: 125px;">
+                            <apex:outputField value="{!account.LastActivityDate}"/>
+                        </td>
+                                            
+                        
+                    </tr>    
+                    </apex:repeat>
+                    
+                 </table>
+                 <apex:outputPanel >
+
+                   <table width="100%" >
+
+                      <tr>
+
+                        <td align="center" width="33%" style="vertical-align:middle;">
+
+                                <apex:outputLink value="javascript:void(0);" rendered="{!isPreviousPageAvailable}" onclick="getPrevAccounts();">&lt;&lt;Previous</apex:outputLink>
+
+                                     <span id="div_mid1" >&nbsp;<apex:outputLabel value="|" rendered="{!isPreviousPageAvailable && isNextPageAvailable}" /> &nbsp;</span>
+
+                                <apex:outputLink value="javascript:void(0);" rendered="{!isNextPageAvailable}" onclick="getNextAccounts();">Next&gt;&gt;</apex:outputLink>
+
+                          </td>   
+
+                        </tr>
+
+                  </table> 
+
+                </apex:outputPanel>
+
+        </div>
+    </div>
+    
+</div>
+</apex:outputPanel>
+</apex:page>

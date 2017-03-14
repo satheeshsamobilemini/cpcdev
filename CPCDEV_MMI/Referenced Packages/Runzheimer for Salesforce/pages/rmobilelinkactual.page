@@ -1,0 +1,161 @@
+<apex:page title="rMobile - Trip Linking Tool" controller="rzm.rMobileLinkActualExtension" tabStyle="RMobile_PlanPage__tab">
+<apex:sectionHeader title="Runzheimer Mobile for Salesforce" subtitle="Trip Linking Tool" />
+
+<apex:pageBlock >
+
+	<apex:pageBlockSection columns="1" >
+		
+		<apex:form >
+			<table>
+			<tr><td>
+			<apex:commandButton id="previousButton" action="{!previousTrip}" value="Previous Day Trip" reRender="actuals,theTable,myLinkInfo,actionStatus2,searchPanel,previousButton,nextButton,iDate" disabled="{!!showPrevious}" status="status3"/>
+			</td>
+			<td width="85px" style="text-align:center;vertical-align:middle;">
+			<apex:actionstatus id="status3">
+				<apex:facet name="start"><apex:image value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/img/spinner.gif')}" width="12" height="12" alt="" /></apex:facet>
+				<apex:facet name="stop"><apex:outputPanel ><strong><apex:outputText value=""/><apex:outputField id="iDate" value="{!actual.Itinerary__r.rzm__Date__c}" /></strong></apex:outputPanel></apex:facet>				
+			</apex:actionstatus>
+			</td>
+			<td>
+			<apex:commandButton id="nextButton" action="{!nextTrip}" value="Next Day Trip" reRender="actuals,theTable,myLinkInfo,actionStatus2,searchPanel,previousButton,nextButton,iDate" disabled="{!!showNext}" status="status3"/>
+			</td></tr>
+			</table>			
+		</apex:form>
+		<br/>
+		<apex:outputPanel id="actuals" >
+		<span style="display:block; width:60%;">		
+		<apex:pageBlockTable value="{!actuallist}" var="al">			
+			<apex:column headerValue="Date/Time" value="{!al.rzm__DestinationTime__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')"/>			
+			<apex:column headerValue="Name" value="{!al.rzm__DestinationLinkName__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />
+			<apex:column value="{!al.rzm__DestinationAddress__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />
+			<apex:column value="{!al.rzm__Mileage_miles__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />
+			<apex:column headerValue="Owner" value="{!al.Itinerary__r.Owner.Name}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />			
+			<apex:column value="{!al.rzm__Geofence_Status__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />
+			<apex:column value="{!al.rzm__WasPlanned__c}" style="{!if(al.Id==actual.Id,'background-color:#CFEBFD;','')}" onClick="rowClick('{!al.Id}')" />								
+		</apex:pageBlockTable>		
+		</span>
+		<apex:outputText rendered="{!showSearch==false}">There are no more unlinked records.</apex:outputText>
+		</apex:outputPanel>
+			
+	</apex:pageBlockSection>	
+		
+	<hr/>
+	<br/>
+
+<apex:form >
+
+	<apex:panelGroup >
+		<apex:outputPanel id="myLinkInfo">
+			<apex:outputPanel rendered="{!showSearch}">
+			<table>
+			<tr><td style="vertical-align:middle;">
+				<apex:outputLabel value="Selected Trip:" style="font-weight:bold;"/>
+			</td><td style="vertical-align:middle;" colspan="3">
+				&nbsp;&nbsp;<apex:outputField value="{!actual.rzm__DestinationTime__c}"/>&nbsp;&#45;&nbsp;<apex:outputField value="{!actual.rzm__DestinationAddress__c}"/>
+			</td></tr>
+			<tr><td style="vertical-align:middle;">
+				<apex:outputLabel value="Linked To:" style="font-weight:bold;"/>
+			</td><td style="vertical-align:middle;">
+				&nbsp;&nbsp;<apex:outputField value="{!actual.rzm__DestinationLinkName__c}"/>
+				            <apex:outputText value="---" rendered="{!actual.rzm__DestinationId__c=='' || actual.rzm__DestinationId__c==null}"/>
+				&nbsp;&nbsp;&#40;<apex:outputField value="{!actual.rzm__Geofence_Status__c}"/>&#41;
+			</td><td>&nbsp;&nbsp;</td>
+			<td>
+				<apex:outputPanel id="actionStatus2">
+					<apex:actionstatus id="status2">
+						<apex:facet name="start"><apex:image value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/img/spinner.gif')}" width="12" height="12" alt="" /></apex:facet>
+						<apex:facet name="stop">
+							<apex:commandButton action="{!clearLink}" reRender="theTable,myLinkInfo,actuals" status="status2" value="Clear Link" rendered="{!showSearch}" />			        
+						</apex:facet>
+					</apex:actionstatus>
+				</apex:outputPanel>
+			</td></tr>	
+			</table>
+			</apex:outputPanel>
+		</apex:outputPanel>		
+		
+	</apex:panelGroup>	
+	<br/>
+	<apex:outputPanel id="searchPanel">
+	<apex:panelGroup rendered="{!showSearch}" >	
+	<apex:outputLabel value="Search for possible trip links:" style="font-weight:bold;"/>&nbsp;&nbsp;
+	
+	<apex:actionstatus id="searchStatus">
+	    <apex:facet name="start"><apex:image value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/img/spinner.gif')}" width="12" height="12" alt="" /></apex:facet>	    
+	</apex:actionstatus>
+	
+	<apex:selectRadio value="{!objectType}" onclick="refreshme()">
+		<apex:selectOption itemValue="all" itemLabel="All"/>
+		<apex:selectOption itemValue="accounts" itemLabel="Accounts"/>
+		<apex:selectOption itemValue="contacts" itemLabel="Contacts"/>
+		<apex:selectOption itemValue="leads" itemLabel="Leads"/>
+	</apex:selectRadio>
+	
+	<table><tr>
+	<td>
+	<apex:selectList value="{!radius}" multiselect="false" size="1" onchange="refreshme()">
+		<apex:selectOption itemValue="1" itemLabel="Radius - 1.0"/>
+		<apex:selectOption itemValue="0.1" itemLabel="0.1"/>
+		<apex:selectOption itemValue="0.2" itemLabel="0.2"/>
+		<apex:selectOption itemValue="0.3" itemLabel="0.3"/>
+		<apex:selectOption itemValue="0.4" itemLabel="0.4"/>
+		<apex:selectOption itemValue="0.5" itemLabel="0.5"/>
+		<apex:selectOption itemValue="0.6" itemLabel="0.6"/>
+		<apex:selectOption itemValue="0.7" itemLabel="0.7"/>
+		<apex:selectOption itemValue="0.8" itemLabel="0.8"/>
+		<apex:selectOption itemValue="0.9" itemLabel="0.9"/>		
+		<apex:selectOption itemValue="1.0" itemLabel="1.0"/>
+		<apex:selectOption itemValue="2" itemLabel="2"/>
+		<apex:selectOption itemValue="5" itemLabel="5"/>
+		<apex:selectOption itemValue="10" itemLabel="10"/>
+	</apex:selectList>
+	</td>
+	<td>
+	<apex:selectRadio value="{!radiusunit}" onclick="refreshme()">
+		<apex:selectOption itemValue="mi" itemLabel="Mi"/>
+		<apex:selectOption itemValue="km" itemLabel="Km"/>
+	</apex:selectRadio>
+	</td>
+	</tr>	
+	</table>
+	&nbsp;&nbsp;Select one of the following using the &ldquo;Link&rdquo; button
+	</apex:panelGroup>
+	</apex:outputPanel>
+<apex:pageBlockSection collapsible="false" columns="1">
+
+<apex:outputPanel id="theTable">
+	<span style="display:block; width:60%;">
+	<apex:pageblockTable value="{!sorteddata}" var="s" rendered="{!showSearch}">
+		<apex:column >
+			<apex:actionstatus id="status">
+			    <apex:facet name="start"><apex:image value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/img/spinner.gif')}" width="12" height="12" alt="" /></apex:facet>
+			    <apex:facet name="stop">			    
+			        <apex:commandLink action="{!updateLink}" reRender="theTable,myLinkInfo,actuals" status="status" style="text-decoration:none;" styleClass="btn" rendered="{!s.Id<>actualDestinationId}">
+			        	Link
+			            <!-- <apex:image url="{!URLFOR($Resource.RunzheimerAssets, '/img/Add2Itinerary.png')}" width="12" height="12"/> -->
+			            <apex:param name="actualId" value="{!s.Id}"/>
+			            <apex:param name="actualName" value="{!s.Name}"/>
+			        </apex:commandLink>			        
+			    </apex:facet>
+		    </apex:actionstatus>
+		    <apex:outputText rendered="{!s.Id==actualDestinationId}">&nbsp;&nbsp;&nbsp;<apex:image value="/img/check.gif"/></apex:outputText>
+	    </apex:column>    
+		<apex:column headerValue="Distance" ><apex:outputText value="{0, number, ###,###.00}"><apex:param value="{!s.Distance}"/></apex:outputText> {!RADIUSUNIT}</apex:column>	
+	    <apex:column headerValue="Type">{!s.Type}</apex:column>
+	    <apex:column headerValue="Name">{!s.Name}</apex:column>
+	    <apex:column headerValue="Owner">{!s.OwnerName}</apex:column>        
+	</apex:pageblockTable>
+	</span>
+</apex:outputPanel>
+
+</apex:pageBlockSection>
+
+	<apex:actionFunction name="refreshme" action="{!doNothing}" reRender="theTable" status="searchStatus"/>
+	
+	<apex:actionFunction name="rowClick" action="{!selectNewRow}" reRender="theTable,myLinkInfo,actuals" status="searchStatus">
+		<apex:param name="aId" assignTo="{!selectedActualId}" value=""/>
+	</apex:actionFunction>
+
+</apex:form>
+</apex:pageBlock>
+</apex:page>

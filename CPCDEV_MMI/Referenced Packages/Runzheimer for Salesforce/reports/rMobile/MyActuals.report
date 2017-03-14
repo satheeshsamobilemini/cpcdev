@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>CUST_OWNER_NAME</field>
+    </columns>
+    <columns>
+        <field>Trip__c.DestinationLink__c</field>
+    </columns>
+    <columns>
+        <field>Trip__c.Link_Status_for_Report__c</field>
+    </columns>
+    <columns>
+        <field>Trip__c.DestinationAddress__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>Trip__c.Mileage_miles__c</field>
+    </columns>
+    <columns>
+        <field>Trip__c.StopDuration__c</field>
+    </columns>
+    <columns>
+        <field>Trip__c.OriginTime__c</field>
+    </columns>
+    <columns>
+        <field>Trip__c.OriginAddress__c</field>
+    </columns>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Itinerary__c.Date__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Actual Trips</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntityCustomEntity$Itinerary__c$Trip__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <timeFrameFilter>
+        <dateColumn>Itinerary__c.Date__c</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
+</Report>

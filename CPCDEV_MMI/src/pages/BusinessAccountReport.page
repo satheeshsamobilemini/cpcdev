@@ -1,0 +1,63 @@
+<apex:page ></apex:page>
+<!-- TFS 2291 start 1
+<apex:page controller="01p800000003wDS">
+<apex:form >
+    <table>
+        <tr height="17">
+            <td colspan="11">
+                <apex:outputtext value="Please Select Sales Rep: "/>
+                <apex:selectList value="{!SRepId}" size="1" id="fRep">
+                    <apex:selectOptions value="{!SReps}"/>
+                </apex:selectList>
+             </td>
+        </tr>
+        <tr></tr>
+        <tr height="17">
+            <td colspan="11"> 
+                <apex:commandButton value="Search" action="{!searchAction}" rerender="SRepLbl, pgtableBA" status="myStatus"/> 
+            </td>
+        </tr>
+        <tr height="17">
+            <td colspan="11" >
+                <apex:actionStatus startStyle="color:Red;font-weight:bold" startText="Loading...Please wait." stopText="" id="myStatus"/>
+            </td>
+        </tr>
+        <tr height="17" border="1">
+            <td colspan="10">
+                <table>
+                   <tr>
+                      <td>
+                        <strong><font face="areal">Sales Rep Name:</font></strong><apex:outputLabel id="SRepLbl" value="{!SRep}"/>
+                      </td>
+                    </tr>
+                 </table>
+             </td>
+         </tr>
+    </table>
+    <apex:pageBlock title="{!titleMsg}" id="pgtableBA" >
+        <apex:pageBlockTable value="{!accntWrapperList}" var="item">
+            <apex:column headerValue="Account Name">
+                <apex:outputLink value="/{!item.acc.Id}" id="theLink">{!item.acc.name}</apex:outputLink>
+            </apex:column> 
+            <apex:column value="{!item.acc.Id}"/> 
+            <apex:column value="{!item.acc.Branch__c}"/> 
+            <apex:column value="{!item.acc.Number_of_Open_Tasks__c}"/> 
+            <apex:column value="{!item.acc.Name}" headerValue="Account Name"/> 
+            <apex:column value="{!item.acc.Result_Id__c}" headerValue="Result Id"/> 
+            <apex:column value="{!item.acc.User_Type__c}" headerValue="User Type"/> 
+            <apex:column value="{!item.acc.When_To_Call__c}" headerValue="When To Call"/> 
+            <apex:column value="{!item.acc.Rental_Use_Comments__c}" headerValue="Rental Use Comments"/>
+            <apex:column value="{!item.acc.INDUSTRY}" /> 
+            <apex:column value="{!item.acc.Total_Units_on_Rent__c}" headerValue="Total Units on Rent"/>
+            <apex:column value="{!item.acc.Total_Revenue_Last_12_Months__c}" headerValue="Total Revenue Last 12 Months"/> 
+            <apex:column value="{!item.acc.New_rentals_all_Last_03_Months__c}" headerValue="New rentals all Last 03 Months"/>
+            <apex:column value="{!item.acc.New_rentals_all_Last_Year_Same_Qtr__c}" headerValue="New rentals all Last Year Same Qtr"/>
+            <apex:column value="{!item.acc.New_Rentals_Mobile_Last_Year_Next_Q__c}" headerValue="New Rentals Mobile Last Year Next Q"/>
+            <apex:column value="{!item.acc.Number_of_Open_Tasks__c}" headerValue="#OpenActivities"/>
+                   <apex:column value="{!item.dueDate}" headerValue="Last Activity"/>
+        </apex:pageBlockTable>
+        <br/> 
+        <apex:outputLabel value="No Record Found" rendered="{!IF(OR(ISNULL(accntWrapperList),accntWrapperList.size == 0), true,false)}" />
+    </apex:pageBlock> 
+    </apex:form>
+</apex:page>   TFS 2291 end 1 -->

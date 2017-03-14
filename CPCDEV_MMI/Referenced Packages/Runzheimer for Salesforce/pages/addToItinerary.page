@@ -1,0 +1,51 @@
+<apex:page standardController="rzm__Stop__c" extensions="rzm.addToItineraryExtension" tabStyle="RMobile_PlanPage__tab" >
+<apex:sectionHeader subtitle="Add Stop to Itinerary"/>
+<apex:pageMessages />
+<apex:variable value="{!rzm__Stop__c}" var="s"/>
+
+<apex:form >
+<apex:pageBlock >
+
+    <apex:pageBlockButtons location="bottom" >
+        <apex:commandButton action="{!SaveItineraryAndReturn}" value="Save and Return to {!LocationType}" disabled="{!disableSave}"/>
+        <apex:commandButton action="{!SaveItineraryAndPlan}" value="Save and Go to Itinerary Plan Page" disabled="{!disableSave}"/>
+        <apex:commandButton action="{!Cancel}" value="Cancel"/>
+    </apex:pageBlockButtons>
+    
+    <apex:pageBlockSection columns="1">
+        
+        <apex:outputField value="{!s.Name}"/>
+        
+        <apex:inputField value="{!i.rzm__Date__c}" required="true"/>
+                
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Estimated Arrival"/>
+        <apex:panelGroup >
+        <apex:selectList value="{!hours}" multiselect="false" size="1">
+            <apex:selectOptions value="{!hourItems}"/>
+        </apex:selectList> 
+        <apex:selectList value="{!minutes}" multiselect="false" size="1">
+            <apex:selectOptions value="{!minuteItems}"/>
+        </apex:selectList>
+        &nbsp;&nbsp;(leave blank for timeless)
+        </apex:panelGroup>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Duration"/>
+        <apex:panelGroup >
+        <apex:selectList value="{!durationHours}" multiselect="false" size="1">
+            <apex:selectOptions value="{!durationHourItems}"/>
+        </apex:selectList> 
+        <apex:selectList value="{!durationMinutes}" multiselect="false" size="1">
+            <apex:selectOptions value="{!minuteItems}"/>
+        </apex:selectList>        
+        </apex:panelGroup>
+        </apex:pageBlockSectionItem>
+        
+        <apex:inputField value="{!s.rzm__Comment__c}" style="width:300px;"/>
+        <apex:inputField id="isCalendarEvent" label="Create Calendar Event?" value="{!s.rzm__Calendar_Event__c}" />
+    </apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

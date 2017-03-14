@@ -1,0 +1,27 @@
+<apex:page controller="BRNSHRK.AuthenticateController" action="{!initPage}">
+
+<apex:form id="form">
+<apex:pageBlock id="authenticate" title="Authenticate With Brainshark" mode="edit">
+    <apex:pageBlockButtons location="bottom">
+        <apex:commandButton action="{!authenticate}" value="Authenticate" rerender="form"/>    
+        <apex:actionStatus id="authenticateStatus" rendered="authenticate">
+            <apex:facet name="start">
+                <apex:commandButton value="Authenticating..." disabled="true"/>
+            </apex:facet>
+            <apex:facet name="stop">
+                <apex:commandButton value="Authenticate" action="{!authenticate}" rerender="authenticate" status="authenticateStatus"/>
+            </apex:facet>
+        </apex:actionStatus>
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection columns="1">
+<apex:pageMessages />
+    <apex:outputLabel value="Brainshark Username"></apex:outputLabel>
+    <apex:inputText value="{!username}" style="width:200px;"/>
+    <apex:outputLabel value="Brainshark Password"></apex:outputLabel>
+    <apex:inputSecret value="{!password}" style="width:200px;"/>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page showheader="False" sidebar="False">
+<apex:iframe src="/apex/DodgeManagementView?isdtp=vw" scrolling="true" id="theIframe"/>
+</apex:page>

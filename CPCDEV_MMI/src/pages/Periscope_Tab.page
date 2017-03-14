@@ -1,0 +1,8 @@
+<apex:page >
+  <!-- apex:outputLink value="https://tms.mobilemini.com/mobilemini" id="theLink" target="_blank">https://tms.mobilemini.com/mobilemini</apex:outputLink> -->
+  <script>
+    window.onload = function(){
+      window.open("https://tms.mobilemini.com/mobilemini","_self");
+    }
+  </script>
+</apex:page>

@@ -1,0 +1,78 @@
+<!--
+     (c) 2015 TEKsystems Global Services
+    
+     Name                : InvoiceHistory
+     Extensions          : InvoiceHistoryCtrl
+     Created Date        : 20 March 2015
+     Created By          : Jailabdin Shaik (TEK)
+     Purpose             : To DIsplay Invoices of an Account on AccountDashboard page.
+-->
+
+<apex:page id="pgId" controller="InvoiceHistoryCtrl" showHeader="false" sidebar="false">
+
+    <script type="text/javascript">
+    function displaybutton(){
+    
+        //alert('welcome');
+    }
+    
+    function openandClose(){
+          
+          <!-- window.open('{!cpqURL}'+'?username=m%40t&password=p&_csrf=bf8449c6-c267-42a9-944a-9a892bc3ce71?id={!accId}'); -->
+          //window.open('http://cpq-devweb.mobilemini.com/CPQ/payments?cpq=true&accountNo={!currentaccount.SAP_Bill_To__c}&invoiceStatus={!invoiceStatus}');
+           window.open('{!cpqURL}'+'/invoices?accountNo={!currentaccount.SAP_Bill_To__c}&status={!invoiceStatus}&salesOrg={!currentaccount.Sales_Org__c}&emailId={!$User.Email}');
+       }
+       
+    </script>
+    
+    <style>
+        .mainHeader{
+          height: 35px;
+          background-color: #F2F2F2;
+          text-align: left;
+          padding: 10px 0px 0px 20px; 
+       }
+        
+        .mainHeaderLabel{
+              color: black;
+              font-size: 14px;
+              font-family: sans-serif;
+            <!--  font-weight: bolder; -->
+      }
+      
+         .paymentOpt{
+                
+                width: 50%;
+      }
+         
+    </style>
+
+   <apex:form >
+   
+       <div id="mainHeader" class="mainHeader">
+         <b> <Label id="mainHeaderLabel" class="mainHeaderLabel">Select a Type of Invoice History</Label> </b>
+        </div>   
+    
+      <apex:pageBlock id="pb">
+     <!--   <apex:pageBlockSection > -->
+        
+            <apex:selectRadio value="{!invoiceStatus}" styleClass="paymentOpt" style="margin-top: 10px; font-size:14px;" layout="pageDirection" >
+                
+                <apex:selectOption itemLabel="Closed"  itemvalue="Closed" />
+                <apex:selectOption itemLabel="Open (Make payment)" itemvalue="Open"/>    
+                <apex:selectOption itemLabel="All" itemvalue="All"/>
+                
+                <apex:actionSupport action="{!change}" event="onchange"/>           
+            </apex:selectRadio>  
+        
+            
+    <!-- </apex:pageBlockSection> -->
+        
+        <apex:pageBlockButtons location="bottom" id="pbb">
+            <apex:commandButton value="Submit" onclick="openandClose();window.top.close();" style="left:-120px;position:relative;" rendered="{!showSubmitButton}" />
+        </apex:pageBlockButtons> 
+      
+      </apex:pageBlock>
+      
+  </apex:form>
+</apex:page>

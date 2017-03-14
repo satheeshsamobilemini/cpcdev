@@ -1,0 +1,30 @@
+<apex:page controller="BRNSHRK.BrainsharkActivityMigrationController" action="{!initPage}">
+	<apex:stylesheet value="{!staticHost}/s2/Styles/convert.css" />
+	<apex:stylesheet value="{!staticHost}/s2/Styles/bskux.css" />	
+	<apex:sectionHeader title="Brainshark for Salesforce" subtitle="Brainshark Setup"/>
+
+	<apex:pageBlock title="Migrate Brainshark Data">
+		<div class="bsk-page">
+			<p>Convert pre-existing Brainshark activity data into Brainshark invitation and Brainshark view data. Choose a range of data, and date / time to execute the import below. You may want to schedule the conversion for a day and time when your sales team is not active.</p>
+			<br></br>
+			<p>Use this process if your company has an older instance of the Sales Accelerator and have not previously run this conversion, or was using the Brainshark Connector and have the sync all views bit turned on and have in the past deleted older Brainshark activity data.</p>
+			<br></br>
+			<p>Note: The BrainsharkActivity object will be deprecated in the future. Any data not imported/migrated will be lost once BrainsharkActivity has been removed. Brainshark will notify system administrators before this deprecation occurs.</p>
+			<br></br>
+			<div class="row">
+				<div class="js-migration-tool"></div>
+			</div>
+			<div class="row">
+				<div class="js-messages-container messages-container"></div>
+			</div>
+		</div>
+	</apex:pageBlock> 
+	<script>
+	    var BSKpage = {
+	        'ControllerMethods': {
+	            'scheduleBatch':'{!$RemoteAction.BrainsharkActivityMigrationController.scheduleActivityMigration}'
+	        }
+	    };
+	</script>
+	<script data-main="{!staticHost}/s2/Scripts/convert.js" type="text/javascript" src="{!staticHost}/s2/Scripts/libraries/require/require.js"/>
+</apex:page>

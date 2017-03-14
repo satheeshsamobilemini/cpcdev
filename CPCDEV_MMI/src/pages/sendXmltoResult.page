@@ -1,0 +1,111 @@
+<!-- 
+PageName : sendXmltoResult
+CreatedBy : Kirtesh Jain
+Created Date : May 15,2009
+-->
+
+<apex:page controller="sendXMLtoResultController" showHeader="true" sidebar="false" id="pg" tabstyle="Account">
+<script src="/soap/ajax/15.0/connection.js" type="text/javascript"></script>
+<script src="/soap/ajax/15.0/apex.js" type="text/javascript"></script>
+<script>
+ var selectedContactId = '' ;
+ 
+ function checkContact(chk){
+  var checkStatus = chk.checked;
+  var chkArray = document.getElementsByName("chk");
+  selectedContactId = '' ;
+  
+  if( checkStatus == true){
+    selectedContactId = chk.id ;
+    
+    for(var i = 0; i < chkArray.length;i++) {
+       if( chkArray[i].id !=  chk.id )
+       chkArray[i].checked = false;
+    } 
+   }
+   
+   actionContact(selectedContactId );
+  
+ }
+ 
+ function replaceQuotes (myString){
+	
+	myString = myString.replace(/'/gi, '\'');
+	myString = myString.replace(/"/gi, '\"');
+	return myString;
+}
+ 
+ 
+
+ 
+ function  validation() {
+   var validationError = false  ;
+   var billingStreet = "{!strBillingStreet}";
+   var billingCountry = replaceQuotes("{!Account.BillingCountry}");
+   var billingState =  replaceQuotes("{!Account.BillingState}");
+   var billingPostalCode = replaceQuotes("{!Account.BillingPostalCode}");
+   var billingCity = replaceQuotes("{!Account.BillingCity}");
+   var phone = replaceQuotes("{!Account.Phone}");
+   var accountName =  replaceQuotes("{!strName}");
+   var branchId =  '{!Account.Branch__c}';
+   var salesRepId = '{!Account.Owner.Sales_Rep_Id__c}';
+   var selectedContactName = document.getElementById('pg:frm:pb:txtselectedContactName').value ;
+     
+   if( accountName  ==  '' ||  accountName  ==  null  
+       ||  billingCountry  == ''  || billingCountry == null 
+       ||  billingStreet == '' || billingStreet == null
+	   ||  billingState == '' || billingState == null
+	   ||  billingCity == '' || billingCity == null
+	   ||  billingPostalCode  == '' || billingPostalCode  == null
+	   ||  phone  ==  ''  ||  phone  ==  null 
+	   ||  branchId == '' || branchId == null
+	   ||  salesRepId == '' || salesRepId == null
+	   ||  selectedContactName == '' || selectedContactName == null
+	  ){
+       validationError = true ;
+    }
+ 
+    if(validationError == true){
+       alert( 'Following fields are Mandatory for Account to Produce Result : Billing Street (' + billingStreet + '), Billing City (' + billingCity + '), Billing State (' + billingState + '), Billing Zipcode (' + billingPostalCode + '), Billing Country (' + billingCountry + '), Phone (' + phone + ')') ;
+    }else{
+       actionSubmit();
+    }
+  }
+  
+  function oncompleteSubmit(){
+    var message = document.getElementById('pg:frm:pb:txtMessage').value ;
+    alert(message) ;
+    self.close();
+  }
+</script>
+<apex:SectionHeader title="Select the Primary Contact for this Account"></apex:SectionHeader>
+<apex:form id="actionfrm">
+  <apex:actionFunction action="{!setContact}" name="actionContact"  rerender="pnl" immediate="true" status="waitStatus" >
+     <apex:param name="selectedContact" assignTo="{!selectedContactId}" value="" />
+  </apex:actionFunction>
+  <apex:actionFunction action="{!submit}" name="actionSubmit"  rerender="pnl" immediate="true" oncomplete="oncompleteSubmit();" status="messagetoUser">
+  </apex:actionFunction>
+</apex:form>
+<apex:form id="frm">
+ <apex:actionStatus startStyle="font-weight:Bold;color:#cc0000" startText="Please wait..." stopText="" id="waitStatus"/>
+ <apex:actionStatus startStyle="font-weight:Bold;color:#cc0000" startText="Sending Prospect to Result.  Do not close this window." stopText="" id="messagetoUser"/>
+ <apex:pageblock id="pb">
+  <apex:pageBlockButtons location="bottom">
+      <input type="button" class="btn"  value="Submit"  class="btn"  style="align:right" onclick="validation();"/>
+  </apex:pageBlockButtons>
+
+ <apex:pageblockTable id="tblContact" value="{!listContact}" var="contact" >
+     <apex:column > 
+          <input type="checkbox" id="{!contact.Id}" name="chk" onclick="checkContact(this)"/> 
+     </apex:column>
+     <apex:column value="{!contact.Name}" >
+      <apex:facet name="header">Contact Name</apex:facet>
+     </apex:column>
+ </apex:pageblockTable>
+ <apex:outputpanel id="pnl">
+   <apex:inputtext value="{!selectedContactName}" id="txtselectedContactName" style="visibility:hidden"/>
+   <apex:inputtext value="{!message}" id="txtMessage" style="visibility:hidden"/>
+ </apex:outputpanel>
+</apex:pageblock>
+</apex:form>
+</apex:page>

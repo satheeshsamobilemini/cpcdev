@@ -1,0 +1,126 @@
+<apex:page controller="AcumenMerge.MergeController" >
+	<apex:includeScript value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/js/jquery-1.8.2.min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/js/MergeWiz2.js')}"/>
+	<apex:styleSheet value="{!URLFOR($Resource.AcumenMerge__MergeAnyObjectLib, '/css/MergeWiz2.css')}"/>
+	<script type='text/javascript'>
+		$j = jQuery.noConflict();
+		$j(document).ready(function() {
+			$j(".headerRow > div:eq(1)").append("{!headerNames}");
+		});
+	</script>
+    <!-- <apex:includeScript value="{!$Resource.jQuery171}"/>
+    <script type='text/javascript'>
+        function confirmMerge() {
+            var isMerge = confirm("These records will be merged into one record using the selected values. Merging cannot be undone. Proceed with the record merge?");
+            if (isMerge) return true;
+        
+            return false;
+        } 
+        
+        $j = jQuery.noConflict()
+        // Adds table headers, hides disabled radio buttons
+        $j(document).ready(function() {
+            $j(".headerRow > div:eq(1)").append("{!headerNames}")
+            $j(":radio:disabled").hide();
+            $j("table.radios:first").find("td").each(function() {
+                $j(this).find('label').hide();
+            })
+            
+            $j("label").each(function() {
+				if($j(this).text() = 'false') {
+					$j(this).addClass('falseBox');
+				} else if($j(this).text() = 'true') {
+					$j(this).addClass('trueBox');
+				}
+            })
+        })
+        
+        // Selects column of radios
+        function selectRadios(i) {
+            $j("input[type=radio]").removeAttr("checked")
+            $j("table.radios").find("tr").each(function() {
+                var radios = $j(this).find('input[type=radio]')
+                $j(radios[i]).prop("checked",true);
+            })
+        }
+    </script>
+    <style>
+        table tr { height:14px;}
+        table.radios {
+            width:100%;
+        }
+        tr.dataRow td.dataCell table.radios td {
+            width:33%;
+            border-width:0 0 0 0;
+            padding:0
+        }
+        tbody tr td {
+        	border-width:0 1 0 0;
+        }
+        .header {
+            float:left;
+            font-size:11px;
+        }
+        .header a {
+            text-decoration:underline;
+        }
+        .list td {
+            padding:0;
+        }
+        form .pbBody .blockTable {
+            font-size:12px;
+            width:97%;
+            margin-right:auto;
+            margin-left:auto;
+        }
+        .blockTable .dataRow .sameValues {
+            background-color:#F8F8F8;
+            width:250px;
+            text-align:right;
+            font-weight:bold;
+            padding-right:5px;
+        }
+        form div.pbBody table.blockTable tr.dataRow td.diffValues {
+            background-color:#3366CC;
+            color:#FFFFF7;
+            width:250px;
+            text-align:right;
+            font-weight:bold;
+            padding-right:5px;)
+        }
+        label.trueBox {
+        	indent:-100%;
+        	overflow:hidden;
+        	background-image:url('img/checkbox_checked.gif');
+        }
+        label.falseBox {
+        	indent:-100%;
+        	overflow:hidden;
+        	background-image:url('img/checkbox_unchecked.gif');
+        }
+    </style>-->
+    <apex:pageMessages />
+    <apex:sectionHeader title="Merge Any Object" subtitle="Step 2 of 2" />
+    <apex:form >
+        <apex:pageBlock title="Choose Record Values" mode="edit">
+            <apex:pageBlockButtons style="float:right">
+                <apex:commandButton value="Back" action="{!step1}" />
+                <apex:commandButton value="Merge"  action="{!mergeSelections}" onclick="return confirmMerge()"/>
+            </apex:pageBlockButtons>
+            <div style="padding:15px">
+            Select the values that you want to retain in the merged record. Highlighted rows indicate fields that contain conflicting data. The Master Record selected will retain read-only and hidden field values. 
+            <br /><br />
+            Note: All related records including any notes, attachments, and activities will be associated with the new merged record.
+            </div>
+            <apex:pageBlockTable value="{!toMergeList}" var="item" rules="all" styleClass="blockTable" >
+                <apex:column value="{!item.fieldLabel}" styleClass="{!IF(item.fieldName=='OwnerId', 'diffValues', IF(item.isSameValues,'sameValues','diffValues'))}"/>
+                <apex:column >
+                    <apex:facet name="header"></apex:facet>
+                    <apex:selectRadio value="{!item.chosenValue}" disabled="{!IF(item.fieldName=='OwnerId',false,item.isSameValues)}" styleClass="radios">
+                        <apex:selectOptions value="{!item.options}" />
+                    </apex:selectRadio>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

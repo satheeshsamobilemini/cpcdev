@@ -1,0 +1,96 @@
+<apex:component id="DeliveryTabComponent" > 
+    <apex:attribute name="fullQuote" type="MMI_Full_Quotes_UK__c" description="Full Quote Object" required="true"/>
+    <apex:attribute name="ContactSearchButton" type="Boolean" description="Enable or Disable search button for contact details"/>
+    <apex:attribute name="DelConatctId" type="String" description="Billing Conatct ID" required="true" />
+    <apex:attribute name="DelSearchContact" type="ApexPages.Action" description="Search contact button action" required="true"/>
+    <apex:attribute name="markAsRequired" type="Boolean" description="Enable or Disable required fields"/>
+    <apex:attribute name="quoteExipreddate" type="String" description="variable to store quoteExipreddate value"/> 
+    <apex:attribute name="purchaseOrder" type="String" description="variable to store purchaseOrder value"/>
+      
+       <apex:pageBlockSection title="Dates" collapsible="false" id="pbsDeliveryDates">
+            
+            <apex:inputField id="requiredDate" value="{!fullQuote.Required_Date__c}" required="{!markAsRequired}" taborderhint="1"/>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Quote Expires" for="quoteExpiresDate"/>
+                <apex:inputText id="quoteExpiresDate" styleClass="quoteExpiresDate" value="{!quoteExipreddate}" tabindex="30" disabled="true"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:inputField value="{!fullQuote.Rental_Length__c}" required="{!markAsRequired}" taborderhint="2" >
+            <apex:outputText style="font-weight: bold" value="In Weeks"/></apex:inputField>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Purchase Order" for="purchaseorder"/>
+                <apex:inputText id="purchaseorder" styleClass="quoteExpiresDate" value="{!purchaseorder}" tabindex="23"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+          
+        <apex:pageBlockSection title="Delivery Details" collapsible="false">
+            
+            <apex:inputField id="deliveryCompanyName" value="{!fullQuote.Delivery_Company_Name__c}" taborderhint="4"/>
+            
+            <apex:inputField value="{!fullQuote.Location_Type__c}" taborderhint="12" required="{!markAsRequired}"/>
+            
+            <apex:inputField id="deliveryAddress" style="width: 167px" value="{!fullQuote.Delivery_Address__c}" required="{!markAsRequired}" taborderhint="5"/>
+            
+            <apex:outputPanel layout="block">
+            <apex:outputText styleClass="fieldSectionLabelD" value="Site Contact"/>
+                <apex:actionRegion >
+                     <apex:inputHidden id="delContactId" value="{!DelConatctId}" />
+                    
+                     <apex:commandButton tabindex="130" style="margin-left: 3.6%; margin-top: 1%; width: 14%"  value="Search"  
+                                         disabled="{!ContactSearchButton}" onclick="openContactSelection('{!$Component.delContactId}');" reRender="true"/>
+                      <apex:actionFunction action="{!DelSearchContact}" name="openContactSelection2" 
+                                           reRender="delFName,delLName,delPhone,delMob,delEmail,delFax">
+                           <apex:param name="conId" value="{!DelConatctId}" assignTo="{!billingContactID}"/>
+                           <apex:param name="delFlag" value="Delivery" />
+                      </apex:actionFunction>
+                </apex:actionRegion>
+            </apex:outputPanel>
+            
+            <apex:inputField id="deliveryCity" value="{!fullQuote.Delivery_City__c}" taborderhint="6"  required="{!markAsRequired}"/>
+            
+            <apex:inputField value="{!fullQuote.Delivery_First_Name__c}" taborderhint="14"  id="delFName" />
+            
+            <apex:inputField id="deliveryCounty" value="{!fullQuote.Delivery_County__c}" taborderhint="7" />
+            
+            <apex:inputField value="{!fullQuote.Delivery_Last_Name__c}" taborderhint="15" id="delLName"/>
+            
+            <!-- Post Code lookup Button is not required as it will be a auto complete field -->
+            <apex:inputField id="deliveryPostcode" styleClass="delPostCode" value="{!fullQuote.Delivery_Postcode__c}" taborderhint="8" required="{!markAsRequired}" />
+           
+            
+            <apex:inputField value="{!fullQuote.Delivery_Phone__c}" taborderhint="16" id="delPhone"/>
+            
+            <apex:inputField id="deliveryCountry" value="{!fullQuote.Delivery_Country__c}" taborderhint="9" />
+            
+            <apex:inputField value="{!fullQuote.Delivery_Mobile__c}" taborderhint="17" id="delMob"/>
+            
+            <apex:inputField value="{!fullQuote.Fulfilling_Depot__c}" taborderhint="10" required="{!markAsRequired}" id="fulDep">
+                <apex:commandButton action="{!null}" value="Search" tabindex="110" onclick="fulfildepPopup('{!$Component.fulDep}');" reRender="true"/>
+            </apex:inputField>
+            
+            <apex:inputField value="{!fullQuote.Delivery_Email__c}" taborderhint="18" id="delEmail"/><br/>
+            
+            <apex:inputField value="{!fullQuote.Delivery_Fax__c}" taborderhint="19" id="delFax"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Delivery Planning" collapsible="false" id="delPickCostTime">
+            
+            <apex:inputField styleClass="delTime" value="{!fullQuote.Del_Time__c}" taborderhint="20" onchange="onDelTimeChange()" required="{!markAsRequired}"/>
+            
+            <apex:pageBlockSectionItem id="delPickup">
+                <apex:outputLabel value="Del / Pickup Costs" for="delPickupCosts"/>
+                <apex:outputPanel layout="block" style="display: flex;">
+                    <apex:inputField id="delPickupCosts" styleClass="summaryFields delPickupCost" value="{!fullQuote.Del_Pickup_Costs__c}" 
+                                     taborderhint="21" required="{!markAsRequired}"/>
+                    <apex:outputPanel style="font-weight: bolder; padding-right: 3px;">GBP</apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+            
+        <apex:pageBlockSection showHeader="false" columns="1">
+            <apex:inputField style="height:100px; width:61%" value="{!fullQuote.Delivery_Instructions__c}" taborderhint="22" />
+        </apex:pageBlockSection>        
+        
+     
+</apex:component>

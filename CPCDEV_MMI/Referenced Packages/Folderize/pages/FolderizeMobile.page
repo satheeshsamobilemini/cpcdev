@@ -1,0 +1,6 @@
+<apex:page controller="sharem.SMF_AppController" action="{!onPageVisited}" docType="html-5.0"
+  applyHtmlTag="false" applyBodyTag="false" showHeader="false" standardStylesheets="false" title="Folderize Mobile">
+
+	<c:FolderizeMobileViewer />
+
+</apex:page>

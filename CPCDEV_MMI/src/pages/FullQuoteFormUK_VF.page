@@ -1,0 +1,850 @@
+<apex:page id="fullQuoteFormUKPage" Controller="FullQuoteUKMainController" title="Full Quote Form" >
+    <link href="{!URLFOR($Resource.Favicon)}" rel="SHORTCUT ICON"/>
+    <apex:stylesheet value="{!URLFOR($Resource.BootStrapUKZip, 'bootstrap.css')}"/>
+    <apex:stylesheet value="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"/>
+    
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"/>
+    <apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"/>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.pca__PostcodeAnywhere, 'address.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.pca__PostcodeAnywhere, 'address.js')}" />
+
+    
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
+    <script src="../../soap/ajax/33.0/connection.js" type="text/javascript"></script>
+        <script type="text/javascript"> 
+              sforce.connection.sessionId = '{!GETSESSIONID()}'; 
+        </script>
+        <style>
+            #dTabs li a { background-color:#abc1fe; }
+            #dTabs li.active a { border-bottom-color: transparent;background-color:#d9e1eb; }
+            #dTabs.nav-tabs > li > a {
+                padding: 8px 16px;
+                margin:0;
+                margin-right: -17px;
+                color: #333;
+                font-weight:bold;
+            }
+            .bs .btn {
+                background: -moz-linear-gradient(top,  #33a6cc 50%, #0099cc 50%); /* FF3.6+ */
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#33a6cc), color-stop(50%,#0099cc)); /* Chrome,Safari4+ */
+                background: -webkit-linear-gradient(top,  #33a6cc 50%,#0099cc 50%); /* Chrome10+,Safari5.1+ */
+                background: -o-linear-gradient(top,  #33a6cc 50%,#0099cc 50%); /* Opera 11.10+ */
+                background: -ms-linear-gradient(top,  #33a6cc 50%,#0099cc 50%); /* IE10+ */
+                background: linear-gradient(to bottom,  #33a6cc 50%,#0099cc 50%); /* W3C */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33a6cc', endColorstr='#0099cc',GradientType=0 ); /* IE6-9 */
+                padding: 3px 3px; 
+                font-size: 10px;
+                letter-spacing: 0px;
+                border:1px;
+                color: #333;margin:1px;padding:2px 3px;border:1px solid #b5b5b5;border-bottom-color:#7f7f7f;
+                background:#e8e8e9 url('/img/alohaSkin/btn_sprite.png') repeat-x right top;
+                font-weight:bold;
+                font-size:.9em;
+                -moz-border-radius:3px;
+                -webkit-border-radius:3px;
+                border-radius:3px
+            }
+            
+        
+            .fieldSectionLabelC{
+                                text-align: center;
+                                font-weight: bold;
+                                margin-left: 71px;
+                                margin-top: 20px;
+                              }
+            .fieldSectionLabelD{
+                                text-align: center;
+                                font-weight: bold;
+                                margin-left: 100px;
+                                margin-top: 20px;
+                              }
+            .requiredInput{
+                              display: inline-block
+                          }
+            .noProductBasketItem{
+                                  text-align: center;
+                                  font-weight: bolder;
+                                }
+            .basketActionsColumn{
+                                  text-align: center;
+                                }
+            .addToBasketButton{
+                                width: 110px;
+                                height: 30px;
+                                background: url({!$Resource.AddIconCircle}) no-repeat;
+                                background-position: 5px 6px;
+                                padding-left: 20px;
+                                background-size: 15px;
+                              }
+            .addToBasketButton:hover{
+                                       background-position: 5px 6px; 
+                                       background-color: aliceblue;
+                                    }
+            .productsRow{
+                          height : 21px
+                        }
+            .productsTableLoading{
+                                     background-color: #fbfbfb;
+                                     height: 17%%;
+                                     opacity: 0.65;
+                                     width: 81%;
+                                     top: 12.5%;
+                                     left: 18%;
+                                     z-index: 980;
+                                 }
+            .ui-tabs.ui-tabs-vertical {
+                                        padding: 0;
+                                        box-sizing: border-box;
+                                        margin: auto;
+                                        margin-bottom: 1%;
+                                    }
+            .ui-tabs.ui-tabs-vertical .ui-widget-header {
+                                                            border: none;
+                                                        }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav {
+                                                    float: left;
+                                                    width: 16%;
+                                                    background: #F8F8F8;
+                                                    border-radius: 4px 0 0 4px;
+                                                    border-right: 1px solid gray;
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav li {
+                                                    clear: left;
+                                                    width: 100%;
+                                                    margin: 0.2em 0;
+                                                    border: 1px solid gray;
+                                                    border-width: 1px 0 1px 1px;
+                                                    border-radius: 4px 0 0 4px;
+                                                    overflow: hidden;
+                                                    position: relative;
+                                                    right: -2px;
+                                                    z-index: 2;
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav li a {
+                                                    display: block;
+                                                    width: 100%;
+                                                    padding: 0.6em 1em;
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav li a:hover {
+                                                    cursor: pointer;
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active {
+                                                    margin-bottom: 0.2em;
+                                                    padding-bottom: 0;
+                                                    border-right: 1px solid white;
+                                                    font: inherit;
+                                                    left: 4px;
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-nav li:last-child {
+                                                    margin-bottom: 10px;
+                                                    
+                                                }
+            .ui-tabs.ui-tabs-vertical .ui-tabs-panel {
+                                                    float: left;
+                                                    position: relative;
+                                                    box-sizing: border-box;
+                                                    width: 83%;
+                                                    border-left: 1px solid gray;
+                                                    border-radius: 0;
+                                                    position: relative;
+                                                    left: -1px;
+                                                }
+            .accessoriesTable{
+                                width: 85%;
+                             }
+            .accTblQtyFrq{ text-align: center; width:5%;}
+            .accTblAddToBasket{text-align: center; width:5%;}
+            .accTblPriceHeader{text-align: center; width:5%;}
+            .addORRemoveIcon:hover{ width: 24px; height: 19px;}
+            .summaryFields .repId{ cursor: not-allowed !important;}
+        </style>
+        <script>
+              $.noConflict();
+              jQuery(document).ready(function() {
+              
+              
+              
+                      (function() {
+            var billingfields = [
+                { element: "billingAddress", field: "{Line1}" },
+                { element: "billingCity", field: "{City}", mode: pca.fieldMode.POPULATE },
+                { element: "billingCounty", field: "{Province}", mode: pca.fieldMode.POPULATE },
+                { element: "postcode", field: "{PostalCode}" },
+                { element: "billingCountry", field: "{Country}", mode: pca.fieldMode.COUNTRY }
+                
+            ],
+            billingoptions = {
+                key: "BX92-EU61-EE73-KE89" ,
+                countries: { codesList: "United Kingdom", fillOthers: true }
+            },
+            control = new pca.Address(billingfields, billingoptions);
+         })();
+         
+         
+         (function() {
+            var deliveryfields = [
+                { element: "deliveryAddress", field: "{Line1}" },
+                { element: "deliveryCity", field: "{City}", mode: pca.fieldMode.POPULATE },
+                { element: "deliveryCounty", field: "{Province}", mode: pca.fieldMode.POPULATE },
+                { element: "deliveryPostcode", field: "{PostalCode}" },
+                { element: "deliveryCountry", field: "{Country}", mode: pca.fieldMode.COUNTRY }
+                
+            ],
+            deliveryoptions = {
+                key: "BX92-EU61-EE73-KE89" ,
+                countries: { codesList: "United Kingdom", fillOthers: true }
+            },
+            control = new pca.Address(deliveryfields, deliveryoptions);
+         })();
+         
+                var postCodeonFocus = '';
+                
+                jQuery( '[id$=deliveryPostcode], [id$=deliveryAddress]').focus(function(){
+                    postCodeonFocus = jQuery('[id$=deliveryPostcode]').val();  
+                });
+                
+                jQuery( '[id$=deliveryPostcode], [id$=deliveryAddress]').change(function(){
+                    setTimeout(setupPage,2000);
+                    setTimeout(addressError,3000);
+                    setTimeout(reCalculateTransportCost,2000);
+                });
+                
+                jQuery(document).on('blur','[id$=deliveryPostcode]',function(e){console.log(e.which);
+                  var postCodeValue = jQuery('[id$=deliveryPostcode]').val();
+                  if(postCodeValue == null || postCodeValue == ''){
+                      console.log('Post Code is empty.');
+                  }
+                  else{
+                      if(postCodeValue != postCodeonFocus){
+                          setTimeout(setupPage,2000);
+                          setTimeout(addressError,3000);
+                          setTimeout(reCalculateTransportCost,2000);
+                          //postCodeonFocus = postCodeValue;
+                      }
+                  }
+                });
+                
+              
+                 jQuery( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+                 jQuery( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+                 setTimeout(function(){
+                     var test = jQuery("#tabs>ul").height();
+                     jQuery(".accessoryDynamicTable").css('max-height',test);
+                  }, 2000);
+                 });
+        </script>
+      <apex:sectionHeader id="fullQuotePageUKHeader" title="Quotation Entry: Full Quote" />
+      <apex:pageMessages id="pageMessage" escape="false"/>
+      <div class="bs">
+        <apex:outputPanel styleClass="bs-example" id="navTabs" layout="block" style="position:relative;">
+        <apex:actionstatus id="onloadStatus" >
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                    <div class="waitingHolder" >
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        <apex:actionstatus id="onloadWaitStatus" >
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                    <div class="waitingHolder" >
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Please Wait...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        <apex:actionstatus id="EamilQuoteStatus" >
+               <apex:facet name="start">
+                   <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:90%;opacity:0.65;width:100%;">
+                       <div class="waitingHolder" >
+                           <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                            <font color="Red"><b>Please wait we are emailing quote....</b></font> 
+                        </div>
+                    </div>
+                </apex:facet>
+      </apex:actionstatus> 
+      
+        <ul class="nav nav-tabs" style="border-bottom:0px" id="dTabs">
+            <li class="active"><a class="active-tab" data-toggle="tab" href="#customerBilling">Customer &amp; Billing</a></li>
+            <li><a data-toggle="tab" href="#delivery">Delivery</a></li>
+            <li><a data-toggle="tab" href="#products">Products</a></li>
+            <li><a data-toggle="tab" href="#summary">Summary</a></li>
+        </ul>
+        <apex:form id="fullQuoteForm">
+        <apex:inputHidden value="{!fullQuote.Sales_Rep__c}" id="theHiddenInput"/>
+        <apex:outputPanel styleClass="tab-content" id="tabOptions" layout="block">
+         
+            <div id="customerBilling" class="tab-pane fade in active">
+              <apex:pageBlock mode="edit" id="pbCustomerBillingTab">
+                    <apex:pageBlockButtons location="bottom" id="pbbCustomerBillingTab" >
+                        <apex:commandButton id="custRefreshButton" tabindex="300" onclick="refreshButtonAction()" status="onloadStatus" value="Refresh" reRender="pageMessage1" 
+                                            disabled="{!(IF(OR(fullQuote.Status__c=='Lost',SelectedProducts.size<=0), true, false ))}"/>
+                        <apex:commandButton tabindex="310" action="{!updateQuote}" status="onloadStatus" value="Update Quote" reRender="pageMessage" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}" oncomplete="callEmailSend();"/>
+                        <apex:commandButton tabindex="320" action="{!processConvertToOrder}" value="Convert to Order" status="onloadStatus" oncomplete="genRFDAndSendMail()" 
+                                            reRender="pageMessage, sendConfirm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="330" action="{!markAsLost}" value="Mark as Lost" reRender="pageMessage, fullQuoteUKForm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="340"  oncomplete="setMarkAsRequired();"  value="Close Quote" immediate="true" action="{!setRequiredVar}" rerender="fullQuoteForm" status="onloadStatus" rendered="{!closequote}"/>
+                        
+                    </apex:pageBlockButtons>
+                    <c:CustomerBillingTab id="customerBillingTab" fullQuote="{!fullQuote}" SearchRep="{!searchRep}" billingConatctId="{!billingContactID}" 
+                                          ContactSearchButton="{!ctrlContactSearchButton}" SearchContact="{!searchConatct}" markAsRequired="{!markAsRequired}"/>
+                   
+                </apex:pageBlock>  
+            </div>
+            
+            <div id="delivery" class="tab-pane fade">
+               <apex:pageBlock mode="edit" id="pbDeliveryTab">
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton id="delRefreshButton" tabindex="300" onclick="refreshButtonAction()" status="onloadStatus" value="Refresh" reRender="pageMessage1" 
+                                            disabled="{!(IF(OR(fullQuote.Status__c=='Lost',SelectedProducts.size<=0), true, false ))}"/>
+                        <apex:commandButton tabindex="310" action="{!updateQuote}" status="onloadStatus" value="Update Quote" reRender="pageMessage" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}" oncomplete="callEmailSend();"/>
+                        <apex:commandButton tabindex="320" action="{!processConvertToOrder}" value="Convert to Order" status="onloadStatus" oncomplete="genRFDAndSendMail()" 
+                                            reRender="pageMessage, sendConfirm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="330" action="{!markAsLost}" value="Mark as Lost" reRender="pageMessage, fullQuoteUKForm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="340"  oncomplete="setMarkAsRequired();"  value="Close Quote" immediate="true" action="{!setRequiredVar}" rerender="fullQuoteForm" status="onloadStatus" rendered="{!closequote}"/>
+                    </apex:pageBlockButtons>
+                    <c:DeliveryTab id="delivaryTabComp" fullQuote="{!fullQuote}" ContactSearchButton="{!ctrlContactSearchButton}" DelConatctId="{!billingContactID}" 
+                                   DelSearchContact="{!searchConatct}" markAsRequired="{!markAsRequired}" quoteExipreddate="{!quoteExipreddate}" purchaseOrder="{!purchaseOrder}"/>
+                </apex:pageBlock>
+            </div>
+            
+            <div id="products" class="tab-pane fade">
+                <apex:pageBlock mode="edit" id="pbProductsTab">
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton id="pdtRefreshButton" tabindex="0" onclick="refreshButtonAction()" status="onloadStatus" value="Refresh" reRender="pageMessage1" 
+                                            disabled="{!(IF(OR(fullQuote.Status__c=='Lost',SelectedProducts.size<=0), true, false ))}"/>
+                        <apex:commandButton tabindex="0" action="{!updateQuote}" status="onloadStatus" value="Update Quote" reRender="pageMessage" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}" oncomplete="callEmailSend();"/>
+                        <apex:commandButton tabindex="0" action="{!processConvertToOrder}" value="Convert to Order" status="onloadStatus" oncomplete="genRFDAndSendMail()" 
+                                            reRender="pageMessage, sendConfirm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="0" action="{!markAsLost}" value="Mark as Lost" reRender="pageMessage, fullQuoteUKForm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="340"  oncomplete="setMarkAsRequired();"  value="Close Quote" immediate="true" action="{!setRequiredVar}" rerender="fullQuoteForm" status="onloadStatus" rendered="{!closequote}"/>
+                    </apex:pageBlockButtons>
+                    <apex:outputPanel id="productsPanel" style="position:relative;" layout="block"> 
+                    <apex:actionRegion > 
+                    <apex:pageBlockSection id="pbsProductLIst" title="Product List" collapsible="false" columns="1">
+                        
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel for="productType" value="Product Type"/>
+                            <apex:outputPanel layout="block">
+                                <apex:inputField id="productType" value="{!fullQuote.Product_Type__c}" required="{!markAsRequired}"/>
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Unit Size" for="unitSize"/>
+                            <apex:outputPanel layout="block" style="display: flex">
+                                <apex:inputField id="unitSize" value="{!fullQuote.Unit_Size__c}" required="{!markAsRequired}"/>    
+                                <apex:commandButton id="searchProductsButton" title="Search Products" status="onloadStatus" 
+                                                    oncomplete="reloadAccessoriesPanel()" action="{!SearchProducts}" value="Search" 
+                                                    reRender="pageMessage, listOfProductsTable, pbsProductDetails, accessoriesWrapPanel"/>
+                            </apex:outputPanel>
+                            
+                        </apex:pageBlockSectionItem>
+                        <apex:outputPanel id="productsTablePanel" style="position:relative;max-height: 130px;overflow: auto;" layout="block"> 
+                            <apex:pageBlockTable id="listOfProductsTable" value="{!ProductsWithAgreed}" var="pdts" title="Select Product"
+                                                 align="center" rowClasses="productsRow" >
+                                <apex:column headerValue="Description" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Description__c}" styleClass="pdtsDescription" >
+                                    <apex:outputField value="{!pdts.pdtItem.Description__c}" />
+                                </apex:column>
+                                
+                                <apex:column headerValue="Item Code" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Code__c}">
+                                    <apex:outputField value="{!pdts.pdtItem.Code__c}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="Unit Type" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Type__c}">
+                                    <apex:outputField value="{!pdts.pdtItem.Type__c}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="Grade" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Type2__c}">
+                                    <apex:outputField value="{!pdts.pdtItem.Type2__c}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="Kicker" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Rate__c}">
+                                    <apex:outputField value="{!pdts.pdtItem.Rate__c}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="Goal" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtItem.Goal__c}">
+                                    <apex:outputField value="{!pdts.pdtItem.Goal__c}"/>
+                                </apex:column>
+                                
+                                <apex:column headerValue="Agreed" onclick="selectProduct('{!pdts.pdtItem.Id}')" title="{!pdts.pdtAgreedValue}">
+                                    <apex:outputText value="{!pdts.pdtAgreedValue}"/>
+                                </apex:column>
+                                
+                            </apex:pageBlockTable>
+                        </apex:outputPanel>
+                        <apex:actionFunction name="selectProductCallBack" action="{!getSelectedProductDetails}" status="onloadStatus" 
+                                             reRender="pageMessage, pbsProductDetails, selectedRate">
+                            <apex:param id="pdtTabelParam" name="ProductID" value=""/>
+                        </apex:actionFunction>
+                    </apex:pageBlockSection>
+                    </apex:actionRegion>
+                     
+                    <apex:pageBlockSection id="pbsProductDetails" showHeader="false">
+                       
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Select Rate" for="selectRate"/>
+                            <apex:outputPanel layout="block">
+                               <apex:actionRegion >  
+                                <apex:inputField id="selectRate" styleClass="selectRateField" value="{!fullQuote.Select_Rate__c}" >
+                                    <apex:actionSupport status="onloadStatus" action="{!getSelectRate}" event="onchange" reRender="pageMessage, selectedRate"/>
+                                </apex:inputField>
+                               </apex:actionRegion>  
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        
+                        <apex:pageBlockSectionItem id="pBSIselectedRate">
+                            <apex:outputLabel id="selectedRateLabel" value="Selected Rate" for="selectedRate"/>
+                            <apex:outputPanel id="selectedRatePanel" layout="block" style="display:flex">
+                                <apex:outputPanel style="font-weight: bolder; padding-right: 3px;">&pound;</apex:outputPanel>
+                                    <apex:inputText id="selectedRate" styleClass="selectedRateField" value="{!selRate}"
+                                                disabled="{!IF(OR(fullQuote.Select_Rate__c == 'Kicker', fullQuote.Select_Rate__c == 'Goal', fullQuote.Select_Rate__c == 'Agreed'),true,false)}"/> 
+                            </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:inputField styleClass="quantityField" id="quantity" value="{!fullQuote.Quantity__c}" />
+                        <button type="button" class="addToBasketButton" style="margin-left: 19%;" onclick="pdtQuantityRate()">Add to Basket</button>
+                        <apex:actionRegion >
+                        <apex:actionFunction status="onloadStatus" name="addToBasket" action="{!AddtoBasket}" reRender="pageMessage, pdtBasketSectionPanel, custRefreshButton, delRefreshButton, pdtRefreshButton, smryRefreshButton, summaryTabComp, delPickupCosts">
+                            <apex:param id="quantityParam" name="Quantity" value=""/>
+                            <apex:param id="selectedRateParam" name="SelectedRate" value=""/>
+                            <apex:param id="postCodeParam" name="PostCode" value=""/>
+                        </apex:actionFunction>
+                        
+                        </apex:actionRegion>
+                    </apex:pageBlockSection>
+                    
+                    <apex:outputPanel id="accessoriesWrapPanel" layout="block">
+                    <apex:pageBlockSection id="pbsAccessories" title="Accessories" columns="1"  collapsible="false" rendered="{!(IF(allAccessories!=null, true, false ))}"> 
+                                                
+                        <apex:outputPanel id="accessoriesPanel" layout="block" style="position:relative;" >        
+                            <div id="tabs"><apex:actionRegion >
+                                <ul>
+                                    <apex:variable var="dynamicId" value="{!0}"/>
+                                    <apex:repeat value="{!allAccessories}" var="acs" >
+                                        <li title="{!acs}"><a href="#{!dynamicId}" style="text-overflow: ellipsis; overflow: hidden;">{!acs}</a></li>
+                                        <apex:variable var="dynamicId" value="{!dynamicId+1}"/>
+                                    </apex:repeat>
+                                </ul>
+                                <apex:variable var="dynamicId" value="{!0}"/>
+                                <apex:repeat value="{!allAccessories}" var="acs">
+                                    <div id="{!dynamicId}" style="max-height: 150px;overflow: auto;">
+                                        <apex:variable var="accRowNumber" value="{!0}"/>
+                                        <apex:pageBlockTable value="{!pdtTypeAccessoryListMap[LOWER(acs)]}" var="acsItem" styleClass="accessoriesTable" 
+                                                             rowClasses="accessoriesRow" columns="6" align="center">
+                                            
+                                            <apex:column headerValue="Description" >
+                                                <apex:outputField value="{!acsItem.pdtItem.Description__c}"/>    
+                                            </apex:column>
+                                            
+                                            <apex:column headerValue="Item Code" >
+                                                <apex:outputField value="{!acsItem.pdtItem.Code__c}"/>    
+                                            </apex:column>
+                                            
+                                            <apex:column headerValue="Unit Type"  >
+                                                <apex:outputField value="{!acsItem.pdtItem.Type__c}"/>    
+                                            </apex:column>
+                                            
+                                            <apex:column headerValue="Quantity | Frequency" style="text-align: center;" headerClass="accTblQtyFrq">
+                                                <apex:inputText style="width:40px;" size="3" maxlength="3" value="{!acsItem.accessoryQuantity}" />
+                                                <apex:outputText >
+                                                    &nbsp;|&nbsp;
+                                                </apex:outputText>
+                                                <apex:inputText style="width:26px;" maxlength="2" value="{!acsItem.accessoryFrequency}" size="2" 
+                                                                disabled="{!(IF( acsItem.pdtItem.Unit_Type_2__c == 'Service' && (acsItem.pdtItem.Is_Other__c), false, true))}"/>
+                                                <apex:outputText escape="false" >
+                                                    <b style="font-size:10px;">day(s)</b>
+                                                </apex:outputText>
+                                            </apex:column>
+                                            
+                                            <apex:column headerValue="Price" style="text-align: center;" headerClass="accTblPriceHeader">
+                                                <apex:inputField value="{!acsItem.pdtItem.Rate__c}" style="width:40px" />    
+                                            </apex:column>
+                                            
+                                            <apex:column headerValue="Add to Basket" style="text-align: center;" width="5%" >
+                                                <apex:commandLink id="addAccessoryButton" title="Add to Basket" type="image/png" action="{!AddAccessoriestoBasket}"
+                                                                  status="onloadStatus"
+                                                                  reRender="pageMessage, pdtBasketSectionPanel, custRefreshButton, delRefreshButton, pdtRefreshButton, smryRefreshButton, summaryTabComp, delPickupCosts">
+                                                    <apex:image id="addToBasketButton" styleClass="addORRemoveIcon" value="{!$Resource.AddIcon}" width="15" height="15"/>
+                                                    <apex:param name="AccessoryProductItemId" value="{!acsItem.pdtItem.Id}"/>
+                                                    <apex:param name="AccessoryProductItemIndex" value="{!accRowNumber}"/>
+                                                </apex:commandLink>
+                                                <apex:variable var="accRowNumber" value="{!accRowNumber+1}"/>
+                                            </apex:column>
+                                        </apex:pageBlockTable>
+                                      <apex:variable var="dynamicId" value="{!dynamicId+1}"/>  
+                                    </div>
+                                </apex:repeat>
+                                </apex:actionRegion>
+                            </div>
+                        </apex:outputPanel>
+                        
+                    </apex:pageBlockSection> 
+                    </apex:outputPanel>      
+                    <apex:pageBlockSection id="pbsProductsBasket1" title="Shopping Basket" collapsible="false" columns="1">
+                        <apex:outputPanel id="pdtBasketSectionPanel" layout="block">
+                            <apex:outputPanel styleClass="noProductBasketItem" layout="block" rendered="{!(IF(SelectedProducts.size<=0, true, false ))}">
+                                Please add products to basket
+                            </apex:outputPanel>
+                        
+                        
+                            <apex:outputPanel layout="block" style="max-height: 162px;overflow: auto;" rendered="{!(IF(SelectedProducts.size>0, true, false ))}">
+                                <apex:actionRegion >        
+                                    <apex:variable var="rowNumber" value="{!0}"/>
+                                    <apex:pageBlockTable value="{!SelectedProducts}" var="pdtBasket" styleClass="shoppigBasketTable" title="Selected Products Basket" 
+                                                         rules="groups" align="center">
+                                        
+                                        <apex:column styleClass="basketActionsColumn" title="Remove" headerClass="basketActionsColumn" headerValue="Actions" width="5%">
+                                            <apex:commandLink status="onloadStatus"  type="image/png"
+                                                              onclick="if (! window.confirm('Are you sure, you want to remove this product from basket?') ) {return false}"
+                                                              action="{!removeProductItem}" reRender="pageMessage, pdtBasketSectionPanel, addAccessoryCheckbox, delPickupCosts, summaryTabComp, custRefreshButton, delRefreshButton, pdtRefreshButton, smryRefreshButton">
+                                                <apex:image id="removeButton" styleClass="addORRemoveIcon" value="{!$Resource.removeIcon}" width="20" height="15"/>
+                                                <apex:param name="rowIndex" value="{!rowNumber}"/>
+                                            </apex:commandLink>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Description" title="{!pdtBasket.Description__c}" >
+                                            <apex:outputField value="{!pdtBasket.Description__c}"/>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Item Code" title="{!pdtBasket.Itemcode__c}">
+                                            <apex:outputField value="{!pdtBasket.Itemcode__c}"/>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Details" title="Please add any details." width="15%">
+                                            <apex:inputField value="{!pdtBasket.Details__c}">
+                                                <apex:actionsupport action="{!setBasketChanges}" status="onloadWaitStatus" event="onchange" reRender="pageMessage, delPickupCosts, summaryTabComp" />
+                                            </apex:inputField>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Quantity" title="{!pdtBasket.Quantity__c}" style="text-align: center;" width="5%">
+                                            <apex:outputField value="{!pdtBasket.Quantity__c}" />
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Frequency" title="Frequency in days." style="text-align: center;" width="5%">
+                                            <apex:outputField value="{!pdtBasket.Frequency__c}" />
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Price" title="{!pdtBasket.Price__c}" width="10%">
+                                            <apex:outputField value="{!pdtBasket.Price__c}" />
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Total" title="{!pdtBasket.Total__c}" width="10%">
+                                            <apex:outputField value="{!pdtBasket.Total__c}" />
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="Transport Cost (Each Way)" title="Transport cost each way." 
+                                                     style="text-align: center;" width="15%">
+                                            <apex:inputField style="width: 60%;" value="{!pdtBasket.TransportCost__c}" onchange="onTransportCostChange()"/>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="LLW" title="Loss Limitation Waiver" width="5%">
+                                            <apex:inputField value="{!pdtBasket.LLW__c}" required="{!markAsRequired}" onchange="onTransportCostChange()" rendered="{!(IF(pdtBasket.is_LLW_Editable__c, true, false))}"/>
+                                            <apex:outputField value="{!pdtBasket.LLW__c}" rendered="{!(IF(pdtBasket.is_LLW_Editable__c, false, true))}"/>
+                                            <apex:variable var="rowNumber" value="{!rowNumber+1}"/>
+                                        </apex:column>
+                                        
+                                    </apex:pageBlockTable>
+                                    <apex:actionFunction status="onloadWaitStatus" action="{!setBasketChanges}" name="setBasketValues" reRender="pageMessage, delPickupCosts, summaryTabComp"/>
+                              </apex:actionRegion>
+                            </apex:outputPanel>
+                        </apex:outputPanel>     
+                    </apex:pageBlockSection>
+                 </apex:outputPanel>
+                </apex:pageBlock>
+            </div>
+            
+            <div id="summary" class="tab-pane fade">
+               <apex:pageBlock mode="edit" id="pbSummaryTab">
+                    <apex:pageBlockButtons location="bottom">
+                        <apex:commandButton id="smryRefreshButton" onclick="refreshButtonAction()" status="onloadStatus" value="Refresh" reRender="pageMessage1 " 
+                                            disabled="{!(IF(OR(fullQuote.Status__c=='Lost',SelectedProducts.size<=0), true, false ))}"/>
+                        <apex:commandButton action="{!updateQuote}" value="Update Quote" status="onloadStatus" reRender="pageMessage" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}" oncomplete="callEmailSend();"/>
+                        <apex:commandButton action="{!processConvertToOrder}" value="Convert to Order" status="onloadStatus" oncomplete="genRFDAndSendMail()" 
+                                            reRender="pageMessage, sendConfirm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton action="{!markAsLost}" value="Mark as Lost" reRender="pageMessage, fullQuoteUKForm" rendered="{!AND(fullQuote.Is_First_Email_Sent__c,fullQuote.Status__c!='Lost')}"/>
+                        <apex:commandButton tabindex="340"  oncomplete="setMarkAsRequired();"  value="Close Quote" immediate="true" action="{!setRequiredVar}" rerender="fullQuoteForm" status="onloadStatus" rendered="{!closequote}"/>
+                    </apex:pageBlockButtons>
+                    <c:SummaryTab id="summaryTabComp" fullQuote="{!fullQuote}" ContractValueFields="{!ContractValueFields}" EmailQuote="{!saveAndEmailQuote}" markAsRequired="{!markAsRequired}"/>
+                </apex:pageBlock>
+            </div>
+            <apex:outputPanel id="sendConfirm">
+                 <script>
+                     //Shankar - Trigger RFD generation action and send email.
+                     function genRFDAndSendMail(){
+                        console.log('Generate RFD and Send Email to Branch & Customer = '+'{!sendOrderConfirmation}.');
+                        if('{!sendOrderConfirmation}' == 'true'){
+                            convertToOrder();
+                        }
+                     }
+                 </script>
+            </apex:outputPanel>
+            <apex:actionFunction status="onloadStatus" action="{!refresh}" name="refreshAction" reRender="pageMessage, delPickupCosts, summaryTabComp"/>
+            <apex:actionFunction action="{!sendEmailUpdates}"  name="callEmailSend2" reRender="pageMessage" status="onloadStatus"/>
+            <apex:actionFunction action="{!closeQuote}"  name="JScloseQuote" reRender="fullQuoteForm" status="onloadStatus" />
+            <apex:actionFunction immediate="true" status="onloadStatus" action="{!delPostCodeChange}" name="delPostCodeChangeFunction" reRender="pageMessage, delPickupCosts, pdtBasketSectionPanel, summaryTabComp">
+                <apex:param id="delPostCodeParam" name="PostCodeChangeValue" value=""/>
+            </apex:actionFunction>
+            <apex:actionFunction immediate="true" status="onloadStatus" action="{!resetSummaryTabFields}" name="resetSummaryTabFields" reRender="pageMessage, delPickupCosts, summaryTabComp"/>
+            <apex:actionFunction status="onloadStatus" action="{!onChangeOfOtherValue}" name="onChangeOthers" reRender="pageMessage, delPickupCosts, summaryTabComp"/>
+            <apex:actionFunction status="onloadWaitStatus" action="{!genOrderAndSendMail}" name="convertToOrder" />
+        </apex:outputPanel>
+        </apex:form>
+    </apex:outputPanel> 
+    </div> 
+ <script type="text/javascript">
+   var prePostCode = 'test';
+   var preAddress = '';
+function postCodeError(){
+//alert('--inside testmain--'+prePostCode);
+if(prePostCode != jQuery( '[id$=deliveryPostcode]').val() && jQuery('[id$=fulDep]').val() == '' && jQuery( '[id$=deliveryPostcode]').val() != ''){
+alert("No service branch in this PostalCode");
+}
+prePostCode = jQuery( '[id$=deliveryPostcode]').val(); 
+}   
+
+function addressError(){
+//alert('--inside testmain--'+preAddress);
+if((preAddress != jQuery( '[id$=deliveryAddress]').val() && jQuery( '[id$=deliveryPostcode]').val() != '') && jQuery('[id$=fulDep]').val() == ''){
+alert("No service branch in this PostalCode");
+}
+preAddress = jQuery( '[id$=deliveryAddress]').val(); 
+}
+
+function postcodeChangeError(){
+//alert('--inside testmain--'+preAddress);
+if((prePostCode != jQuery( '[id$=deliveryPostcode]').val() && jQuery( '[id$=deliveryPostcode]').val() != '') && jQuery('[id$=fulDep]').val() == ''){
+alert("No service branch in this PostalCode");
+}
+prePostCode = jQuery( '[id$=deliveryPostcode]').val();
+} 
+    //Shankar - Re-calculate transport cost for all items in basket.
+    function reCalculateTransportCost(){
+        var postCodeValue = jQuery('[id$=deliveryPostcode]').val();
+        if(document.getElementsByClassName("shoppigBasketTable").length > 0){
+            delPostCodeChangeFunction(postCodeValue);
+        } 
+    }
+ 
+ function setupPage() {
+      
+      
+      //function contains all code to execute after page is rendered
+      var st = jQuery( '[id$=deliveryPostcode]').val();
+      //var st = document.getElementById(deliveryPostcode).value;
+      var srt = st.substring(0, st.indexOf(' ', 0)) + st.substring(st.indexOf(' ', 0)+1, st.indexOf(' ', 0)+2);
+      //alert("in function"+srt);
+      var state = { //state that you need when the callback is called
+          //fulDep : document.getElementById(fulDep),
+          //fulDep : document.getElementById(fulDep), fulDep
+          //startTime : new Date().getTime()
+          };
+          
+
+      var callback = {
+          //call layoutResult if the request is successful
+          onSuccess: layoutResults,
+
+          //call queryFailed if the api request fails
+          onFailure: queryFailed,
+          source: state};
+          
+          sforce.connection.query(
+          "Select Id, Name, Service_Branch__c From Post_Code_Rate__c where Name = '"+srt+"'",
+           callback);
+        
+  }
+ function queryFailed(error, source) {
+   // source.fulDep = "An error has occurred: " + error;
+   // alert("No service branch in this PostalCode");
+    jQuery( '[id$=fulDep]').val('');
+  }
+  
+  function layoutResults(queryResult, source) {
+    // alert("result"+queryResult);
+     var a = 1;
+      var records = queryResult.getArray('records');
+        if (queryResult.size == 1) {
+            var Branchresult = sforce.connection.query("Select Branch_Address__c,Branch_Name__c,Branch_Code__c, Branch_Email__c, Branch_Mobile__c, Branch_Phone__c from Branch_Detail__c");
+            var branchRecords = Branchresult.getArray("records");
+          //  alert('Branchresult'+branchRecords +'@@'+branchRecords .length);
+            var mySet = new Set();
+            for (var i = 0; i < branchRecords .length; i++) {
+                mySet.add(branchRecords[i].Branch_Name__c);
+              //  alert('inside'+mySet[i]+'@@'+branchRecords[i].Branch_Name__c+'@@'+records[0].Service_Branch__c);
+            }
+          //  alert('mySet'+mySet+'@@'+records[0].Service_Branch__c);
+           // alert('mySet'+mySet+'@@'+mySet.has(records[0].Service_Branch__c));
+            if(mySet.has(records[0].Service_Branch__c))
+                jQuery( '[id$=fulDep]').val(records[0].Service_Branch__c);
+        }
+        else if(a){
+        
+            jQuery( '[id$=fulDep]').val('');
+            a= null;
+        }
+   }
+  
+  
+   // Function to open Fulfil depot search popup page  
+    function fulfildepPopup(fulfildep){
+    
+         var url = "/apex/SelectFulfillingDepotPopup?fulfildep="+fulfildep;
+         newWin = window.open(url,'Popup','height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+         if (window.focus)
+        {
+        newWin.focus();
+        }
+        return false;
+    }
+ 
+ 
+    var newWin = null;
+    // Function to open SalesRep search popup page  
+    function search(repID, repName, recordId){
+         var url = "/apex/SelectConatctPopup?repID="+repID+"&repName="+repName+"&recordId="+recordId;
+         newWin = window.open(url,'Popup','height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+         if (window.focus)
+        {
+        newWin.focus();
+        }
+        return false;
+    }
+      
+    //Shankar - function to be invoked on click of product line item
+    function selectProduct(pdtID){
+      if(pdtID != null && pdtID != ''){
+            selectProductCallBack(pdtID); 
+         }  
+    }
+    
+    //Shankar - Pass quantity and selected rate values to controller
+    function pdtQuantityRate(){
+          //Get user entered quantity and rate
+          var quantity = document.getElementsByClassName('quantityField')[0].value;
+          var selectedRate = document.getElementsByClassName('selectedRateField')[0].value;
+          var delPostCode = document.getElementsByClassName('delPostCode')[0].value;
+          //Pass the values to controller using action function in products component
+          addToBasket(quantity, selectedRate, delPostCode);
+      }
+    
+    //Shankar - Add accesssory to basket  
+    function addAccessoriesToBasket(pdtItemID){
+        //console.log(pdtItemID);
+        addAccessoriesToBasketActionFuction(pdtItemID);
+    }
+    
+    //Shankar - Active accessory panel vertical tab style  
+    function reloadAccessoriesPanel(){
+        jQuery( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+        jQuery( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+        var ulHeight = jQuery("#tabs>ul").height();
+        jQuery(".accessoryDynamicTable").css('max-height',ulHeight);
+    }
+    
+    //Shankar - OnChange of others value in summary tab.
+    function onChangeOfOthers(){
+        var delPickupCost = jQuery('[id$=delPickupCosts]').val();
+        if(delPickupCost == null){
+            console.log('Others is null.');
+        }
+        else{
+            if(delPickupCost != 0 || delPickupCost != 0.00 || delPickupCost != 0.0){
+                onChangeOthers();
+            }
+        }
+    }
+      
+   //Sreenivas -Function to open popup for conatct selection page
+    function openContactSelection(id)
+    {
+       var left = (screen.width/2)-(900/2); 
+       var top = (screen.height/2)-(500/2);
+       
+      newWin = window.open('/apex/SelectConatctPopup?id={!selectedAccount.id}'+'&idLoc='+id+'&FromAccount=false', 'w1', "width = 900, height = 500,top= "+top+", left= "+left+",resizable=1,scrollbars=yes"); 
+      if (window.focus)
+        {
+            newWin.focus();
+        }
+        return false;  
+    }
+   // Sreenivas - Function to close contact selection popup and to populate conatct details 
+    function closeLookupPopup()
+    {
+        newWin.close();
+        if (null!=newWin)
+        {
+          newWin.close();
+        }
+        openContactSelection1();
+        openContactSelection2();
+    }
+    // Vivek - Function to close fulfilling depot selection popup. 
+    function closeFulfillingDepotLookupPopup(){
+        newWin.close();
+        if (null!=newWin){
+          newWin.close();
+        }
+    }
+    
+    //Shankar - Function will be called when user clicks refresh button.
+      function refreshButtonAction(){
+          var summaryTabFields = document.getElementsByClassName("summaryFields");
+          for(var i=0; i<summaryTabFields.length; i++){
+             if(summaryTabFields[i].value == null||summaryTabFields[i].value == ''){
+                 summaryTabFields[i].value = 0;    
+             }
+          }
+          refreshAction();
+      }
+    
+    //Shankar - DelTime onchange function call
+    function onDelTimeChange(){
+        var delPickupCost = document.getElementsByClassName("delPickupCost")[0].value;
+        if(delPickupCost != 0 || delPickupCost != 0.00){
+            refreshAction();
+        }
+    }
+    
+    //Shankar - Transport Cost onchange function call.
+    function onTransportCostChange(){
+        var delPickupCost = document.getElementsByClassName("delPickupCost")[0].value;
+        if(delPickupCost != 0 || delPickupCost != 0.00){
+            resetSummaryTabFields();    
+        }
+        else{
+            setBasketValues();
+        }
+    }
+      
+    function callEmailSend()
+    {
+     //alert('on complete');
+     console.log(document.getElementsByClassName("messageText"));
+     callEmailSend2();
+    }
+    
+    function setMarkAsRequired(){
+       //alert('oncomplte..');
+       JScloseQuote();      
+    }
+    
+    function redirectToOppty()
+    {
+     var urlopp = '{!fullQuote.Opportunity__c}';
+     alert('urlopp ..after'+urlopp );
+     window.location.href = '/'+urlopp ;
+    }
+ </script>                       
+</apex:page>

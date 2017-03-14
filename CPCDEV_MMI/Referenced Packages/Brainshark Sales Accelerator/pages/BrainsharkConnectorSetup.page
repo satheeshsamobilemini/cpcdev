@@ -1,0 +1,4 @@
+<apex:page controller="BRNSHRK.BrainsharkConnectorSetupController" action="{!initPage}" >
+<apex:sectionHeader title="Brainshark for Salesforce" subtitle="Brainshark Connector Settings"/>
+<apex:iframe height="1200px" src="{!appHost}/BrainsharkCRM/config.aspx?ct=0&cs={!$Api.Session_ID}&ctwsurl={!$Api.Partner_Server_URL_90}"/>
+</apex:page>

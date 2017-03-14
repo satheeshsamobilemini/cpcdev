@@ -1,0 +1,34 @@
+<!--
+     (c) 2015 TEKsystems Global Services
+    
+     Name                : SelectSORRecordType
+     Controller          : SelectSORRecordTypeCntrl
+     Created Date        : 5 Nov, 2015 
+     Created By          : Nagalakshmi
+     Purpose             : For selecting SOR Recordtype.
+-->
+
+<apex:page controller="SelectSORRecordTypeCntrl">
+  <apex:form >
+    <apex:pageBlock title="Select Case Record Type" mode="maindetail"><br/><br/>
+      <apex:outputLabel value="Record Type of new record" style="font-weight:bold"/>&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        <apex:selectList size="1" multiselect="false" value="{!recordTypes1}">
+            <apex:selectOptions value="{!items}"/>
+        </apex:selectList><br/><br/>
+        
+        <div align="center"  draggable="false">
+            <apex:commandButton value="Continue" action="{!navigate}"/>
+            <apex:commandButton value="Cancel"  action="{!NavBack}"/>
+        </div>
+        
+        <apex:outputLabel value="Available Customer Request Record Types" style="font-weight:bold"/><br/><br/><br/>
+        
+        <apex:pageBlockTable value="{!RecList}" var="r">
+            <apex:column headerValue="Record Type Name" value="{!r.Name}" width="25%" style="font-weight:bold"/>
+            <apex:column headerValue="Description"/>
+        </apex:pageBlockTable>
+        
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

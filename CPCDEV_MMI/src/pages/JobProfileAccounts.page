@@ -1,0 +1,37 @@
+<apex:page controller="JobProfileAccounts" sidebar="false" showheader="false">
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+ <apex:form id="frmMain">  
+
+  <apex:pageBlock title="Please select a Sub Contractor" id="pb">
+       <script id="scr">
+        var url = '{!url}';
+        
+        if(url != 'null'){
+          if (sforce.console.isInConsole()) { 
+            sforce.console.getEnclosingPrimaryTabId(function responseTabID(result){ 
+            sforce.console.openPrimaryTab(result.id,url,true,'Tab'); 
+           } 
+          ); 
+         }
+         else {   
+          window.opener.location.href = url;
+          window.close();
+         }
+       }
+        
+        </script>
+ 
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!next}" value="Next" reRender="pb"/> 
+
+    </apex:pageBlockButtons>
+         <apex:pageMessages id="Message" />
+  
+       <apex:selectRadio value="{!selectedAccount}" layout="pageDirection" >
+            <apex:selectOptions value="{!accounts}"/>
+        </apex:selectRadio>
+        
+    
+  </apex:pageBlock>  
+  </apex:form>
+</apex:page>

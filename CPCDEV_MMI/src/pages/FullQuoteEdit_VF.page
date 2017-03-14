@@ -1,0 +1,3 @@
+<apex:page standardcontroller="MMI_Full_Quotes__c" extensions="FullQuoteEdit_AC" action="{!gotoEdit}">
+
+</apex:page>

@@ -1,0 +1,22 @@
+<apex:page standardController="Account">
+  <h1><font size="+1"><B>Transition Information - Notes and Help</B></font></h1><br/><br/>
+  <h2>Classification Values</h2>
+  <ul>
+      <li>A - Repeat volume customers that need heavy contact (this includes high potential customers)</li>
+      <li>B - Customers with average contact or need slightly above average attention and/or potential.</li>
+      <li>C - Customers that require less than average contact and/or low volume/potential.</li>
+      <li>D - Customers that require very little contact and have very low potential.</li>
+  </ul>
+  <h3>Classification Notes</h3>
+  <ul>
+      <li>Any helpful notes the rep may have regarding the account</li>
+  </ul>
+  <h4>BM Plan for the Account</h4>
+  <ul>
+      <li>Branch Manager Actions for the account</li>
+  </ul>
+  <h5>Total Revenue YTD - Current Year</h5>
+  <ul>
+      <li>Research in result for accurate YTD revenue</li>
+  </ul>
+</apex:page>

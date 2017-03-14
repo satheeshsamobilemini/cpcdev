@@ -1,0 +1,1301 @@
+<apex:page standardStylesheets="false" Controller="ViewMoreController" id="morePage" sidebar="false" >
+
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.3.min.js"/>
+    <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />  
+    <apex:includeScript value="http://pagead2.googlesyndication.com/pagead/show_ads.js"/>  
+    <apex:includeScript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"/>
+    <apex:stylesheet value="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+    <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+    <apex:stylesheet value="{!$Resource.AccountDashboardCss}"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <apex:includeScript value="{!$Resource.angularJS}" />
+    <apex:includeScript value="{!$Resource.angularsanitize}" />
+    <apex:includeScript value="{!$Resource.adaptstrap}" />
+    <apex:includeScript value="{!$Resource.adaptstraptpl}" />
+    <apex:stylesheet value="{!$Resource.adaptstrapcss}"/> 
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/resources/demos/style.css"/>
+    <style>
+        .emptyTableMsg{
+            text-align: center;
+            color: grey;
+            font-size: 14px;
+            padding: 10%;
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">     
+        // ========== initialize documentation app module ========== //
+        var anModule = angular.module('adaptv.adaptStrapDocs', [
+        'ngSanitize',
+        'adaptv.adaptStrap'
+        ]);
+
+        // ========== controllers ========== //
+        anModule.controller('tableliteCtrl', ['$scope', function ($scope)  {
+         
+        $scope.models = {!AllQuotes};
+
+        // alert($scope.models[0].quoteHeader.Quote_Item_Levels__r.records[0].Description__c); convertQuote(item.quoteHeader.Id)
+    
+        $scope.quotesTableColumnDefinition = [
+        {
+            columnHeaderTemplate: 'Quote #',
+            template:' <a target="_blank" ng-href="" style="cursor: pointer;" ng-click ="openQuoteDetails(item.quoteHeader.Account__c,item.quoteHeader.Status__c,item.quoteHeader.Opportunity__c,item.quoteHeader.Id,item.quoteHeader.Contact__c,item.plantCode)" > {{ item.quoteHeader.Name }}</a>',
+            sortKey: 'quoteHeader.Name',
+            visible: true,
+            width: '15em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Status',
+            displayProperty: 'quoteHeader.Status__c',
+            sortKey: 'quoteHeader.Status__c',
+            visible: true,
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Plant',
+            displayProperty: 'plantCode',
+            sortKey: 'plantCode',
+            visible: true,
+            width: '10em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Initial Charges',
+            displayProperty: 'quoteHeader.Total_Initial_Charges__c',
+            sortKey: 'quoteHeader.Total_Initial_Charges__c',
+            
+            width: '10em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Del Date',
+            displayProperty: 'QHDelDate',
+            sortKey: 'delDateFilter',
+            width: '8em'
+        },
+        {
+            columnHeaderDisplayName: 'Del Date Filter',
+            displayProperty: 'delDateFilter',
+            visible: false,
+            width: '1em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Del City',
+            displayProperty: 'quoteHeader.Delivery_City__c',
+            sortKey: 'quoteHeader.Delivery_City__c',
+            visible: true,
+            width: '12em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Del State',
+            displayProperty: 'quoteHeader.Shipto_State__c',
+            sortKey: 'quoteHeader.Shipto_State__c',
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Actions',
+            templateUrl: 'quoteActions.html',
+            width: '18em'
+        },
+        ];
+
+        $scope.convertQuote= function(accid,oppid,quoteid,contact,plant){
+            //  alert('hi there selected quote: ' + QuoteId);
+            //  angular.element(document.getElementById('login-form').submit());
+            //window.open('{!cpqURL}'+'/?cpq=true&mode=convertToContract&account='+accid+'&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity='+oppid+'&contact='+contact+'&quote='+quoteid+'&plant='+plant);
+            var isBillingFilled = '{!isBillingValid}';
+            var salesorg= "{!salesOrgID}";
+            
+            if( (isBillingFilled == 'true' && salesorg != '1200') || salesorg == '1200' ){
+                window.open('{!cpqURL}'+'/shipping?quoteId='+quoteid+ '&uid={!$User.Email}');
+            }
+            else{
+                alert('Please fill the complete Billing Address to proceed with quote conversion!');
+            }
+        };
+    
+        $scope.LostQuote= function(qid,oppid){
+            if(oppid != '' && oppid != null){
+                // callLost(qid);
+                window.open('{!$Page.LostOppReason}?id='+oppid+'&quoteid='+qid);
+            }
+            else
+            {
+                alert('Opportunity is blank for the selected quote!!');
+            }
+        };
+        
+        $scope.openQuoteDetails= function(accountId,QStatus,OppId,quoteid,contactid,plant){
+            if(OppId != null)
+            {
+                if(QStatus=='Open'){
+                //window.open('{!cpqURL}'+'/?cpq=true&mode=edit&account='+accountId+'&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity='+OppId+'&contact='+contactid+'&quote='+quoteid+'&plant='+plant);
+                window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=edit');
+                }
+                else{
+                    window.open('/'+quoteid);    
+                } 
+            }
+            else{
+                alert('Opportunity is blank for the selected quote!!');
+            }       
+            //  if(QStatus!='Open'){
+            //       window.open('{!cpqURL}'+'/?cpq=true&mode=view&account='+accountId+'&opportunity='+OppId);
+            //   }
+        };
+        
+        $scope.CloneQuote = function(accountId,QStatus,OppId,quoteid,contactid,plant){
+            //document.getElementById('hiddenQuoteID').value = quoteid;
+            //callCreateOpp(quoteid);
+            //window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=clone&opportunity='oppID);
+            //window.open('{!$Page.CloneQuoteCPCRedirect}?caname={!caname}&caid={!caid}&casorg={!casorg}&contractID=NA&quoteid='+quoteid);
+            window.open('{!$Page.SelectConatctPopup}?id={!currentAccount.Id}&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid=&quoteid='+quoteid, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=500');
+        };
+    
+        $scope.onChange = function(o, n, data) {
+          $scope.models.changeInfo.push({
+            startPosition: o,
+            endPosition: n,
+            data: data
+          });
+        };
+
+        // ========== ui handlers ========== //
+        $scope.checkRowSelected = function (item, index) {
+          var found = false;
+          $scope.models.selectedCars.forEach(function (selectedItem) {
+            if (item.id === selectedItem.id) {
+              found = true;
+            }
+          });
+          return found ? 'info row-' + index : 'row-' + index;
+        };
+      }]);
+    </script>
+ 
+    <script type="text/javascript">
+           
+        // ========== initialize documentation app module ========== //
+        var anModule = angular.module('listAllContracts', [
+          'ngSanitize',
+          'adaptv.adaptStrap'
+        ]);
+    
+        // ========== controllers ========== //
+        anModule.controller('contractsCtrl', ['$scope', function ($scope)  {
+     
+        $scope.models = {!AllContracts};
+          // alert($scope.models[0].quoteHeader.Quote_Item_Levels__r.records[0].Description__c); openQuoteDetails(accountId,quoteHeader.Status__c,quoteHeader.Opportunity__c)
+        $scope.contractsTableColumnDefinition= [
+          {
+            columnHeaderTemplate: 'Contract #',
+            template:' <a target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openContracts(item.contract, null)" > {{ item.contract }} </a>',
+            sortKey: 'contract',
+            visible: true,
+            width: '15em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Purchase #',
+            displayProperty: 'purch_no_c',
+            sortKey: 'purch_no_c',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Plant',
+            displayProperty: 'plant',
+            sortKey: 'plant',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Fulfilling Depot',
+            displayProperty: 'fulDepot',
+            sortKey: 'fulDepot',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Material',
+            displayProperty: 'material',
+            sortKey: 'material',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Credit Block',
+            displayProperty: 'creditBlock',
+            sortKey: 'creditBlock',
+            visible: true,
+            width: '10em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Street',
+            displayProperty: 'street',
+            sortKey: 'street',
+            visible: true,
+            width: '28em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'City',
+            displayProperty: 'city',
+            sortKey: 'city',
+            visible: true,
+            width: '10em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'State',
+            displayProperty: 'region',
+            sortKey: 'region',
+            width: '8em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Postal Code',
+            displayProperty: 'postl_code',
+            sortKey: 'postl_code',
+            visible: true,
+            width: '10em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Delivery Date',
+            displayProperty: 'goodsIssueDate',
+            sortKey: 'gIssueDateFilter',
+            visible: true,
+            width: '10em'
+          },
+           
+          {
+            columnHeaderDisplayName: 'Invoice Date',
+            displayProperty: 'con_st_dat',
+            sortKey: 'srNumber',
+            visible: true,
+            width: '10em'
+          },
+          {
+            columnHeaderDisplayName: 'Start Date Filter',
+            displayProperty: 'srNumber',
+            visible: false,
+            width: '1em'
+          },
+                   
+            
+          {
+            columnHeaderDisplayName: 'End Date',
+            displayProperty: 'con_en_dat',
+            sortKey: 'endDate',
+            visible: true,
+            width: '10em'
+          },
+          {
+            columnHeaderDisplayName: 'End Date Filter',
+            displayProperty: 'endDate',
+            visible: false,
+            width: '1em'
+          },
+          
+          {
+            columnHeaderTemplate: 'Action',
+            template:' <a target="_blank" style="cursor: pointer;" ng-href="" ng-click ="cloneContract(item.contract)" >[Clone]</a>',
+            visible: true,
+            width: '15em'
+          },          
+          
+        ];
+        
+        $scope.openpopup= function(){
+            alert('FUNCTIONALITY UNDER CONTRUCTION');
+        }
+        
+        $scope.cloneContract = function(contractid){
+            //window.open('{!$Page.CloneQuoteCPCRedirect}?caname={!caname}&caid={!caid}&casorg={!casorg}&quoteid=NA&contractID='+contractid);
+            //alert('Functionality under implementation');
+            window.open('{!$Page.SelectConatctPopup}?id={!currentAccount.Id}&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid=&contractid='+contractid, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes,width=900, height=500');
+        };
+        
+        $scope.openContracts= function(contractId,ItmNm){
+            var uidd = '{!$User.Email}';
+           // alert('hi there uid: ' + uiddd);
+           // angular.element(document.getElementById('login-form').submit());
+            
+            var hidden = angular.element(document.createElement("input"));
+            //hidden.type = "hidden";
+            hidden.name = "contractid";
+            hidden.value = contractId;
+            // document.getElementById('login-form').submit();
+            var f = angular.element(document.getElementById("login-form"));
+            f.append(hidden);
+            
+           if(ItmNm != 'Copy' && ItmNm != null && ItmNm != 'SOR' ) {
+               window.open('{!cpqURL}'+'/?portal=true&module=pickup&contract='+contractId+'&lineitem='+ItmNm+'&uid='+uidd+'&account='+'{!accID}' );
+           } 
+           
+           else if(ItmNm == null)
+           {
+               //window.open('{!cpqURL}'+'/?cpq=true&mode=viewContract&contract='+contractId );
+               //window.open('{!cpqURL}'+'/viewContract?contractId='+contractId +'&uid='+uidd+'&accountId={!currentAccount.id}');
+               //portal=true&module=contract&contract='+contractId+'&uid='+uidd
+               window.open('{!cpqURL}'+'/viewContract?contractId='+contractId +'&emailId='+uidd+'&uid={!$User.Id}&accountId={!currentAccount.id}');
+           }
+           else if(ItmNm == 'SOR')
+           {
+               //window.open('{!cpqURL}'+'/?cpq=true&mode=viewContract&contract='+contractId );
+               window.open('{!cpqURL}'+'/contract='+contractId +'&uid='+uidd);
+               //portal=true&module=contract&contract='+contractId+'&uid='+uidd
+           }
+           else{
+               f.submit();
+           }
+        };
+    
+        $scope.onChange = function(o, n, data) {
+          $scope.models.changeInfo.push({
+            startPosition: o,
+            endPosition: n,
+            data: data
+          });
+        };
+    
+        // ========== ui handlers ========== //
+        $scope.checkRowSelected = function (item, index) {
+          var found = false;
+          $scope.models.selectedCars.forEach(function (selectedItem) {
+            if (item.id === selectedItem.id) {
+              found = true;
+            }
+          });
+          return found ? 'info row-' + index : 'row-' + index;
+        };
+      }]);
+    </script>
+    
+    
+    <!--  =================================================================================================================   -->
+    <script type="text/javascript">     
+        // ========== initialize documentation app module ========== //
+        var anModule = angular.module('QuotesUK', [
+        'ngSanitize',
+        'adaptv.adaptStrap'
+        ]);
+
+        // ========== controllers ========== //
+        anModule.controller('tableliteCtrlUK', ['$scope', function ($scope)  {
+         
+        $scope.models = {!AllQuotes};
+
+        // alert($scope.models[0].quoteHeader.Quote_Item_Levels__r.records[0].Description__c); convertQuote(item.quoteHeader.Id)
+    
+        $scope.quotesTableColumnDefinitionUK = [
+        {
+            columnHeaderTemplate: 'Quote #',
+            template:' <a target="_blank" ng-href="" style="cursor: pointer;" ng-click ="openQuoteDetails(item.quoteHeader.Account__c,item.quoteHeader.Status__c,item.quoteHeader.Opportunity__c,item.quoteHeader.Id,item.quoteHeader.Contact__c,item.plantCode)" > {{ item.quoteHeader.Name }}</a>',
+            sortKey: 'quoteHeader.Name',
+            visible: true,
+            width: '15em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Status',
+            displayProperty: 'quoteHeader.Status__c',
+            sortKey: 'quoteHeader.Status__c',
+            visible: true,
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Plant',
+            displayProperty: 'plantCode',
+            sortKey: 'plantCode',
+            visible: true,
+            width: '10em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Fulfilling Depot',
+            displayProperty: 'quoteHeader.Fulfilling_Branch_Name__c',
+            sortKey: 'quoteHeader.Fulfilling_Branch_Name__c',
+            visible: true,
+            width: '10em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Initial Charges',
+            displayProperty: 'quoteHeader.Total_Initial_Charges__c',
+            sortKey: 'quoteHeader.Total_Initial_Charges__c',
+            width: '10em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Created Date',
+            displayProperty: 'quoteCreateDate',
+            sortKey: 'quoteCreatetFilter',
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Del Date',
+            displayProperty: 'QHDelDate',
+            sortKey: 'delDateFilter',
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Del Date Filter',
+            displayProperty: 'delDateFilter',
+            visible: false,
+            width: '1em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Del City',
+            displayProperty: 'quoteHeader.Delivery_City__c',
+            sortKey: 'quoteHeader.Delivery_City__c',
+            visible: true,
+            width: '12em'
+        },
+        
+        {
+            columnHeaderTemplate: 'Del State',
+            displayProperty: 'quoteHeader.Shipto_State__c',
+            sortKey: 'quoteHeader.Shipto_State__c',
+            width: '8em'
+        },
+        
+        {
+            columnHeaderDisplayName: 'Actions',
+            templateUrl: 'quoteActions.html',
+            width: '18em'
+        },
+        ];
+
+        $scope.convertQuote= function(accid,oppid,quoteid,contact,plant){
+            //  alert('hi there selected quote: ' + QuoteId);
+            //  angular.element(document.getElementById('login-form').submit());
+            //window.open('{!cpqURL}'+'/?cpq=true&mode=convertToContract&account='+accid+'&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity='+oppid+'&contact='+contact+'&quote='+quoteid+'&plant='+plant);
+            var isBillingFilled = '{!isBillingValid}';
+            var salesorg= "{!salesOrgID}";
+            
+            if( (isBillingFilled == 'true' && salesorg != '1200') || salesorg == '1200' ){
+                window.open('{!cpqURL}'+'/shipping?quoteId='+quoteid+ '&uid={!$User.ID}&emailId={!$User.Email}');
+            }
+            else{
+                alert('Please fill the complete Billing Address to proceed with quote conversion!');
+            }
+        };
+    
+        $scope.LostQuote= function(qid,oppid){
+            var salesorg= "{!salesOrgID}";
+            if(oppid != '' && oppid != null && salesorg == '1200'){
+                // callLost(qid);
+                window.open('{!$Page.LostOppUK}?id='+oppid+'&quoteid='+qid);
+            }
+            else if(oppid != '' && oppid != null && salesorg != '1200'){
+                window.open('{!$Page.LostOppReason}?id='+oppid+'&quoteid='+qid);
+            }
+            else
+            {
+                alert('Opportunity is blank for the selected quote!!');
+            }
+        };
+        
+        $scope.openQuoteDetails= function(accountId,QStatus,OppId,quoteid,contactid,plant){
+            if(OppId != null)
+            {
+                if(QStatus=='Open'){
+                //window.open('{!cpqURL}'+'/?cpq=true&mode=edit&account='+accountId+'&uid={!$User.Email}&salesorg={!salesOrgID}&opportunity='+OppId+'&contact='+contactid+'&quote='+quoteid+'&plant='+plant);
+                window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=edit');
+                }
+                else{
+                    window.open('/'+quoteid);    
+                } 
+            }
+            else{
+                alert('Opportunity is blank for the selected quote!!');
+            }       
+            //  if(QStatus!='Open'){
+            //       window.open('{!cpqURL}'+'/?cpq=true&mode=view&account='+accountId+'&opportunity='+OppId);
+            //   }
+        };
+        
+        $scope.CloneQuote = function(accountId,QStatus,OppId,quoteid,contactid,plant){
+            //document.getElementById('hiddenQuoteID').value = quoteid;
+            //callCreateOpp(quoteid);
+            
+            //window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=clone&opportunity='+oppID);
+            //window.open('{!$Page.CloneQuoteCPCRedirect}?caname={!caname}&caid={!caid}&casorg={!casorg}&contractID=NA&quoteid='+quoteid);
+            window.open('{!$Page.SelectConatctPopup}?id={!currentAccount.Id}&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid=&quoteid='+quoteid, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=500');
+        };
+        
+        $scope.onChange = function(o, n, data) {
+          $scope.models.changeInfo.push({
+            startPosition: o,
+            endPosition: n,
+            data: data
+          });
+        };
+
+        // ========== ui handlers ========== //
+        $scope.checkRowSelected = function (item, index) {
+          var found = false;
+          $scope.models.selectedCars.forEach(function (selectedItem) {
+            if (item.id === selectedItem.id) {
+              found = true;
+            }
+          });
+          return found ? 'info row-' + index : 'row-' + index;
+        };
+      }]);
+    </script>
+ 
+    <script type="text/javascript">
+           
+        // ========== initialize documentation app module ========== //
+        var anModule = angular.module('listAllContractsUK', [
+          'ngSanitize',
+          'adaptv.adaptStrap'
+        ]);
+    
+        // ========== controllers ========== //
+        anModule.controller('contractsCtrlUK', ['$scope', function ($scope)  {
+     
+        $scope.models = {!AllContracts};
+          // alert($scope.models[0].quoteHeader.Quote_Item_Levels__r.records[0].Description__c); openQuoteDetails(accountId,quoteHeader.Status__c,quoteHeader.Opportunity__c)
+        $scope.contractsTableColumnDefinitionUK = [
+          {
+            columnHeaderTemplate: 'Contract #',
+            template:' <a target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openContracts(item.contract, null)" > {{ item.contract }} </a>',
+            sortKey: 'contract',
+            visible: true,
+            width: '15em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Purchase #',
+            displayProperty: 'purch_no_c',
+            sortKey: 'purch_no_c',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Plant',
+            displayProperty: 'plant',
+            sortKey: 'plant',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Fulfilling Depot',
+            displayProperty: 'fulDepot',
+            sortKey: 'fulDepot',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Material',
+            displayProperty: 'material',
+            sortKey: 'material',
+            visible: true,
+            width: '19em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Credit Block',
+            displayProperty: 'creditBlock',
+            sortKey: 'creditBlock',
+            visible: true,
+            width: '10em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Street',
+            displayProperty: 'street',
+            sortKey: 'street',
+            visible: true,
+            width: '28em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'City',
+            displayProperty: 'city',
+            sortKey: 'city',
+            visible: true,
+            width: '10em'
+          },
+                              
+          {
+            columnHeaderDisplayName: 'Postal Code',
+            displayProperty: 'postl_code',
+            sortKey: 'postl_code',
+            visible: true,
+            width: '10em'
+          },
+          
+          {
+            columnHeaderDisplayName: 'Delivery Date',
+            displayProperty: 'goodsIssueDate',
+            sortKey: 'gIssueDateFilter',
+            visible: true,
+            width: '10em'
+          },
+           
+          {
+            columnHeaderDisplayName: 'Invoice Date',
+            displayProperty: 'con_st_dat',
+            sortKey: 'srNumber',
+            visible: true,
+            width: '10em'
+          },
+          {
+            columnHeaderDisplayName: 'Start Date Filter',
+            displayProperty: 'srNumber',
+            visible: false,
+            width: '1em'
+          },
+          
+          
+            
+          {
+            columnHeaderDisplayName: 'End Date',
+            displayProperty: 'con_en_dat',
+            sortKey: 'endDate',
+            visible: true,
+            width: '10em'
+          },
+          {
+            columnHeaderDisplayName: 'End Date Filter',
+            displayProperty: 'endDate',
+            visible: false,
+            width: '1em'
+          },
+          
+          {
+            columnHeaderTemplate: 'Action',
+            template:' <a target="_blank" style="cursor: pointer;" ng-href="" ng-click ="cloneContract(item.contract)" >[Clone]</a>',
+            visible: true,
+            width: '15em'
+          }, 
+          
+        ];
+        
+        $scope.openpopup= function(){
+            alert('FUNCTIONALITY UNDER CONTRUCTION');
+        }
+        
+        $scope.cloneContract = function(contractid){
+            //window.open('{!$Page.CloneQuoteCPCRedirect}?caname={!caname}&caid={!caid}&casorg={!casorg}&quoteid=NA&contractID='+contractid);
+            //alert('Functionality under implementation');
+            window.open('{!$Page.SelectConatctPopup}?id={!currentAccount.Id}&FromAccount=true&accDashboard=true&Sales_Org='+'{!salesOrgID}'+'&opportunityid=&contractid='+contractid, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes,width=900, height=500');
+        };
+        
+        $scope.openContracts= function(contractId,ItmNm){
+            var uidd = '{!$User.Email}';
+           // alert('hi there uid: ' + uiddd);
+           // angular.element(document.getElementById('login-form').submit());
+            
+            var hidden = angular.element(document.createElement("input"));
+            //hidden.type = "hidden";
+            hidden.name = "contractid";
+            hidden.value = contractId;
+            // document.getElementById('login-form').submit();
+            var f = angular.element(document.getElementById("login-form"));
+            f.append(hidden);
+            
+           if(ItmNm != 'Copy' && ItmNm != null && ItmNm != 'SOR' ) {
+               window.open('{!cpqURL}'+'/?portal=true&module=pickup&contract='+contractId+'&lineitem='+ItmNm+'&uid='+uidd+'&account='+'{!accID}' );
+           } 
+           
+           else if(ItmNm == null)
+           {
+               //window.open('{!cpqURL}'+'/?cpq=true&mode=viewContract&contract='+contractId );
+               //window.open('{!cpqURL}'+'/viewContract?contractId='+contractId +'&uid='+uidd+'&accountId={!currentAccount.id}');
+               //portal=true&module=contract&contract='+contractId+'&uid='+uidd
+               window.open('{!cpqURL}'+'/viewContract?contractId='+contractId +'&emailId='+uidd+'&uid={!$User.Id}&accountId={!currentAccount.id}');
+           }
+           else if(ItmNm == 'SOR')
+           {
+               //window.open('{!cpqURL}'+'/?cpq=true&mode=viewContract&contract='+contractId );
+               window.open('{!cpqURL}'+'/contract='+contractId +'&uid='+uidd);
+               //portal=true&module=contract&contract='+contractId+'&uid='+uidd
+           }
+           else{
+               f.submit();
+           }
+        };
+    
+        $scope.onChange = function(o, n, data) {
+          $scope.models.changeInfo.push({
+            startPosition: o,
+            endPosition: n,
+            data: data
+          });
+        };
+    
+        // ========== ui handlers ========== //
+        $scope.checkRowSelected = function (item, index) {
+          var found = false;
+          $scope.models.selectedCars.forEach(function (selectedItem) {
+            if (item.id === selectedItem.id) {
+              found = true;
+            }
+          });
+          return found ? 'info row-' + index : 'row-' + index;
+        };
+      }]);
+    </script>
+
+    <!-- ============================================================================================================== -->    
+      
+    <script type="text/javascript">
+        
+        $j = jQuery.noConflict();     
+        $j(document).ready(function() {
+            $j('#dpFrom').datepicker({dateFormat:'yy/mm/dd'});
+            // $('#dpFrom').click(function(){
+            //     $(this).datepicker({dateFormat:'yy/mm/dd'})
+            // });
+            //$j( "#dpFrom" ).focusin(function() {
+            //   $( this ).datepicker({dateFormat:'yy/mm/dd'});
+            // });
+            $j('#dpTo').datepicker({dateFormat:'yy/mm/dd'});
+            // $j('#morePagefrm:mainPgblk:fltrBlck:pbs:pbsicn:srNo').focus();
+            $j('#ContractListTable').DataTable( {
+                "pagingType": "full_numbers",columnDefs: [
+                { orderable: false, targets: [-1,-2] }
+                ]
+            } );
+            $j('#tablequote').DataTable( {
+              "pagingType": "full_numbers"
+            });
+            //  $("#tablequote").slimtable();
+            $j('#tablecontract').DataTable( {
+            "pagingType": "full_numbers"
+            });
+        });
+        $j(document).ready(function() {
+              $('#srNo').focus();
+        });
+        
+        function applyFilters(){
+            //alert('Current view will be overwritten..');
+            var cstatus = document.getElementById('morePage:frm:mainPgblk:fltrBlck:pbs:pbsics:selSts').value;
+            var frmdate = document.getElementById('dpFrom').value;  //morePage:frm:mainPgblk:fltrBlck:pbs:pbsifd:
+            var todate =  document.getElementById('dpTo').value;    //morePage:frm:mainPgblk:fltrBlck:pbs:pbsitd:j_id28 
+            var cnumber = document.getElementById('morePage:frm:mainPgblk:fltrBlck:pbs:pbsicn:srNo').value;
+            var reurl = 'https://' + '{!newURL}' +'/apex/Quote_More?accId={!accountId}&from={!fromObject}&isQuote=false&status=' + cstatus + '&fromdt=' + frmdate + '&todt=' + todate + '&srno=' +cnumber+'&fromFilter=YES' ;
+            
+            if(frmdate != '' && todate == ''){
+                alert("'Contracts To:' field can not be blank when 'Contracts From:' is provided");
+                return false;
+            }
+            if(frmdate == '' && todate != ''){
+                alert("'Contracts From:' field can not be blank when 'Contracts To:' is provided");
+                return false;
+            }
+            
+            //alert(reurl);
+            if((frmdate != '' && todate != '') || (frmdate == '' && todate == '') ) {
+                window.close();
+                window.open(reurl);
+            }
+            //document.location.href = reurl;
+            //window.location.replace(reurl);
+            //applyFilter();
+        }
+  
+        function resetFilters(){
+          resetFilter();
+        }
+        
+        function openContracts(Ed){
+            
+            var hidden = document.createElement("input");
+            //hidden.type = "hidden";
+            hidden.name = "contractid";
+            hidden.value = Ed;
+            // document.getElementById('login-form').submit();
+            var f = document.getElementById('login-form');
+            f.appendChild(hidden);
+            f.submit();
+        }
+        
+        function convertQuote(quoteId){    
+            //TODO: Add logic
+           
+            document.getElementById('login-form').submit();
+        }
+        
+        //Jailabdin - Toggle the child items for Quote table.
+        function toggleChildRow(recordID){
+            var findClass = '.'+recordID;
+            recordID = '#'+recordID;
+            $( recordID ).toggle(function(){
+                var $varText = $(this).closest("tbody").find(findClass);
+                if($varText.text().indexOf("+") > -1){
+                    $varText.html("-");
+                }
+                else{
+                    $varText.html("+");
+                }
+            });
+        }
+    
+        //Nagalakshmi - Onclick function to open quote details in CPQ
+        function openQuoteDetails(accountId,QStatus,OppId){
+            if(QStatus=='Open'){
+               window.open('{!cpqURL}'+'/?cpq=true&mode=edit&account='+accountId+'&opportunity='+OppId);
+                }
+            if(QStatus!='Open'){
+               window.open('{!cpqURL}'+'/?cpq=true&mode=view&account='+accountId+'&opportunity='+OppId);
+            }
+        }
+      
+        //Jailabdin - Search functionality within all tables
+        $(document).ready(function() {
+            $('#global_filter').keyup(function() {
+                searchTable($(this).val());
+            });
+        });
+        
+        function searchTable(inputVal) {
+            var table = $('.table');
+            table.find('tr').each(function(index, row) {
+                var allCells = $(row).find('td');
+                if(allCells.length > 0) {
+                    var found = false;
+                    allCells.each(function(index, td) {
+                        var regExp = new RegExp(inputVal, 'i');
+                        if(regExp.test($(td).text())) {
+                            found = true;
+                            return false;
+                        }
+                    });
+                    if(found == true) $(row).show();
+                    else $(row).hide();
+                }
+            });
+        }
+        
+              
+    </script>
+    <script type="text/javascript">
+        window.onload = setFocus
+        function setFocus() {
+            document.getElementById('morePage:frm:mainPgblk:fltrBlck:pbs:pbsicn:srNo').focus();
+        }
+    </script>
+   
+  <apex:form id="frm">   
+  <!--       
+   <input type="hidden"  name="hiddenQuoteID" id="hiddenQuoteID" /> 
+
+<apex:actionstatus id="cloneredirect" >
+   <apex:facet name="start">
+       <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+           <div class="waitingHolder" >
+               <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                <font color="Red"><b>Redirecting to CPC....</b></font> 
+            </div>
+        </div>
+    </apex:facet>
+</apex:actionstatus> 
+  
+
+<apex:actionFunction name="callCreateOpp" action="{!Createopportunity}"  status="cloneredirect"> 
+ <apex:param id="selectedquote" name="selectedquote" value="" />
+</apex:actionFunction>
+<apex:outputPanel id="redirectClone">
+<apex:outputPanel id="clonepanel" rendered="{!redirectClone}">
+    <script>
+    alert(document.getElementById('hiddenQuoteID').value);
+        var oppid = '{!oppId}';
+        var quoteid = document.getElementById('hiddenQuoteID').value;
+        window.open('{!cpqURL}'+'/discovery?quoteId='+quoteid+'&uid={!$User.ID}&emailId={!$User.Email}&mode=clone&opportunity='+oppid);          
+    </script>
+</apex:outputPanel>
+</apex:outputPanel>
+ -->       
+        <apex:PageBlock id="mainPgblk"> <!-- title="List of Records" -->
+          <apex:outputText value="List of Records"  style="font-size:14pt;!important;"/>
+          <apex:outputText value=" (Latest 100 contracts are displayed)"  style="font-size:10pt;" rendered="{!$CurrentPage.parameters.isContract}"/>          
+          <apex:outputPanel id="quoteTable" layout="block" rendered="{!$CurrentPage.parameters.isQuote}">
+                    
+          <apex:outputPanel id="quoteTabelEmptyMsg" layout="block" styleClass="emptyTableMsg" rendered="{!(IF(listWrapQuoteHaeders.size <=0, true, false))}">
+              No Quotes found for this Account.
+          </apex:outputPanel>
+          <!--
+          <apex:outputPanel id="quoteTableDate" layout="block" rendered="{!(IF(listWrapQuoteHaeders.size > 0 && salesOrgID != '1200', true, false))}">
+                <div ng-app="adaptv.adaptStrapDocs" ng-controller="tableliteCtrl">
+                    <apex:outputText value="Quotes"  style="font-size:10pt;font-weight:bold!important;"/>
+                    <lable style="float:right;">Search: &nbsp;<input type="text" ng-model="models.searchText" style="padding-left:0px;float:right;"/> </lable> <br></br><br></br>
+                    
+                    <script type="text/ng-template" id="quoteActions.html">
+                        <a ng-show="item.quoteHeader.Status__c == 'Open'" id="QConvert" target="_blank" ng-href="" ng-click ="convertQuote(item.quoteHeader.Account__c,item.quoteHeader.Opportunity__c,item.quoteHeader.Id,item.quoteHeader.Contact__c,item.plantCode)" style="cursor: pointer;">[Convert] </a> &nbsp;&nbsp;
+                        <a ng-show="item.quoteHeader.Status__c == 'Open'" id="QLost"  target="_blank" ng-href="" ng-click ="LostQuote(item.quoteHeader.Id,item.quoteHeader.Opportunity__c)" style="cursor: pointer;">[Lost]</a>                        
+                    </script>
+
+                    <script type="text/ng-template" id="quoteMoreInfo.html">
+                        <div>
+                            <table align="center" cellspacing="0" style="margin:15px;margin-left:25px;border: 1px solid black;" width="90%" >
+                                <head>
+                                    <tr style="background-color: #E6E6FA;">
+                                        <th >Description</th>
+                                        <th>Item</th>
+                                        <th>QTY</th>
+                                        <th>Rate</th>
+                                     
+                                    </tr>
+                                </head>
+                            <body>  
+                            <tr ng-repeat="quote2 in item.quoteHeader.Quote_Item_Levels__r.records" style="background-color:#FAEBD7;">
+                                <td><a target="_blank" ng-href="/{{ quote2.Id }}">{{ quote2.Description__c }}</a>                         
+                                </td>
+                                <td> {{ quote2.Item_Code__c }} </td>
+                                <td> {{ quote2.Quantity__c }} </td>
+                                <td> {{ quote2.Actual_Amount__c }}</td>
+                             
+                            </tr>
+                            </body>
+                            </table>      
+                        </div>
+                    </script>
+                         
+                    
+                        <ad-table-lite table-name="AllQuotes"
+                        enable-column-search="false"
+                        column-definition="quotesTableColumnDefinition"
+                        local-data-source="models"
+                        page-sizes="[20, 40, 60]"
+                        pagination-btn-group-classes="pagination pagination-sm"
+                        table-classes="table qtable table-bordered"
+                        draggable="false"
+                        on-click-sort-direction="DEC"
+                        items-not-found-message="Quotes Not Found"
+                        snug-sort-icons="true"
+                        search-text="models.searchText"
+                        row-expand-template="quoteMoreInfo.html"
+                        row-expand-callback="rowExpanded">
+                        </ad-table-lite>
+                     
+                </div>
+       </apex:outputPanel>
+       -->
+       <apex:outputPanel id="quoteTableDateUK" layout="block" rendered="{!(IF(listWrapQuoteHaeders.size > 0 , true, false))}">
+                <div ng-app="QuotesUK" ng-controller="tableliteCtrlUK">
+                    <apex:outputText value="Quotes"  style="font-size:10pt;font-weight:bold!important;"/>
+                    <lable style="float:right;">Search: &nbsp;<input type="text" ng-model="models.searchText" style="padding-left:0px;float:right;"/> </lable><!-- </p> --> <br></br><br></br>
+                
+
+                    <!-- ========== template files ========== -->
+                    <script type="text/ng-template" id="quoteActions.html">
+                    <!--    <apex:outputLink target="_blank" onclick="convertQuote('{!item.quoteHeader.Id}')" value="javascript:void(0)" rendered="{!IF(item.quoteHeader.Status__c='Open',true,false)}">[Convert]</apex:outputLink>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputLink target="_blank" value="/006/e" rendered="{!IF(item.quoteHeader.Status__c='Open',true,false)}">[Lost]</apex:outputLink>  -->
+                        <a id="Qclone"  target="_blank" ng-href="" ng-click ="CloneQuote(item.quoteHeader.Account__c,item.quoteHeader.Status__c,item.quoteHeader.Opportunity__c,item.quoteHeader.Id,item.quoteHeader.Contact__c,item.plantCode)" style="cursor: pointer;">[Clone]</a> &nbsp;                       
+                        <a ng-show="item.quoteHeader.Status__c == 'Open'" id="QConvert" target="_blank" ng-href="" ng-click ="convertQuote(item.quoteHeader.Account__c,item.quoteHeader.Opportunity__c,item.quoteHeader.Id,item.quoteHeader.Contact__c,item.plantCode)" style="cursor: pointer;">[Convert] </a> &nbsp;
+                        <a ng-show="item.quoteHeader.Status__c == 'Open'" id="QLost"  target="_blank" ng-href="" ng-click ="LostQuote(item.quoteHeader.Id,item.quoteHeader.Opportunity__c)" style="cursor: pointer;">[Lost]</a>                        
+                        
+                    </script>
+
+                    <script type="text/ng-template" id="quoteMoreInfo.html">
+                        <div>
+                            <table align="center" cellspacing="0" style="margin:15px;margin-left:25px;border: 1px solid black;" width="90%" >
+                                <head>
+                                    <tr style="background-color: #E6E6FA;">
+                                        <th >Description</th>
+                                        <th>Item</th>
+                                        <th>QTY</th>
+                                        <th>Rate</th>
+                                     <!--   <th>Type</th>  -->
+                                    </tr>
+                                </head>
+                            <body>  
+                            <tr ng-repeat="quote2 in item.quoteHeader.Quote_Item_Levels__r.records" style="background-color:#FAEBD7;">
+                                <td><a target="_blank" ng-href="/{{ quote2.Id }}">{{ quote2.Description__c }}</a>                         
+                                </td>
+                                <td> {{ quote2.Item_Code__c }} </td>
+                                <td> {{ quote2.Quantity__c }} </td>
+                                <td> {{ quote2.Actual_Amount__c }}</td>
+                             <!--   <td> {{ quote2.Type__c        }} </td>  -->
+                            </tr>
+                            </body>
+                            </table>      
+                        </div>
+                    </script>
+                         
+                    <!-- ========== Usage ========== -->
+                        <ad-table-lite table-name="AllQuotes"
+                        enable-column-search="false"
+                        column-definition="quotesTableColumnDefinitionUK"
+                        local-data-source="models"
+                        page-sizes="[20, 40, 60]"
+                        pagination-btn-group-classes="pagination pagination-sm"
+                        table-classes="table qtable table-bordered"
+                        draggable="false"
+                        on-click-sort-direction="DEC"
+                        items-not-found-message="Quotes Not Found"
+                        snug-sort-icons="true"
+                        search-text="models.searchText"
+                        row-expand-template="quoteMoreInfo.html"
+                        row-expand-callback="rowExpanded">
+                        </ad-table-lite>
+                     
+                </div>
+       </apex:outputPanel>       
+       
+       </apex:outputPanel>
+               
+        <apex:outputPanel id="contrctTable" layout="block" rendered="{!$CurrentPage.parameters.isContract}">
+                     
+            <apex:actionFunction name="applyFilter" action="{!applyContractFilters}" status="contractFilters" reRender="mainPanel"/>
+            <apex:actionFunction name="resetFilter" action="{!resetContractFilters}" status="contractFilters" reRender="contrctTable"/>
+            
+            <apex:outputPanel id="contractTableLabel" styleClass="quoteTableLabel"  layout="block"> 
+            <apex:actionstatus id="contractFilters" >
+               <apex:facet name="start">
+                   <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+                       <div class="waitingHolder" >
+                           <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                            <font color="Red"><b>Loading....</b></font> 
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>     
+            
+            <apex:pageBlock title="Filters:" id="fltrBlck">
+                <apex:pageBlockButtons location="Bottom">
+                    <apex:commandButton value="Apply"  onclick="applyFilters()" id="applyBtn" />
+                <!--    <apex:commandButton value="Reset" onclick="resetFilters()"/>  -->
+                </apex:pageBlockButtons>
+                <apex:pageBlockSection columns="2" id="pbs">
+                    
+                    <apex:pageblockSectionItem ></apex:pageblockSectionItem>
+                    <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                                        
+                    <apex:pageBlockSectionItem id="pbsics">  
+                        <apex:outputText value="Contract Status:" />
+                        <apex:selectList size="1" multiselect="false" value="{!contractStatus}" id="selSts">
+                            <apex:selectOptions value="{!ContractStatusList}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="pbsifd">  
+                        <apex:outputText value="Contracts From:" /> 
+                        <apex:outputPanel >
+                            <input id="dpFrom" type="text" /> 
+                           <!-- <apex:inputHidden id="doj" value="{!contractsFromDate}"/>  -->
+                           <!--  <apex:input type="date" value="{!contractsFromDate}" id="dpFrom" />  -->
+                           <!--  <apex:inputText value="{!contractsFromDate}" size="10" id="dpFrom" onfocus="DatePicker.pickDate(false, this, false);" />  -->
+                           <!--   <apex:inputField id="dpFrom" value="{!currentAccount.PersonBirthdate}"/>  -->
+                        </apex:outputPanel>    
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="pbsicn"> 
+                        <apex:outputText value="Contract Number" />  
+                        <apex:inputText value="{!contractNumber}"  id="srNo"/> 
+                    </apex:pageBlockSectionItem>
+                                                    
+                    <apex:pageBlockSectionItem id="pbsitd">  
+                        <apex:outputText value="Contracts To:" />
+                        <apex:outputPanel >  
+                            <input class="span2" id="dpTo" type="text" />
+                            <!-- <apex:inputHidden id="doj1" value="{!contractsToDate}"/>    -->
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            <div style="border: thin solid black"> </div>
+                                   
+            <apex:outputPanel layout="block" rendered="{!(IF(salesOrgID != '1200', true, false))}">
+                <div ng-app="listAllContracts" ng-controller="contractsCtrl" >
+                                
+                <br/><br/>
+                <apex:outputLabel value="Contracts"  style="font-size:10pt;font-weight:bold!important;"/>&nbsp;<apex:outputLabel value="(Click on a Contract to see all the information)" style="font-size:12px"/>
+                <lable style="float:right;">Search in displayed records: &nbsp;<input type="text"  ng-model="cntracts.searchText" style="padding-left:0px;float:right;"/> </lable><br></br>
+             
+                <apex:outputPanel layout="block" styleClass="emptyTableMsg" rendered="{!IF(latestContractsList.size > 0,false,true)}">
+                    <apex:outputText rendered="{!isConServiceAvailable}">No contracts found for given search criteria.</apex:outputText>
+                    <apex:outputText rendered="{!!isConServiceAvailable}">{!serviceErrorMessage}</apex:outputText>
+                </apex:outputPanel>
+                                   
+                <script type="text/ng-template" id="contractActions.html">
+                    <a id="CopyCnt" target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openpopup()" >[Copy]</a> &nbsp;&nbsp;
+                                            
+                </script>
+                 
+                <script type="text/ng-template" id="contractMoreInfo.html">
+                    <div>
+                        <table align="center" cellspacing="0" style="margin:15px;margin-left:25px;border: 1px solid black;" width="90%" >
+                            <head>
+                                <tr style="background-color: #E6E6FA;">
+                              
+                                    <th>Status</th>
+                                    <th>Material</th>
+                                    <th>Serial #</th>
+                                    <th>Description</th>
+                                    <th>Rate</th>
+                                    <th>Delivery Date</th>
+                                    <th>Invoice Date</th>
+                                    <th>End Date</th>
+                                    
+                                </tr>
+                            </head>
+                        <body>  
+                        <tr ng-repeat="ci in item.contractItems" style="background-color:#FAEBD7;">
+                         
+                            <td> {{ ci.status }} </td>
+                            <td> {{ ci.material }} </td>
+                            <td> {{ ci.serial_number }} </td>
+                            <td> {{ ci.short_text }} </td>    
+                            <td> {{ ci.rate }} </td>
+                            <td> {{ ci.goodsIssueDate }} </td>
+                            <td> {{ ci.con_st_dat }} </td>
+                            <td> {{ ci.con_en_dat }} </td>
+                       
+                            
+                        </tr> 
+                        </body>
+                        </table>      
+                    </div>
+                </script>
+                           
+                <ad-table-lite table-name="AllContracts"
+                enable-column-search="false"
+                column-definition="contractsTableColumnDefinition"
+                local-data-source="models"
+                page-sizes="[20, 40, 60]"
+                pagination-btn-group-classes="pagination pagination-sm"
+                table-classes="table qtable table-bordered"
+                draggable="false"
+                on-click-sort-direction="DEC"
+                items-not-found-message="Contracts Not Found"
+                snug-sort-icons="true"
+                search-text="cntracts.searchText"
+                row-expand-template="contractMoreInfo.html"
+                row-expand-callback="rowExpanded">
+               </ad-table-lite>
+                  
+                </div>
+            </apex:outputPanel>
+            
+            <apex:outputPanel layout="block" rendered="{!(IF(salesOrgID == '1200', true, false))}" >
+                <div ng-app="listAllContractsUK" ng-controller="contractsCtrlUK">
+                                                                                
+                
+                <br/><br/>
+                <apex:outputLabel value="Contracts"  style="font-size:10pt;font-weight:bold!important;"/>&nbsp;<apex:outputLabel value="(Click on a Contract to see all the information)" style="font-size:12px"/>
+                <lable style="float:right;">Search in displayed records: &nbsp;<input type="text"  ng-model="cntracts.searchText" style="padding-left:0px;float:right;"/> </lable><br></br>
+            <!--    <apex:outputText value="{!contractsFromDate}" ></apex:outputText>&nbsp;&nbsp;
+                <apex:outputText value="{!contractsToDate}" ></apex:outputText>  -->
+                <apex:outputPanel layout="block" styleClass="emptyTableMsg" rendered="{!IF(latestContractsList.size > 0,false,true)}">
+                    <apex:outputText rendered="{!isConServiceAvailable}">No contracts found for given search criteria.</apex:outputText>
+                    <apex:outputText rendered="{!!isConServiceAvailable}">{!serviceErrorMessage}</apex:outputText>
+                </apex:outputPanel>
+                                    
+                <script type="text/ng-template" id="contractActions.html">
+                    <a id="CopyCnt" target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openpopup() <!-- openContracts(item.CONTRACT,'Copy') -->" >[Copy]</a> &nbsp;&nbsp;
+                                            
+                </script>
+
+                <script type="text/ng-template" id="contractMoreInfo.html">
+                    <div>
+                        <table align="center" cellspacing="0" style="margin:15px;margin-left:25px;border: 1px solid black;" width="90%" >
+                            <head>
+                                <tr style="background-color: #E6E6FA;">
+                              <!--      <th>Item No</th>  -->
+                                    <th>Status</th>
+                                    <th>Material</th>
+                                    <th>Serial #</th>
+                                    <th>Description</th>
+                                    <th>Rate</th>
+                                    <th>Delivery Date</th>
+                                    <th>Invoice Date</th>
+                                    <th>End Date</th>
+                                    <!-- <th colspan="2">Action</th> -->
+                                </tr>
+                            </head>
+                        <body>  
+                        <tr ng-repeat="ci in item.contractItems" style="background-color:#FAEBD7;">
+                         <!--   <td> {{ ci.itm_number }} </td>  -->
+                            <td> {{ ci.status }} </td>
+                            <td> {{ ci.material }} </td>
+                            <td> {{ ci.serial_number }} </td>
+                            <td> {{ ci.short_text }} </td>    <!--  CONTRACT -->
+                            <td> {{ ci.rate }} </td>
+                            <td> {{ ci.goodsIssueDate }} </td>
+                            <td> {{ ci.con_st_dat }} </td>
+                            <td> {{ ci.con_en_dat }} </td>
+                       <!--     <td><a id="PickupCnt"  target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openContracts(ci.contract, ci.itm_number)" >[Pickup]</a> </td>
+                            <td><a id="sorCnt"  target="_blank" style="cursor: pointer;" ng-href="" ng-click ="openContracts(ci.contract, 'SOR')" >[SOR]</a> </td>  -->
+                        </tr> 
+                        </body>
+                        </table>      
+                    </div>
+                </script>
+                              
+                <ad-table-lite table-name="AllContracts"
+                enable-column-search="false"
+                column-definition="contractsTableColumnDefinitionUK"
+                local-data-source="models"
+                page-sizes="[20, 40, 60]"
+                pagination-btn-group-classes="pagination pagination-sm"
+                table-classes="table qtable table-bordered"
+                draggable="false"
+                on-click-sort-direction="DEC"
+                items-not-found-message="Contracts Not Found"
+                snug-sort-icons="true"
+                search-text="cntracts.searchText"
+                row-expand-template="contractMoreInfo.html"
+                row-expand-callback="rowExpanded">
+               </ad-table-lite>
+                             
+                </div>
+            </apex:outputPanel>
+            
+            
+               
+         </apex:outputPanel> 
+      </apex:outputPanel>
+     </apex:PageBlock>
+      
+    </apex:form>
+    
+    <form name="f" target="_blank" style="display:none" role="form" method="get" id="login-form" autocomplete="off" action="http://cpq-devweb/CPQ">
+        <div class="form-group">
+            <label for="email" class="login-labels">Email Address</label>
+            <input type="email" name="username" id="email" class="form-control" value="m@t" placeholder="youremail@gmail.com"/>
+            <span class="form-error" style="display: none;">Email is Required</span>
+        </div>
+        <div class="form-group">
+            <label for="password" class="login-labels">Password</label>
+            <input type="password" name="password" id="password" value="p" class="form-control" placeholder="Password"/><span class="form-error" style="display: none;">Password is Required</span>
+            
+            <div class="forget-password" align="right">
+                <a href="#">Forgot password</a>
+            </div>
+            <input type="hidden" name="_csrf" value="bf8449c6-c267-42a9-944a-9a892bc3ce71"/>
+        </div>
+            <input type="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Login"/><i class="fa fa-chevron-right"></i> 
+    </form>
+    
+</apex:page>

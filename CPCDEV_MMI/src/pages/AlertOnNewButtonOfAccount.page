@@ -1,0 +1,14 @@
+<apex:page standardController="Account" extensions="AccountNewButtonProfiles">
+ <apex:outputPanel rendered="{!(!allowProfile)}">
+<script>
+        
+      window.onload = new function() {  alert("Error: Please create a Lead and convert it to an Account.");window.location.href="/001/o"; };
+      
+</script>
+</apex:outputPanel>
+ <apex:outputPanel rendered="{!allowProfile}">
+ <script>
+    window.onload = new function() {  window.location.href="/001/e?nooverride=1&RecordType={!$CurrentPage.parameters.RecordType}&retURL={!$CurrentPage.parameters.retURL}"; };
+ </script>
+ </apex:outputPanel>
+</apex:page>

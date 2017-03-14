@@ -1,0 +1,152 @@
+<!--
+Name   : UORScorecard
+Usage  : Used to display Units on Rent Scorecard of Account .
+Author : Kirtesh Jain
+Date   : September 18, 2009
+-->
+
+<apex:page ></apex:page>
+<!-- TFS 2291 start 1
+<apex:page standardController="Account" extensions="UORController"
+        title="UOR Scorecard: {!Account.Name}">
+    <apex:sectionHeader title="Units on Rent Scorecard" subtitle="{!Account.Name}" />
+    
+    <apex:form >
+        <apex:pageMessages />
+        
+        The hierarchy is created by associating accounts with parent accounts.
+        
+        <apex:outputPanel layout="block" style="text-align:right;font-weight:bold;">
+            Show&nbsp;&nbsp;<apex:selectList value="{!currentUnit}" size="1">
+                <apex:selectOptions value="{!unitOptions}" />
+                <apex:actionSupport event="onchange" rerender="nodeTable" status="unitChanged" />
+            </apex:selectList>
+            <apex:outputPanel layout="block">
+                &nbsp;
+                <apex:actionStatus startStyle="color:#cc0000;" id="unitChanged" startText="Please wait..." />
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <apex:pageBlock rendered="{!NOT(hasError)}">     TFS 2291 end 1 -->
+            <!-- Table listing Account Hierarchy -->  <!-- TFS 2291 start 2 
+            <apex:pageBlockTable value="{!nodesList}" var="node" id="nodeTable">
+                <apex:column headervalue="Account Name"
+                        style="white-space:pre;"> TFS 2291 end 2 --><!-- White space to indent Hierarchy --> <!-- TFS 2291 start 3 <span
+                        style="padding-right:{!node.spanPadding}px;" />
+                   <apex:outputLink value="/{!node.account.Id}">{!node.account.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column headervalue="BranchID" value="{!node.account.Branch__c}" />
+                <apex:column headervalue="Servicing Branch ID" value="{!node.account.Servicing_Branch_Id__c}" />
+                <apex:column headervalue="Owner" value="{!node.account.Owner.Name}" />
+               
+                <apex:column style="text-align:center">
+                    <apex:facet name="header">
+                      &nbsp;&nbsp;Units on Rent<br/>10-12 Months Ago
+                    </apex:facet>
+                    <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent_1012__c }" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Containers_On_Rent_1012__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Offices_On_Rent_1012__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobile_Offices_On_Rent_1012__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent_1012__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                    <apex:facet name="header">
+                      &nbsp;&nbsp;Units on Rent<br/>7-9 Months Ago
+                    </apex:facet>
+                    <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent_79__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Containers_On_Rent_79__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Offices_On_Rent_79__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobile_Offices_On_Rent_79__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent_79__c}" />
+               </apex:column>
+                
+                <apex:column style="text-align:center">
+                    <apex:facet name="header">
+                      &nbsp;&nbsp;Units on Rent<br/>4-6 Months Ago
+                    </apex:facet>
+                    <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent_46__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Containers_On_Rent_46__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Offices_On_Rent_46__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobile_Offices_On_Rent_46__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent_46__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                  <apex:facet name="header">
+                     &nbsp;&nbsp;Units on Rent<br/> 0-3 months Ago
+                  </apex:facet>
+                   <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent_03__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Containers_On_Rent_03__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Offices_On_Rent_03__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobile_Offices_On_Rent_03__c }" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent_03__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">&nbsp;&nbsp;Units on Rent<br/>&nbsp;&nbsp;&nbsp;&nbsp;Currently</apex:facet>
+                   <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Containers_On_Rent__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Offices_On_Rent__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobile_Offices_On_Rent__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">&nbsp;&nbsp;Units on Rent<br/>&nbsp;&nbsp;YoY % change</apex:facet>
+                   <apex:outputField rendered="{!(currentUnit='All')}"
+                        value="{!node.account.Total_Units_on_Rent_YoY_Change__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Containers')}"
+                        value="{!node.account.Num_of_Storage_Cont_On_Rent_YoY_Chng__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.account.Num_of_Security_Off_On_Rent_YoY_Change__c}" />
+                    <apex:outputField rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.account.Num_of_Mobiles_On_Rent_YoY_Change__c }" />
+                    <apex:outputField rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.account.Num_of_Van_Trailers_On_Rent_YoY_Change__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center" > 
+                  <apex:facet name="header" >
+                    Months since <br/>Last Rental
+                  </apex:facet>
+                   <apex:outputText rendered="{!(currentUnit='All')}"
+                        value="{!node.MonthsSinceLastRental_All}" escape="false"/>
+                    <apex:outputText rendered="{!(currentUnit='Containers')}"
+                        value="{!node.MonthsSinceLastRental_Storage}"  escape="false"/>
+                    <apex:outputText rendered="{!(currentUnit='Security Offices')}"
+                        value="{!node.MonthsSinceLastRental_Security}"  escape="false"/>
+                    <apex:outputText rendered="{!(currentUnit='Mobile Offices')}"
+                        value="{!node.MonthsSinceLastRental_Mobile}"  escape="false"/>
+                    <apex:outputText rendered="{!(currentUnit='Van Trailers')}"
+                        value="{!node.MonthsSinceLastRental_Van}"  escape="false"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>   TFS 2291 end 3 -->

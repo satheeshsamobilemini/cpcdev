@@ -1,0 +1,3 @@
+<apex:page standardController="sharem__SmFolder__c"
+	action="{!URLFOR($Page.Folderize, null, [selectedFolderId = IF(SmFolder__c.Id != null, 'TAG_' + SmFolder__c.Id, '')])}">
+</apex:page>

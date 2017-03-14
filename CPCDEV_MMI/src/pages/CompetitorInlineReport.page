@@ -1,0 +1,153 @@
+<apex:page standardController="Weekly_Snapshot_Branch_Report__c" extensions="CompetitorInlineReportController" id="pg" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
+type="text/javascript"></script>
+<style>
+    .tdLine{
+        border:1px solid grey;
+        text-align:center;
+    }
+</style>
+<apex:form id="frm">
+    <!--  <apex:pageBlock id="CompetitorsBlock">-->
+       <apex:outputPanel id="CompetitorsBlock">
+        <div align="center">
+            <apex:commandButton value="Edit" action="{!editPage}" rerender="CompetitorsBlock" rendered="{!NOT(isEdit)}"/>
+            <apex:commandButton value="Add Row"  action="{!addRow}" rerender="CompetitorsBlock,errPanel" rendered="{!isEdit}"/>
+            <apex:commandButton value="Save"  rendered="{!isEdit}" rerender="CompetitorsBlock,errPanel" action="{!saveRecords}"/>
+            <apex:commandButton value="Cancel" rendered="{!isEdit}"  rerender="CompetitorsBlock" action="{!cancel}"/>
+        </div>
+        <br/>
+        <apex:outputPanel id="errPanel">
+            <apex:pagemessages />
+        </apex:outputPanel>
+        <table id="compTable" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid grey;">
+            <tr>
+                <!--  <th width="3%" style="{!IF(NOT(isEdit), 'display:','display:none;')}">&nbsp;</th>--> 
+                <th width="13%" rowspan="2" class="tdLine">Competitor Name</th>
+                <th colspan="5" class="tdLine">Containers</th>
+                <th colspan="5" class="tdLine">Security Office</th>
+                <th width="6%" rowspan="2" class="tdLine">&nbsp;Color&nbsp;</th>
+                <th width="6%" rowspan="2" class="tdLine">&nbsp;Locking System&nbsp;</th>
+                <th width="10%" rowspan="2"  class="tdLine">&nbsp;How to Sell against&nbsp;</th>
+                <th width="10%" rowspan="2" class="tdLine">&nbsp;Comments&nbsp;</th>
+                <th width="10%" rowspan="2" class="tdLine">&nbsp;Competitor Website</th>
+            </tr>
+            <tr>
+                <th width="5%" class="tdLine">&nbsp;10&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;20&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;20 TT&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;40&nbsp;</th> 
+                <th width="5%" class="tdLine">&nbsp;40 TT&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;10 OB&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;20 OB&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;20 Combo&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;40 OB&nbsp;</th>
+                <th width="5%" class="tdLine">&nbsp;40 Combo&nbsp;</th>
+            </tr>
+            <apex:variable var="count" value="{!0}" /> 
+            <apex:repeat value="{!competitors}" var="com">
+                <tr bgcolor="{!IF(MOD(count,2) == 0 , '#B3B3BC','#FFFFFF')}">
+                <td width="15%" class="tdLine">
+                    <apex:outputField value="{!com.Name}"  rendered="{!NOT(isEdit)}" />
+                    <apex:inputField value="{!com.Name}" rendered="{!isEdit}"/>
+                </td>
+                <td width="5%" class="tdLine">
+                    <apex:outputField value="{!com.X10__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.X10__c}" rendered="{!isEdit}" />
+               </td>
+                <td width="5%" class="tdLine">
+                    <apex:outputField value="{!com.X20__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.X20__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="5%" class="tdLine">
+                    <apex:outputField value="{!com.X20_TT__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.X20_TT__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="5%" class="tdLine">
+                    <apex:outputField value="{!com.X40__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.X40__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="5%" class="tdLine">
+                    <apex:outputField value="{!com.X40_TT__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.X40_TT__c}" rendered="{!isEdit}"/>
+                </td>
+                        
+                 <td width="5%" class="tdLine">
+                     <apex:outputField value="{!com.X10_OB__c}" rendered="{!NOT(isEdit)}"/>
+                     <apex:inputField value="{!com.X10_OB__c}" rendered="{!isEdit}"/>
+                 </td>
+                 <td width="5%" class="tdLine">
+                     <apex:outputField value="{!com.X20_OB__c}" rendered="{!NOT(isEdit)}"/>
+                     <apex:inputField value="{!com.X20_OB__c}" rendered="{!isEdit}"/>
+                 </td>
+                 <td width="5%" class="tdLine">
+                     <apex:outputField value="{!com.X20_Combo__c}" rendered="{!NOT(isEdit)}"/>
+                     <apex:inputField value="{!com.X20_Combo__c}" rendered="{!isEdit}"/>
+                 </td>
+                 <td width="5%" class="tdLine">
+                     <apex:outputField value="{!com.X40_OB__c}" rendered="{!NOT(isEdit)}"/>
+                     <apex:inputField value="{!com.X40_OB__c}" rendered="{!isEdit}"/>
+                 </td>
+                 <td width="5%" class="tdLine">
+                     <apex:outputField value="{!com.X40_Combo__c}" rendered="{!NOT(isEdit)}"/>
+                     <apex:inputField value="{!com.X40_Combo__c}" rendered="{!isEdit}"/>
+                 </td>
+                 <td width="8%" class="tdLine">
+                    <apex:outputField value="{!com.Color__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.Color__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="8%" class="tdLine">
+                    <apex:outputField value="{!com.Locking_System__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.Locking_System__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="12%" class="tdLine">
+                    <apex:outputField value="{!com.How_to_Sell_against__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.How_to_Sell_against__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="12%" class="tdLine">
+                    <apex:outputField value="{!com.Comments__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.Comments__c}" rendered="{!isEdit}"/>
+                </td>
+                <td width="10%" class="tdLine">
+                    <apex:outputField value="{!com.Competitor_Website__c}" rendered="{!NOT(isEdit)}"/>
+                    <apex:inputField value="{!com.Competitor_Website__c}" rendered="{!isEdit}"/>
+                </td>
+                
+            </tr>
+            <apex:variable var="count" value="{!count+1}" /> 
+            </apex:repeat>
+        </table>
+        <apex:outputPanel id="noRecPanel" rendered="{!competitors.size==0}" >
+            <apex:outputLabel value="No Record Found" />
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <!--  </apex:pageBlock> -->
+</apex:form>
+<!--  <script type="text/JavaScript">
+   var isDocumentReady = false;
+
+   function setHeaderFix(){
+       var tableComp=document.getElementById('compTable')
+       var originalTbl = $(tableComp);
+       var originalTblHeader = originalTbl.find('tr:eq(0)');
+       var newTbl =
+originalTbl.clone().attr('id',originalTbl.attr('id')+'_new');
+       var newTblHeader = newTbl.find('tr:eq(0)');
+       newTbl.height(originalTblHeader.height());
+       newTbl.width(originalTblHeader.outerWidth()-10);
+       newTblHeader.height(originalTblHeader.height());
+
+       newTblHeader.find('td').each(function(indx){
+        $(this).width(originalTblHeader.find('td:eq(' + indx + ')').width());
+       });
+
+       newTbl.find('tr:gt(0)').remove();
+       originalTblHeader.hide();
+       originalTbl.parent().before(newTbl);
+   }
+   $(document).ready(function(){
+       setHeaderFix();
+       isDocumentReady = true;
+   });
+</script>-->
+</apex:page>

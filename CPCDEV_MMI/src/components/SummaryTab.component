@@ -1,0 +1,58 @@
+<apex:component id="SummaryTabComponent"> 
+    <apex:attribute name="fullQuote" type="MMI_Full_Quotes_UK__c" description="Full Quote Object" required="true"/>
+    <apex:attribute name="ContractValueFields" type="Schema.FieldSetMember[]" 
+                    description="Field Set for Contact Value section" required="true"/>
+    <apex:attribute name="EmailQuote" type="ApexPages.Action" description="Search contact button action" required="true"/>
+    <apex:attribute name="markAsRequired" type="Boolean" description="Enable or Disable required fields"/>
+    
+    
+      
+        <apex:pageBlockSection title="Contract Value" collapsible="false">
+             <apex:repeat value="{!ContractValueFields}" var="contractValue">
+                 <apex:pageBlockSectionItem rendered="{!(IF((contractValue.Label != 'Quote Ref' && contractValue.Label != 'Other'), true, false))}">
+                     <apex:outputLabel value="{!contractValue.Label}" for="contractValue" />
+                     <apex:outputPanel layout="block" >
+                         <apex:inputField html-tabIndex="1" styleClass="summaryFields" id="contractValue" value="{!fullQuote[contractValue]}" 
+                                         required="{!AND(markAsRequired,OR(contractValue.required, contractValue.dbrequired))}"/>
+                     </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+                 
+                 <apex:pageBlockSectionItem rendered="{!(IF(contractValue.Label == 'Other', true, false))}">
+                     <apex:outputLabel value="{!contractValue.Label}" for="contractValue1" />
+                     <apex:outputPanel layout="block" >
+                         <apex:inputField id="contractValue1" styleClass="contractValueOthers" value="{!fullQuote[contractValue]}" 
+                                         required="{!AND(markAsRequired,OR(contractValue.required, contractValue.dbrequired))}"
+                                         onchange="onChangeOfOthers()"/>
+                     </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+                 
+                 <apex:pageBlockSectionItem rendered="{!(IF(contractValue.Label == 'Quote Ref', true, false))}">
+                     <apex:outputLabel value="{!contractValue.Label}" for="contractValueOutputField" />
+                     <apex:outputPanel layout="block" >
+                         <apex:outputField id="contractValueOutputField" value="{!fullQuote[contractValue]}"/>
+                     </apex:outputPanel>
+                 </apex:pageBlockSectionItem>
+             </apex:repeat>
+         </apex:pageBlockSection>         
+       
+        
+        <apex:pageBlockSection title="Additional Info" collapsible="false">
+            <apex:panelGrid width="100%" columns="2">  
+                <apex:pageBlockSection showHeader="false" columns="1">
+                    <apex:inputTextarea title="Please add any additional notes" id="additionalNotes" 
+                                        value="{!fullQuote.Additional_Notes__c}" cols="100" rows="8"/>
+                </apex:pageBlockSection>
+                
+                 <apex:pageBlockSection showHeader="false" columns="1">
+                    <apex:commandButton action="{!EmailQuote}" value="Email Quote" title="Email Quote" reRender="pageMessage" status="onloadStatus" disabled="{!fullQuote.Is_First_Email_Sent__c}" oncomplete="callEmailSend();"/>
+                     <apex:inputCheckbox value="{!fullQuote.Brochure__c}" disabled="{!fullQuote.Is_First_Email_Sent__c}"/>
+                     <apex:inputCheckbox value="{!fullQuote.Unit_Info__c}" disabled="{!fullQuote.Is_First_Email_Sent__c}"/>
+                     <apex:inputCheckbox value="{!fullQuote.SHAF__c}" disabled="{!fullQuote.Is_First_Email_Sent__c}"/>
+                                         
+                </apex:pageBlockSection>
+            </apex:panelGrid> 
+        </apex:pageBlockSection>
+        <script>
+            jQuery(".summaryFields, .repId").attr("disabled", "disabled");
+        </script>
+</apex:component>

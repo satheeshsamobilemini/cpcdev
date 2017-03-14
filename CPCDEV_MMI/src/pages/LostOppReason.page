@@ -1,0 +1,23 @@
+<apex:page standardController="Opportunity" extensions="LostOppReasonClass">
+<apex:includeScript value="{!$Resource.jQueryLib19Compress}"/>
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<apex:form >
+<apex:pageBlock title="Please provide Reason for Lost opportunity">
+<apex:pageBlockSection >
+<apex:inputfield value="{!currentOpportunity.Opportunity_Lost_Category__c}" required="true"/>
+<apex:inputfield value="{!currentOpportunity.Lost_Opportunity_Reason_New__c}" required="true"/>
+<apex:inputfield value="{!currentOpportunity.Lost_Business_Additional_Comments__c}"/>
+<apex:inputfield value="{!currentOpportunity.Lost_Business_To__c}" required="true"/>
+<!--<div align="right" draggable="false" >
+<apex:pageBlockSectionItem>-->
+
+<!--</apex:pageBlockSectionItem>
+</div>-->
+</apex:pageBlockSection>
+</apex:pageBlock>
+<div align="center" draggable="false" >
+<apex:commandButton action="{!Save}" title="Save" value="Save"/>
+<apex:commandButton action="{!Cancel}" title="Cancel" value="Cancel"/>
+</div >
+</apex:form> 
+</apex:page>

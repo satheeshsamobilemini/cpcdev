@@ -1,0 +1,87 @@
+<apex:page id="page" title="rMobile Getting Started" controller="rzm.GeocodeSetup" readonly="true">
+<apex:sectionHeader title="Runzheimer Mobile for Salesforce" subtitle="Geocode Addresses" help="https://www.runzheimer.com/Solutions/Runzheimer-Mobile-Route-Planning-Software.aspx"
+	description="Use this page to view the status of the initialization process which geocodes all valid addresses for your Accounts, Contacts, and Leads.  The initialization process is triggered upon the installation of Runzheimer Mobile for Salesforce."
+/>
+<apex:pageMessages id="messages"/>
+<apex:pageBlock title="Runzheimer Mobile Setup Page">
+
+<apex:form >
+	<apex:outputPanel id="stats">						    
+	    <apex:pageBlockSection title="Geocode Utlities" columns="1">
+	    	<apex:pageBlockSectionItem id="batchJobFeedback">
+	    		<div style="font-weight:strong">{!batchJobsMaxedFeedback}</div>
+	    	</apex:pageBlockSectionItem>
+		    <apex:pageBlockTable value="{!records}" var="r">
+		    	<apex:column headerValue="Object" value="{!r.name}"/>
+		    	<apex:column >
+		    		<apex:outputPanel id="buttons" rendered="{!!isPersonAccountOrg}">
+			    		<apex:commandButton action="{!refreshRecords}" value="  Reset  " onclick="if(!confirmIt()) return false;" reRender="jobs,buttons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus">		    		                        
+	                        <apex:param name="rName" value="{!r.name}"/>                        
+	                    </apex:commandButton>&nbsp;&nbsp;                  
+			    		<apex:commandButton action="{!cleanRecords}" value="Clean/Geocode" reRender="jobs,buttons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus">
+			    			<apex:param name="rName" value="{!r.name}"/>
+			    		</apex:commandButton>
+			    		<apex:commandButton action="{!geoCodeRecords}" value="  Geocode  " reRender="jobs,buttons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus">
+			    			<apex:param name="rName" value="{!r.name}"/>
+			    		</apex:commandButton>
+		    		</apex:outputPanel>
+		    		
+		    		<apex:outputPanel id="paButtons" rendered="{!isPersonAccountOrg}">
+		    			<apex:commandButton action="{!refreshRecords}" value="  Reset  " onclick="if(!confirmIt()) return false;" reRender="jobs,paButtons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus" rendered="{!IF(r.name != 'Contact', true, false)}">		    		                        
+	                        <apex:param name="rName" value="{!r.name}"/>                        
+	                    </apex:commandButton>&nbsp;&nbsp;
+	                    
+	                    <apex:outputText id="useAccounts" value="Contacts will be completed with accounts." rendered="{!IF(r.name != 'Contact', false, true)}" />
+	                    
+	                    <apex:commandButton action="{!cleanRecords}" value="Clean/Geocode" reRender="jobs,paButtons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus" rendered="{!IF(r.name != 'Contact', true, false)}">
+			    			<apex:param name="rName" value="{!r.name}"/>
+			    		</apex:commandButton>
+	                    
+	                    <apex:commandButton action="{!geoCodeRecords}" value="  Geocode  " reRender="jobs,paButtons,batchJobFeedback" disabled="{!totalRZMJobs!=null && totalRunningJobs>=5}" status="codeStatus" rendered="{!IF(r.name != 'Contact', true, false)}">
+			    			<apex:param name="rName" value="{!r.name}"/>
+			    		</apex:commandButton>
+		    		</apex:outputPanel>
+		    		
+		    	</apex:column>
+		    </apex:pageBlockTable>	    
+	    </apex:pageBlockSection>
+	    
+	    <apex:outputPanel id="jobs">
+	    <apex:pageBlockSection title="Batch Job Status" columns="1">
+	    <div style="font-weight:strong">Total Batch Jobs Running: {!totalRunningJobs}</div>
+	    
+	    <apex:outputPanel rendered="{!totalRZMJobs!=null && totalRZMJobs>0}">
+	    <apex:pageBlockTable value="{!jobs}" var="j">	    	
+	    	<apex:column value="{!j.ApexClass.Name}" />
+	    	<apex:column value="{!j.Status}" />
+	    	<apex:column value="{!j.TotalJobItems}" />	    	
+	    	<apex:column value="{!j.JobItemsProcessed}" />
+	    	<apex:column value="{!j.NumberOfErrors}" />
+	    	<apex:column value="{!j.ExtendedStatus}" />
+	    	<apex:column value="{!j.CreatedDate}" />
+	    	<apex:column value="{!j.CompletedDate}" />	    	  	
+	    </apex:pageBlockTable>
+	    </apex:outputPanel>
+	    </apex:pageBlockSection>
+	    </apex:outputPanel>
+	    
+	</apex:outputPanel>  
+
+    <apex:actionPoller interval="15" reRender="stats" status="status" /> 
+    <br/><br/>
+	<span style="font-style:italic;">&nbsp;&nbsp;Page refreshes every 15 seconds&nbsp;&nbsp;
+		<apex:actionstatus id="status">
+			<apex:facet name="start"><apex:image value="{!URLFOR($Resource.rzm__RunzheimerAssets, '/img/spinner.gif')}" alt="" height="8" width="8" /></apex:facet>		       
+		</apex:actionstatus>
+		
+	</span>
+	               
+</apex:form>
+    
+</apex:pageBlock>
+<script type="text/javascript">
+   function confirmIt() 
+   {return confirm('Are you sure you want to initialize all geocoding for this object?');}
+</script>
+
+</apex:page>

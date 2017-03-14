@@ -1,0 +1,157 @@
+<apex:page controller="GleniganManagementController" tabStyle="Abi_Management__tab">
+  <script>
+  	function highlightChar(comp,colour,txtDeco,charVal,sChar){
+  	  if(comp!=null && charVal !=sChar){
+			comp.style.backgroundColor = colour;
+			comp.style.textDecoration = txtDeco;
+	  }
+	}
+  </script>
+  <apex:form id="GleniganMangFrm" >
+    <apex:sectionHeader title="Glenigan Management" subtitle="Home" />
+    <apex:pagemessages id="mesg" />
+    <br />        
+    Projects for Branch&nbsp;&nbsp;&nbsp;
+    <apex:selectList value="{!selectedbranch}" multiselect="false" size="1">
+      <apex:selectOptions value="{!Branches}"/>
+    </apex:selectList>
+    &nbsp;&nbsp;&nbsp;
+    <apex:commandButton value="View" reRender="GleniganMangFrm" action="{!doSearch}" status="myStatus"/>
+    &nbsp;&nbsp;&nbsp;
+    <apex:actionStatus startStyle="color:Red;font-weight:bold" startText="Loading...Please wait." stopText="" id="myStatus"/>
+    <br />
+    <br /> 
+    <apex:outputPanel id="headerPanel"> 
+      <div align="center">
+        <apex:repeat value="{!headerChars}" var="char">
+          <span style="{!IF(char=selectedChar,'background-color:#666;color:#FFFFFF;font-weight: bold','color:#000000;cursor:pointer;font-weight: Normal')}" onclick="doHeaderSearchJS('{!char}')" onmouseover="highlightChar(this,'#B6B6B6','underline','{!char}','{!selectedChar}');" onmouseout="highlightChar(this,'#FFFFFF','none','{!char}','{!selectedChar}');" >&nbsp;{!char}&nbsp;</span><b>|</b>
+        </apex:repeat>
+       </div>
+    </apex:outputPanel> 
+    <br /> 	
+    <apex:pageBlock id="GleniganProjectBlock">
+      <apex:pageBlockTable value="{!GleniganProjects}" var="GleniganProj">
+        <apex:column >
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Name', '{!sortOrder}'); return false;">
+              Glenigan Project ID 
+              <img src="{!IF(sortOn = 'Name',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputLink value="/{!GleniganProj.id}" target="_new">{!GleniganProj.Name}</apex:outputLink><br/>
+        </apex:column>
+        <apex:column >
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Pttitle__c', '{!sortOrder}'); return false;">
+              Project Title 
+              <img src="{!IF(sortOn = 'Pttitle__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+             </a>
+             
+            </apex:facet>
+          <apex:outputField value="{!GleniganProj.Pttitle__c}" />
+        </apex:column>
+        <apex:column >
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Ptsite3__c', '{!sortOrder}'); return false;">
+              Address 3 
+              <img src="{!IF(sortOn = 'Ptsite3__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+            </apex:facet>
+          <apex:outputField value="{!GleniganProj.Ptsite3__c}" />
+        </apex:column>
+        <apex:column >
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Ptpcode__c', '{!sortOrder}'); return false;">
+              Site Postal Code 
+              <img src="{!IF(sortOn = 'Ptpcode__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputField value="{!GleniganProj.Ptpcode__c}" />
+        </apex:column>
+        <apex:column > 
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('GC_Awarded__c', '{!sortOrder}'); return false;">
+              GC Awarded
+              <img src="{!IF(sortOn = 'GC_Awarded__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputField value="{!GleniganProj.GC_Awarded__c}" />
+        </apex:column>
+        <apex:column >
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Value__c', '{!sortOrder}'); return false;">
+              Project Value
+              <img src="{!IF(sortOn = 'Value__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputField value="{!GleniganProj.Value__c}" />
+        </apex:column>
+        <apex:column > 
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Stage__c', '{!sortOrder}'); return false;">
+              Stage
+              <img src="{!IF(sortOn = 'Stage__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputField value="{!GleniganProj.Stage__c}" />
+        </apex:column>
+        <apex:column > 
+          <apex:facet name="header">
+            <a href="javascript:void(0);" onclick="doSortedSearchJS('Devtype__c', '{!sortOrder}'); return false;">
+              Development Type
+              <img src="{!IF(sortOn = 'Devtype__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+          </apex:facet>
+          <apex:outputField value="{!GleniganProj.Devtype__c}" />
+        </apex:column>
+        <apex:column >
+          <apex:commandButton value="Create" onClick="openCreateLinkURLJS('{!GleniganProj.id}'); return false;" />
+        </apex:column>
+        <apex:column >
+          <apex:commandButton value="Remove" onclick="openRemoveLinkURLJS('{!GleniganProj.id}'); return false;" />            
+        </apex:column>
+       </apex:pageBlockTable> 
+       <apex:outputLabel rendered="{!GleniganProjects.size==0}">No Records Found</apex:outputLabel>
+      <apex:actionFunction action="{!doSortedSearch}" name="doSortedSearchJS" reRender="GleniganMangFrm" status="myStatus">
+        <apex:param name="firstParam" assignTo="{!sortOn}" value="" />
+        <apex:param name="secondParam" assignTo="{!sortOrder}" value="" />          
+      </apex:actionFunction>  
+      <apex:actionFunction name="doHeaderSearchJS" id="doHeaderSearch" action="{!doHeaderSearch}" reRender="GleniganMangFrm" status="myStatus" >
+        <apex:param value="" name="firstParam" assignTo="{!selectedChar}"/>
+	  </apex:actionFunction>  
+	  <apex:actionFunction action="{!openCreateLinkURL}" name="openCreateLinkURLJS" reRender="GleniganFrm" status="myStatus">
+        <apex:param name="firstParam" assignTo="{!currentGleniganProjId}" value="" />
+      </apex:actionFunction>
+      <script>
+      	function openRemoveLinkURLJS(projectID){
+      	  
+          window.open('/apex/RemoveGleniganProjectFromAM?id='+projectID+'&selectedBranch={!selectedbranch}','_top');
+        }
+      </script>
+    </apex:pageBlock>   
+    <apex:outputPanel rendered="{!IF(GleniganProjects.size>0,true,false)}">
+      <table width="100%" cellpadding="0" cellspacing="0">  
+        <tr>
+          <td width="40%">
+            <apex:actionStatus startStyle="color:Red;font-weight:bold" startText="Loading...Please wait" stopText="" id="myStatus1"/>
+          </td>
+          <td align="Right" width="30%">
+            &nbsp;&nbsp;&nbsp;
+            <apex:commandLink action="{!GleniganStdSetCntrl.first}" reRender="GleniganMangFrm" value="First" id="firstLnk" status="myStatus1" rendered="{!GleniganStdSetCntrl.hasPrevious}"/>&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="First" id="firstLabel" rendered="{!NOT(GleniganStdSetCntrl.hasPrevious)}" style="color:#A2A2A2;"/>&nbsp;&nbsp;
+            <apex:commandLink action="{!GleniganStdSetCntrl.previous}" reRender="GleniganMangFrm" value="Previous" id="prevLnk" status="myStatus1" rendered="{!GleniganStdSetCntrl.hasPrevious}"/>
+            <apex:outputLabel value="Previous" id="prevLabel" rendered="{!NOT(GleniganStdSetCntrl.hasPrevious)}" style="color:#A2A2A2;"/>
+            &nbsp;&nbsp;&nbsp;&nbsp; 
+          </td>  
+          <td align="Left" width="30%">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:commandLink action="{!GleniganStdSetCntrl.next}" reRender="GleniganMangFrm" value="Next" id="nextLnk" status="myStatus1" rendered="{!GleniganStdSetCntrl.hasNext}"/>&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="Next" id="nextLabel" rendered="{!NOT(GleniganStdSetCntrl.hasNext)}" style="color:#A2A2A2;"/>&nbsp;&nbsp;
+            <apex:commandLink action="{!GleniganStdSetCntrl.last}" reRender="GleniganMangFrm" value="Last" id="lastLnk" status="myStatus1" rendered="{!GleniganStdSetCntrl.hasNext}"/>
+            <apex:outputLabel value="Last" id="lastLabel" rendered="{!NOT(GleniganStdSetCntrl.hasNext)}" style="color:#A2A2A2;"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+         </tr> 
+      </table>
+    </apex:outputPanel>    
+  </apex:form>         
+</apex:page>

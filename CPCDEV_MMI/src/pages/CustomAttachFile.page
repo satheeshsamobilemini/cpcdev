@@ -1,0 +1,59 @@
+<!-- Upload a file and put it in your personal documents folder-->
+<!-- Page: -->
+<apex:page standardController="Attachment" extensions="CustomAttachFileController">
+<style>
+    .customRequired{
+         display:inline-block;
+         background-color:#CC0000;
+         width:3px;
+         margin-right:1px;
+         position: relative;
+         vertical-align:top; 
+   }
+</style>
+<apex:form id="theForm">
+
+<apex:pageBlock title="Attach File">
+<apex:messages style="color:red;"/>
+<br/>
+<b> 1. Select Branch </b>&nbsp;&nbsp;&nbsp;
+<span id="idCustomRequired" class="customRequired" >&nbsp;</span>
+  <!--  <apex:inputField value="{!safetyAttachment.Branch__c}" />  --> 
+  
+  <apex:selectList value="{!safetyAttachment.Branch__c}" multiselect="false" size="1">
+            <apex:selectOptions value="{!branches}"/>
+        </apex:selectList>
+
+<br/><br/>
+<b>2.  Select the File</b><br/>
+Type the path of the file or click the Browse button to find the file.
+<br/>
+<apex:pageBlockSection >
+<apex:inputFile value="{!attachment.body}" filename="{!attachment.name}"/>
+</apex:pageBlockSection>
+<br/>
+<b>3. Click the "Attach File" button.</b>
+    <br/>Repeat steps 1 and 2 to attach multiple files.<br/>
+    ( When the upload is complete the file information will appear below. )
+ <br/><br/>
+ 
+  <apex:commandButton value="Attach File"  action="{!save}"  />   
+  
+
+</apex:pageBlock>
+
+<!--  <b>3.  Click the Done button to return to the previous page.</b>
+    <br/>( This will cancel an in-progress upload. )<br/><br/>
+   <apex:commandButton value="Done" action="{!save}"/>
+  <br/>
+  <apex:outputPanel id="ileDetails" >
+  <apex:pageBlock id="fd" rendered="{!isFile}">
+    <apex:pageBlockSection >
+        File Name: <apex:outputField value="{!attachment.Name}"/> 
+        Size : <apex:outputField value="{!attachment.BodyLength}" />
+    </apex:pageBlockSection>
+      
+  </apex:pageBlock>
+  </apex:outputPanel> -->
+</apex:form>
+</apex:page>

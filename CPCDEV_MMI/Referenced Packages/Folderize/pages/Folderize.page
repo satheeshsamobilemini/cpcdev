@@ -1,0 +1,11 @@
+<apex:page controller="sharem.SMF_AppController" extensions="sharem.SMF_MainAppExtension" action="{!onPageVisited}" tabStyle="Folderize__tab" title="Folderize">
+
+	<apex:form >
+		<!-- show Folderize viewer if user data were synchronized -->
+		<c:FolderizeViewer rendered="{!NOT(isSyncNeeded)}"/>
+		
+		<!-- otherwise show Folderize synchronizer -->
+		<c:FolderizeSynchronizer currentUser_Json="{!currentUser_Json}" rendered="{!isSyncNeeded}"/>
+	</apex:form>
+	
+</apex:page>

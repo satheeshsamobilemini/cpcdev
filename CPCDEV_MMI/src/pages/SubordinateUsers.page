@@ -1,0 +1,109 @@
+<!-- 
+PageName : SubordinateUsers 
+CreatedBy : kirtesh Jain
+Created Date : May 19 , 2009
+-->
+
+<apex:page controller="SubordinateUsersRoles" id="pg">
+<apex:SectionHeader title="Manage Sales Reps - Available for Lead Assignment"></apex:SectionHeader>
+
+<apex:form id="frm">
+  <apex:pageMessages id="pageMsgLeadAss" />
+  
+  <apex:outputPanel layout="block" style="text-align:center;">
+    <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Updating Users. Please wait..."
+        id="loadingStatus" />
+  </apex:outputPanel>
+  
+  <apex:actionFunction action="{!updateUsers}" name="actionUpdateUsers" status="loadingStatus" rerender="pbLeadAss, pageMsgLeadAss">
+  </apex:actionFunction>
+
+ <apex:actionFunction action="{!sortData}" name="sortToDoData" status="sortStatusLeadAss" rerender="pbLeadAss, pageMsgLeadAss">
+    <apex:param name="sortField" assignTo="{!sortField}" value="" />
+ </apex:actionFunction>
+ 
+<apex:pageblock id="pbLeadAss">
+
+<apex:pageBlockButtons >
+    <input type="button" value="Update Users" onclick="actionUpdateUsers();"  class="btn" Style="display:{!IF(searchCount = 0 , 'none','block')}" />
+</apex:pageBlockButtons>
+
+<apex:outputLabel value="No Subordinate Users Available" rendered="{!(searchCount == 0)}" />
+
+<apex:pageBlockSection columns="1" rendered="{!NOT(searchCount==0)}">
+<apex:outputPanel layout="block" style="text-align:center;">
+  &nbsp;
+  <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+      id="sortStatusLeadAss" />
+</apex:outputPanel>
+
+<apex:pageblockTable id="tblUser" value="{!results}" var="user"   rendered="{!NOT(searchCount==0)}">
+     <apex:column headerValue="Available for Lead Assignment">
+          <apex:inputCheckbox value="{!user.Available_For_Leads__c}" />
+     </apex:column>
+     <apex:column value="{!user.Name}" >
+        <apex:facet name="header">
+         <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('Name');">User Name<img
+                src="{!IF(sortField = 'Name',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+         </apex:outputLink>
+        </apex:facet>
+     </apex:column>
+     <apex:column value="{!user.UserRole.Name}" >
+        <apex:facet name="header">
+        <apex:outputLink value="javascript:void(0);" onclick="sortToDoData('UserRole.Name');">Role<img
+                src="{!IF(sortField = 'UserRole.Name',IF(isAsc = true, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+       </apex:outputLink>
+        </apex:facet>
+     </apex:column>
+</apex:pageblockTable>
+
+<apex:outputPanel layout="block" style="white-space:nowrap;width:100%;"
+    rendered="{!NOT(searchCount==0)}" id="navigationPnlLeadAss">
+  <apex:outputPanel layout="block" style="text-align:center;">
+    &nbsp;
+    <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+        id="navigationStatusLeadAss" />
+  </apex:outputPanel>
+  <table width="100%"><tr width="100%">
+    <td style="text-align:left;">{!paginator.showingFrom} - {!paginator.showingTo} of {!paginator.totalResults}</td>
+    <td style="text-align:center;">
+      <apex:commandLink value="Previous Page" action="{!previousToDoPage}"
+          status="navigationStatusLeadAss" reRender="pbLeadAss, pageMsgLeadAss"
+          rendered="{!paginator.isPreviousPageAvailable}" />
+      <apex:outputText value="Previous Page" rendered="{!NOT(paginator.isPreviousPageAvailable)}" />
+      <apex:outputLabel value=" | " />
+      <apex:commandLink value="Next Page" action="{!nextToDoPage}"
+          status="navigationStatusLeadAss" reRender="pbLeadAss, pageMsgLeadAss"
+          rendered="{!paginator.isNextPageAvailable}" />
+      <apex:outputText value="Next Page" rendered="{!NOT(paginator.isNextPageAvailable)}" />
+    </td>
+    <td style="text-align:right;">Page {!paginator.currentPage} of {!paginator.totalPage}</td>
+  </tr></table>
+</apex:outputPanel>
+
+<!--
+<apex:outputPanel rendered="{!NOT(searchCount==0)}">
+ <table width="100%" >
+  <tr>
+   <td align="left" width="33%">
+        <div id="pagelinkblock" >
+           <div id="curstate"> {!paginator.showingFrom} - {!paginator.showingTo} of {!paginator.totalResults} </div>
+        </div>
+   </td>
+   <td align="center" width="33%" style="vertical-align:middle;">
+       <apex:outputLink value="javascript:void(0);" rendered="{!paginator.isPreviousPageAvailable}" onclick="previousToDoPage();">&lt;&lt;Previous</apex:outputLink>
+       <span id="div_mid1" >&nbsp;<apex:outputLabel value="|" rendered="{!paginator.isPreviousPageAvailable && paginator.isNextPageAvailable}" /> &nbsp;</span>
+        <apex:outputLink value="javascript:void(0);" rendered="{!paginator.isNextPageAvailable}" onclick="nextToDoPage();">Next&gt;&gt;</apex:outputLink>
+   </td>   
+   <td align="right" width="33%" style="vertical-align:middle;">
+        <div id="pagenumber">Page {!paginator.currentPage} of {!paginator.totalPage}</div>
+   </td>
+ </tr>
+</table> 
+</apex:outputPanel>
+-->
+
+</apex:pageBlockSection>
+</apex:pageblock>
+</apex:form>
+</apex:page>

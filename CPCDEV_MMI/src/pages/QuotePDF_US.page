@@ -1,0 +1,390 @@
+<apex:page sidebar="false" renderAs="pdf" showheader="false"  controller="QuotePDF_US" action="{!getPDFContent}" applyHtmlTag="false" applyBodyTag="false">
+       <head>
+            <style type="text/css" media="print">
+             @page {
+                    @top-right {
+                      content: "Page " counter(page) " of " counter(pages);
+                      font-weight: solid;
+                      font-size:10pt;
+                    }
+                }
+            </style>
+        </head> 
+               <div class="header" >
+                    <table width="100%">
+                        <tr>
+                            <td colspan="4">
+                                <table width="100%" style="padding-bottom: 20%;">
+                                    <tr align="center" >
+                                        <td width="50%" align="right"> 
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',false,true)}">
+                                                <img src="{!$Resource.mobileminiinc}" width="70%" height="70%" /> 
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                                <img src="{!$Resource.ETSLogo}" width="70%" height="70%" /> 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td width="60%" style=" padding-right: 20px; font-size: 30px; font-weight: bold;">Quotation</td>
+                                    </tr>
+                                    <tr align="center">
+                                        <td align="right" style="padding-right: 80px;">
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',false,true)}">
+                                                <a href="http://www.mobilemini.com/">www.mobilemini.com</a> 
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                                <a href="http://www.evergreentank.com/">www.evergreentank.com</a> 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <!--          <td style="padding-right: 20px;">Page <span class="pagenumber"/> of <span class="pagecount"/></td>  -->
+                                    </tr>           
+                                </table>
+                            </td>
+                        </tr>
+                        
+                    </table>
+               </div>
+               <!--  <apex:form >-->
+                     <div > 
+                        <table width="100%">
+                            <tr></tr><tr></tr>
+                            <tr  >
+                                <td width="40%" nowrap="nowrap">
+                                    <span align="left" style="padding-left: 5px; font-size: 20px; font-weight: bold;" >Branch Location:</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">{!brWklySnap.Street__c},</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">{!brWklySnap.City__c}, {!brWklySnap.State__c} {!brWklySnap.Zipcode__c}</span><br/>  <!-- , {!brWklySnap.Country__c} -->
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Salesperson Name: {!usrDetails.Name}</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Phone #: {!usrDetails.Phone} Ext #: {!usrDetails.Extension__c}  </span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Fax #: {!usrDetails.Fax}</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Email: {!usrDetails.Email}</span>
+                                     
+                                </td> 
+                                <td align="right" height="200%" colspan="2" style="padding-top: 20px;">
+                                    <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                        <img src="{!$Resource.ETSContainer}" style="width: 90%; height: 150%;"/> 
+                                    </apex:outputPanel>  
+                                <apex:outputPanel rendered="{!if(slaesorgID == '1500',false,true)}">
+                                    <img src="{!$Resource.mobileminiTheStoragePDF}" style="width: 100%; height: 80%;"/> 
+                                </apex:outputPanel>
+                                </td>
+                            </tr>
+                            <tr >
+                                <!-- <td align="left" style="padding-left: 40px;" colspan="2">
+                                    <div style="width:50px;height:50px;"> <a id="docusignAnchor" href="" style="color:white">\s1\</a>  </div>
+                                </td> -->
+                                
+                                <td style="padding-left: 10px;" colspan="3" >
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_1_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_1_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_2_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_2_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_3_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_3_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_4_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_4_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_5_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_5_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_6_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_6_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_7_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_7_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_8_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_8_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_9_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_9_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_10_approv\</a> &nbsp;&nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_10_reject\</a> &nbsp;&nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_11_approv\</a> &nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_11_reject\</a> &nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_12_approv\</a> &nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_12_reject\</a> &nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_13_approv\</a> &nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_13_reject\</a> &nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_14_approv\</a> &nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_14_reject\</a> &nbsp;
+                                    
+                                    <a id="docusignAnchorApp" href="" style="width:50px;height:50px;color:white;">\app_15_approv\</a> &nbsp;
+                                    <a id="docusignAnchorRej" href="" style="width:50px;height:50px;color:white;">\rej_15_reject\</a> &nbsp;
+                                    
+                                 </td>
+                                <!-- <td style="padding-left: 160px;"  >
+                                    <div style="width:50px;height:50px;"> <a id="docusignAnchorApp" href="" style="color:white">\app_2_approv\</a>  </div>
+                                 </td> -->                                
+                                <!-- <td style="padding-right: 100px;"  > 
+                                    <div style="width:50px;height:50px;padding-left: 15px;"><a id="docusignAnchorRej" href="" >\rej_1_reject\</a>  </div>
+                                </td>
+                                <!-- <td style="padding-right: 100px;"  > 
+                                    <div style="width:50px;height:50px;padding-left: 15px;"><a id="docusignAnchorRej" href="" style="color:white">\rej_2_reject\</a>  </div>
+                                </td> -->                                
+                            </tr>
+                            <tr style="border-bottom: 1px solid black;">
+                                <td colspan="3">
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="33%" nowrap="nowrap" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Customer:</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_address__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_City__c} , {!qHeader.Billling_State__c} {!qHeader.Billing_Zip__c}</span><br/> <!-- {!qHeader.Billing_Country__c} -->
+                                            </td>
+                                            <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Deliver To:</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>  <!-- {!delDetails.Name} -->
+                                                <span align="left" style="padding-left: 3px; font-size: 10px; ">{!qHeader.Shipto_address__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Shipto_City__c} , {!qHeader.Shipto_State__c} {!qHeader.Shipto_Zip__c}</span><br/> <!-- {!qHeader.Shipto_Country__c} -->
+                                                
+                                            </td>
+                                            <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quotation:</span><span style="padding-left: 2px; font-size: 12px;">{!qHeader.Transaction_Type__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Number:</span><span style="padding-left: 2px; font-size: 12px;">{!qHeader.Name}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Delivery Date:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteDeldate}"/> 
+                                                    </apex:outputText>
+                                                </span><br/>
+                                                <apex:outputPanel >  <!-- rendered="{!isRental}" -->
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quote expires:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteEnd}"/>
+                                                    </apex:outputText>
+                                                </span><br/>
+                                                </apex:outputPanel>
+                                            </td> 
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <br/> 
+                            <tr style="page-break-after:always;">
+                               <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                     <table width="100%" cellpadding="4">
+                                        <tr style="background-color: #BDBDBD">
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="5%;">Qty</td>   
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="70%;">Product Description</td>
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="130%;">Additional Information</td>  
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="70%;">Period</td>
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">Price Per Item</td>
+                                            
+                                            <!--
+                                            <apex:repeat value="{!listofcuststng}" var="charges">
+                                            <td  style="white-space: nowrap ;border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">{!charges}</td>
+                                            </apex:repeat>
+                                            
+                                            -->
+                                            
+                                            <!--   <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">Period</td> -->
+                                       </tr>
+                                       
+                                        <apex:repeat value="{!quoteItems}" var="qi" rendered="{!shownormalitems}">
+                                            <tr style="font-size: 12px;">
+                                                <td><center><apex:outputLabel value="{!FLOOR(qi.Quoteitemlevels.Quantity__c)}"/></center></td>  
+                                                <td>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}"> 
+                                                        <b><apex:outputText value="{!qi.Quoteitemlevels.Description__c}" /></b>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                                        <apex:outputText style="padding-left:15px;" value="{!qi.Quoteitemlevels.Description__c}" />
+                                                    </apex:outputPanel>
+                                                </td>
+                                                
+                                                <td style="padding-left:15px;">
+                                                    <apex:outputPanel > <!-- rendered="{!OR(if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',false,true),if(qi.Quoteitemlevels.Accessory__c != 'X',false,true))}"  -->
+                                                        {!qi.Quoteitemlevels.Short_Text__c}
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td style="white-space: nowrap"><center><apex:outputText value="{!IF(qi.Quoteitemlevels.Recurring__c != null ,'Per Period','One Time')}" />
+                                                   </center>
+                                                </td>
+                                                <apex:repeat value="{!qi.itemchargs}" var="chgs">
+                                                   <td style="text-align:left"> 
+                                                   <apex:outputLabel value="{!currencysymbol}" rendered="{!if(chgs='--',false,true)}"/><apex:outputLabel value="{!chgs}" /> 
+                                                   </td>
+                                                </apex:repeat>
+                                                   
+                                                
+                                            </tr>   
+                                        </apex:repeat>
+                                        
+                                        
+                                        
+                                        
+                                        <apex:repeat value="{!quoteItems}" var="qi" rendered="{!showextendeditems}">
+                                            <tr style="font-size: 12px;">
+                                                <td><center>
+                                                <apex:outputLabel value="{!FLOOR(qi.Quoteitemlevels.Quantity__c)}"/></center></td>  
+                                                <td>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}"> 
+                                                        <b><apex:outputText value="{!qi.Quoteitemlevels.Description__c}" /></b>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                                        <apex:outputText style="padding-left:15px;" value="{!qi.Quoteitemlevels.Description__c}" />
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td style="padding-left:15px;">
+                                                
+                                                    <apex:outputPanel >  <!-- rendered="{!OR(if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',false,true),if(qi.Quoteitemlevels.Accessory__c != 'X',false,true))}" -->
+                                                        {!qi.Quoteitemlevels.Short_Text__c}
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td style="white-space: nowrap"><center><apex:outputText value="{!IF(qi.Quoteitemlevels.Recurring__c != null ,'Per Period','One Time')}" />
+                                                   </center>
+                                                </td>
+                                                <apex:repeat value="{!qi.itemchargs}" var="chgs">
+                                                   <td style="text-align:left"> 
+                                                   <apex:outputLabel value="{!currencysymbol}" rendered="{!if(chgs='--',false,true)}"/><apex:outputLabel value="{!chgs}" /> 
+                                                   </td>
+                                                </apex:repeat>
+                                             
+                                            </tr>  
+                                            <script>alert('{!qi.subitemlist}'.length);</script>
+                                            <apex:repeat value="{!qi.subitemlist}" var="subitems" >
+                                                
+                                                <tr style="font-size: 12px;">
+                                                    
+                                                    <td><center><apex:outputLabel value="{!FLOOR(qi.Quoteitemlevels.Quantity__c)}"/></center></td>  
+                                                    <td>
+                                                        <apex:outputPanel > <!-- rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}" -->
+                                                            <apex:outputText style="padding-left:25px;" value="{!subitems.Description__c}" />
+                                                        </apex:outputPanel>
+                                                        <!-- <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                                            <apex:outputText style="padding-left:25px;" value="{!subitems.Description__c}" />
+                                                        </apex:outputPanel> -->
+                                                    </td>
+                                                    <td style="padding-left:15px;"></td>
+                                                    <td style="white-space: nowrap"><center><apex:outputText value="{!IF(OR(subitems.Description__c = 'LLW',subitems.Description__c = 'PPE') ,'Per Period','One Time')}" />
+                                                   </center></td>
+                                                   
+                                                    <td style="text-align:left">
+                                                        <apex:outputLabel value="{!currencysymbol}" rendered="{!if(subitems.Actual_Amount__c=null,false,true)}"/>
+                                                        <!-- <apex:outputLabel value="{!CEILING((subitems.Actual_Amount__c/qi.Quoteitemlevels.Quantity__c))}" /> -->
+                                                        <apex:outputText value="{0, number, 0.00}">
+                                                              <apex:param value="{!subitems.Actual_Amount__c/qi.Quoteitemlevels.Quantity__c}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </apex:repeat>
+                                        
+                                    
+                                        <tr>
+                                            <td colspan="5"><hr/></td>
+                                        </tr><!--
+                                        <tr style="font-size: 12px;">
+                                            <td></td>
+                                            <td colspan="3"> <apex:outputLabel rendered="{!if((qHeader.Shipto_State__c  = 'CA' || qHeader.Shipto_State__c  = 'CO' || qHeader.Shipto_State__c  = 'AR' || qHeader.Shipto_State__c  = 'MO' || qHeader.Shipto_State__c  = 'MI' || qHeader.Shipto_State__c  = 'NV') && slaesorgID == '1000',true,false)}">[Other Fees and Charges CA,AR,CO,MI,NV,MO] </apex:outputLabel> </td>
+                                        </tr> -->
+                                        <tr>
+                                           
+                                            <td colspan="4" style="padding-left: 450px; font-size: 14px; font-weight: bold;"><u>Totals:</u></td>
+                                        </tr>
+                                        <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                                            <tr style="font-size: 12px;"> 
+                                                
+                                                <td colspan="4" style="padding-left: 450px;">   
+                                                    <apex:outputLabel value="{!if((qHeader.Shipto_State__c  = 'CA' || qHeader.Shipto_State__c  = 'CO' || qHeader.Shipto_State__c  = 'AR' || qHeader.Shipto_State__c  = 'MO' || qHeader.Shipto_State__c  = 'MI' || qHeader.Shipto_State__c  = 'NV') && qsi.Description__c = 'Total Taxes' && slaesorgID == '1000','Other Fees and Charges',qsi.Description__c)}" />    
+                                                 </td>
+                                                 <td  align="left" >
+                                                    {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                                                 </td>
+                                            </tr>
+                                        </apex:repeat>
+                                        
+                                    </table>
+                                </td>
+                            </tr> 
+                            <tr style="page-break-inside:avoid;">
+                                <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span style="font-size: 10px; font-weight: bold;">Clarifications:</span> <span style="font-size: 10px;"> This Quotation is based on the standard terms and conditions of the Mobile Mini Rental or Sale Agreement. Customer is responsible for all taxes, permits, fees, licenses, utility connections, foundation engineering, and the preparation of a level, compact 2000psf soil bearing capacity and accessible site. Mobile Mini does not warrant that the equipment meets any local or state code not specifically listed.</span><br/><br/> 
+                                                <span style="font-size: 10px;"><apex:outputLabel value="Mobile Mini Federal ID Codes: DUNS # 118062157, CAGE CODE # 0KWJ4"/></span><br/><br/>
+                                                <span style="font-size: 10px;"><apex:outputLabel value="All sales are final, Customer is responsible for all maintenance and repair of the purchased unit." rendered="{!!isRental}" /></span>
+                                                <span style="font-size: 10px;"><apex:outputLabel value="Customer must insure all Mobile Mini leased equipment. One period equals four weeks." rendered="{!isRental}" /></span> <span style="font-size: 10px; font-weight: bold;"><apex:outputLabel value="When scheduling a PICK-UP, we require a 10 business days notice. The final billing cycle will be determined by the date the pickup is scheduled." rendered="{!isRental}" /></span><span style="font-size: 10px;"><apex:outputLabel value="Rental charges apply for the earlier of 5 days after pick-up request or actual pick-up date." rendered="{!isRental}" /></span><br/><br/>
+                                                <span style="font-size: 10px;"><apex:outputLabel value="**All Offices Require a TWO Period Minimum Rental Length**" rendered="{!isRental}" /></span>
+                                                <span style="font-size: 10px;"><apex:outputLabel value="Seller notifies buyer that seller has assigned its right (but not its obligations) in this quote, for the equipment described herein, to Mobile Mini Exchange LLC, a qualified intermediary, as part of an Internal Revenue Code Section 1031 exchange program." rendered="{!!isRental}" /></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td> 
+                            </tr>
+                        </table> 
+                    </div>
+                        <table width="100%">
+                            <tr width="100%" style="page-break-inside:avoid;">
+                                <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                    <table width="100%">
+                                        
+                                        <tr align="center"><td><span style="font-size: 12px; font-weight: bold;">Mobile Mini Master Lease Agreement Terms &amp; Conditions</span></td></tr>
+                                        <tr>
+                                            <td>
+                                                <span style="font-size: 10px; font-weight: bold;">1.&nbsp;&nbsp;&nbsp;&nbsp;Lease.</span> <span style="font-size: 10px;"> Customer ("you") hereby lease from Mobile Mini ("<u>MMI</u>") all units and equipment (including stairs) identified on the reverse hereof and any future substituted or added units (collectively, "<u>Units</u>"). This Master Lease will govern all future rentals unless agreed in writing otherwise. 
+                                                &nbsp;Unless identified in writing as a sale, you shall not acquire any ownership interest in any Unit. The term of a Unit lease ("<u>Lease</u>") commences upon the date of delivery of a Unit and continues on a monthly (meaning every 28 days) basis (each a "<u>Period</u>") until terminated as provided herein. You agree to pay MMI the lease charges, sales and prorated personal property tax assessments or comparable amounts, delivery, pickup and fuel charges, Loss Limitation Waiver
+                                                 charge, waiting time charges if delivery/pickup exceeds one hour on-site, and other charges set forth in invoices delivered to you (collectively, "<u>Charges</u>"). Unless agreed to otherwise by MMI, all Charges are due monthly in advance without demand. Charges and terms of this Lease are subject to change upon notice to you and shall be effective upon the earlier of payment by Customer of its next invoice or the next Charges due date. You shall owe
+                                                all Charges for each Period regardless of the number of days Units were on-rent and there will be no return of Charges in the event a Unit is returned prior to the end of a Period. You shall pay as liquidated damages (not a penalty) $25 (and any bank fees) for dishonored checks and 15% of unpaid pretax Charges after each Charges’ due date. If you have provided MMI with credit card information, you authorize MMI to charge your credit card for all
+                                                Charges. Following each Period, each Lease shall renew automatically for additional Periods until you give MMI at least 5 working days notice to terminate a Lease. You shall pay in advance the deposit indicated to secure your performance of a Lease. The deposit will be returned if you request in writing within 30 days of Unit's return in undamaged condition or revert to MMI for its own account if not so requested. MMI may apply the deposit for
+                                                damage and any other Charges and you will replace such deposit amounts if Units are still on rent. Any payments made by you to MMI above Charges owed each Period shall revert to MMI for its own account if not claimed by Customer in writing within 30 days of such payment.</span><br/> 
+                                            </td></tr>    
+                                            <tr><td>    
+                                                <span style="font-size: 10px; font-weight: bold;">2.&nbsp;&nbsp;&nbsp;&nbsp;Delivery, Use and Removal.</span>
+                                                <span style="font-size: 10px;"> You may either pickup/return Units (upon meeting MMI insurance/indemnification requirements) or pay for MMI delivery/return. You may store Units at your delivery location or pay MMI to store Units at a MMI facility and agree Units may be stored by MMI at an alternative location in MMI’s sole discretion. By using Units you or your agent accept the Units as free of defects, in good repair and working condition.
+                                                You agree to inspect Units prior to use and to notify MMI in writing of any defect. Regardless of being in transit, at your location or a MMI facility, you shall be solely responsible for all loss, theft and damages (except ordinary wear and tear) to Units, Unit contents ("<u>Contents</u>") and your premises or other property, for any cause whatsoever, including (without limitation) damages caused by theft, vandalism, forces of nature, leaking of any Unit, condensation, humidity, or damages relating to the delivery or removal of a Unit. You shall not allow habitation in Units or store dangerous, illegal,
+                                                unsanitary, explosive, staining, malodorous or hazardous materials in any Unit, remove any Unit from the United States or alter any Unit in any way (including drilling holes, painting or affixing signs). You agree not to store collectibles, currency, software, heirlooms, jewelry, works of art or anything having sentimental value to you and waive any claim for emotional or sentimental attachment to the Contents. If a Unit is delivered and placed by MMI, you
+                                                must contact MMI to relocate any Unit and obtain MMI's written consent or pay MMI's then-current relocation rates. You shall pay MMI all Charges to clean, paint, repair, remove locks, make immediately ready for re-lease any Unit and to remove, store, retain or dispose of Contents. You shall keep Units freely accessible at all times to inspection and removal by MMI. If a Unit is destroyed, damaged beyond repair, lost, stolen, not returned to or not
+                                                repossessed by MMI, you shall pay MMI the replacement value of such Unit, plus applicable taxes. You assume full responsibility for identifying and complying with local ordinances and for any fines and/or penalties, monetary or other, resulting from your use or placement of Units in violation of such ordinances, rules and/or regulations. You must call MMI to schedule Unit return or removal. MMI will attempt to schedule delivery/removal of the Unit as
+                                                requested by you but rental Charges will continue until delivery/removal of the Unit is completed. You are responsible to remove all locks and clean and empty the Unit prior to removal by or return to MMI. MMI may remove all locks, empty Unit and any Contents left in Units may become MMI property without payment. You shall pay additional removal charges (including for failed attempts) if a Unit isn’t ready for MMI removal or for changes in site
+                                                condition. MMI's driver or agent may refuse a delivery/removal and MMI can charge Customer if such cannot be accomplished due to safety or potential damage. You authorize MMI to attempt to place Units pursuant to your instructions on a driveway or other paved surface accessible from a street, over your lawn or other non-paved area and you represent that any placement area will have adequate size, clearance and structural integrity to sustain the
+                                                weight and size of the Unit(s), delivery truck and any other related equipment.
+                                                </span><br/>
+                                            </td></tr>    
+                                            <tr><td>     
+                                                <span style="font-size: 10px; font-weight: bold;">3.&nbsp;&nbsp;&nbsp;&nbsp;Warranty Disclaimer.</span> 
+                                                <span style="font-size: 10px;"> You shall maintain the Unit in good condition. You are responsible to weekly inspect the Unit’s interior and exterior to assure it is in good working condition. You shall keep each Unit free from all liens and grant MMI a contractual lien and security interest (as of the date any Charges are unpaid and due) on all Contents and proceeds thereof to secure payment of Charges. <b> <span style="font-size: 11px;">MMI MAKES NO WARRANTY OF ANY
+                                                KIND, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY OR FITNESS FOR PARTICULAR PURPOSE, PERFORMANCE, QUALITY, DESIGN, CONDITION, SAFETY OR SECURITY OF UNITS OR MMI FACILITIES OR COMPLIANCE WITH LAW AND YOU AGREE YOU HAVE SOLELY DETERMINED THAT THE UNITS ARE
+                                                SUITABLE FOR YOUR INTENDED USE</span></b>. You lease the Units "as is." MMI shall not be liable for any damages, loss of profits, loss of or damage to property stored in or around the Units, loss of income, personal injury, death or other damages, direct or indirect, consequential or otherwise of you or your agents or invitees for any reason. You shall indemnify, hold harmless, defend and reimburse MMI and its directors, officers, employees, and agents
+                                                ("<u>MMI Related Parties</u>") from and against all losses, damages, death, claims, injuries, costs and attorney's fees arising directly or indirectly from (i) the use, delivery, removal or condition of Units, (ii) the loss of, damage to or destruction of Units and/or Contents (iii) any fine, liens, tax, penalty, towing, impound or other charges arising from your use of the Units or (iv) your breach of this Lease. Units shall not be attached or affixed to real property.
+                                                <u>Customer acknowledges that it will not store above the maximum value and weight of Contents of Units set forth on MMI's rental documents and such value shall be conclusive as to the maximum value of all Contents</u>. <u>Individual items shall be limited to $.60 per pound up to the Content maximum value</u>. This maximum value is significant consideration in the establishment of rental price. 
+                                                </span><br/>
+                                            </td></tr>    
+                                            <tr><td>   
+                                                <span style="font-size: 10px; font-weight: bold;">4.&nbsp;&nbsp;&nbsp;&nbsp;Insurance and Loss Limitation Waiver</span>
+                                                <span style="font-size: 10px;"> ("<u>LLW</u>"). Neither you nor your insurer shall have any claim (direct or by way of subrogation) against MMI or MMI Related Parties for any loss or damage to any property resulting from any casualty.<b><span style="font-size: 11px;"> INSURANCE FOR UNIT CONTENTS IS YOUR RESPONSIBILITY--MMI DOES NOT PROVIDE ANY INSURANCE</span></b>. You will provide prior to delivery or upon request a Certificate of Insurance naming MMI as loss payee and additional insured with coverage equal to the Unit replacement cost. The policy shall be acceptable to MMI in its
+                                                discretion and provide for 30 days notice to MMI prior to cancellation or modification. Unless you maintain such policy, you accept the LLW and shall pay its Charge. LLW terms are published on <i>www.mobilemini.com</i>/LLW and hereby incorporated by reference. You acknowledge receipt of such terms and that they are part of each Lease. Your payment of the LLW waives your liability for Units (not Contents) up to the replacement cost of Units (subject to $1,000 deductible per occurrence for all non-storage container Units) for certain limited types of loss other than flood and windstorm damage to
+                                                modular offices located within 150 miles of coastal waters.</span><br/>
+                                            </td></tr>    
+                                            <tr><td>       
+                                                <span style="font-size: 10px; font-weight: bold;">5.&nbsp;&nbsp;&nbsp;&nbsp;Miscellaneous.</span>
+                                                <span style="font-size: 10px;">MMI may terminate this Lease at any time without notice for any reason whatsoever. You release any claim that MMI has duties of a bailee or under "warehouseman" laws. Each of the following constitute an "<u>Event of Default:</u>" (a) you fail to perform any term of any Lease, (b) you have bankruptcy, reorganization or insolvency proceedings threatened or instituted, or (c) if MMI has a reasonable belief of an anticipatory default by you. upon an Event of Default MMI may, without legal process or notice, terminate a Lease, enter any premises where a Unit is located, repossess Units,
+                                                remove any locks on your property or Units, remove Contents without regard to their protection or pursue any other remedy available. You irrevocably grant MMI unrestricted access to your property and permission to enter day or night, remove locks, disconnect attached utilities and repossess Units. If a Unit is repossessed, MMI is approved in advance to remove Contents or exercise its lien and hold Contents and you shall have no claim against MMI for damaged Contents. If you do not pay all Charges due and remove all Contents from MMI premises, you grant MMI permission to dispose of/sell Contents
+                                                in accordance with applicable state law and apply net proceeds to unpaid Charges. Customer releases and agrees to indemnify MMI and MMI Related Parties from any claims for trespass, conversion or damages of any nature arising from repossession. You agree to pay, as liquidated damages, MMI's collection/repossession/disposal fees, attorney's fees and any other cost incurred by reason of any Event of Default or the exercise of MMI's remedies. Repossession of a Unit shall not relieve you of your obligation to pay Charges owed hereunder. No remedy referred to is exclusive, and each shall be in
+                                                addition to any remedy referred to herein or otherwise available to MMI. If MMI seeks to recover or repossess Units by means of "writ of replevin" or similar method, you waive any security or bond posting requirement prior to such process. Acceptance of partial payment shall not constitute a waiver of MMI's right to full payment. Any endorsements appearing on your checks shall not affect Charges owed. You shall not transfer or hypothecate the Unit, assign your duties hereunder or sublease the Unit. MMI may assign, pledge or transfer this Lease without your consent. Except as provided in Section 1, a
+                                                Lease may only be amended in writing executed by the parties, shall be governed by the state laws where this Lease was executed by MMI ("Jurisdiction") and contains the entire understanding of the parties and supersedes the terms of any purchase order or similar document from you or any other agreement among the parties. Any suit regarding this Agreement shall be brought in the Jurisdiction provided that MMI may bring suit against you in any county where the Unit or Customer is located. If any term hereof is unenforceable, such invalidity shall not affect the enforceability of the Lease or any other provision. 
+                                                This Lease may be executed in multiple counterparts including by fax or other electronic transmission, each of which shall be regarded as an original and constitute one instrument. Your indemnity obligations shall survive termination of a Lease. <b><span style="font-size: 11px;">You agree that MMI's total aggregate liability under this Lease shall not exceed $5,000. MMI, you and any of your agents, or invitees waive any right to trial by jury for any cause of action brought against MMI or MMI Related Parties</span></b>. Both parties agree to exclusively abide by the access, lien and lien sale procedures
+                                                herein and waive to the fullest extent possible any legal requirements for other access, lien, notice and/or sale procedures.</span>
+                                                
+                                                
+                                            </td></tr>
+                                        
+                                    </table>
+                                </td> 
+                            </tr>
+                        </table> 
+                                        
+                    
+                <!-- </apex:form> -->
+                
+    </apex:page>

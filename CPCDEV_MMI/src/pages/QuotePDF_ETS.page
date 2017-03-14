@@ -1,0 +1,573 @@
+<apex:page renderAs="pdf" controller="QuotePDF_US" action="{!getPDFContent}" title="QuotePDF">
+ 
+       <head>
+           <title>QuotePDF</title>
+            <style type="text/css" media="print">
+             @page {
+                    @top-right {
+                      content: "Page " counter(page) " of " counter(pages);
+                      font-weight: solid;
+                      font-size:10pt;
+                    }
+                }
+                li{
+                    margin-top: 10px;
+                    border:1px solid grey;
+                }
+
+            </style>
+        </head> 
+    
+               <div class="header" >
+                    <table width="100%">
+                        <tr>
+                            <td colspan="4">
+                                <table width="100%" style="padding-bottom: 20%;">
+                                    <tr align="center" >
+                                        <td width="50%" align="center"> 
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1501',true,false)}">
+                                                <img src="{!$Resource.WMILogo}" width="25%" height="25%" /> 
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}"> 
+                                                <img src="{!$Resource.ETSLogo}" width="70%" height="70%" /> 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td width="60%" style=" padding-right: 20px; font-size: 30px; font-weight: bold;">Quotation</td>
+                                    </tr>
+                                    <tr align="center">
+                                        <td align="right" style="padding-right: 80px;">
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1501',true,false)}">
+                                                <a href="http://www.watermovers.com/">www.watermovers.com</a> 
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                                <a href="http://www.evergreentank.com/">www.evergreentank.com</a> 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <!--          <td style="padding-right: 20px;">Page <span class="pagenumber"/> of <span class="pagecount"/></td>  -->
+                                    </tr>           
+                                </table>
+                            </td>
+                        </tr>
+                        
+                    </table>
+               </div>
+               <!--  <apex:form >-->
+                     <div > 
+                        <table width="100%">
+                            <tr></tr><tr></tr>
+                            <tr  >
+                                <td width="40%" nowrap="nowrap">
+                                    <span align="left" style="padding-left: 5px; font-size: 20px; font-weight: bold;" >Branch Location:</span><br/>
+                                    <!-- <span align="left" style="padding-left: 5px; font-size: 10px;">{!brWklySnap.Street__c},</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">{!brWklySnap.City__c}, {!brWklySnap.State__c} {!brWklySnap.Zipcode__c}</span><br/>   , {!brWklySnap.Country__c} -->
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;"> {!usrDetails.street},</span><br/> 
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">{!usrDetails.city}, {!usrDetails.State} {!usrDetails.PostalCode}</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Salesperson Name: {!usrDetails.Name}</span><br/>
+                                    <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                        <span align="left" style="padding-left: 5px; font-size: 10px;">Phone #: {!usrDetails.Phone} Ext #: {!usrDetails.Extension__c}  </span><br/>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!if(slaesorgID == '1501',true,false)}">
+                                        <span align="left" style="padding-left: 5px; font-size: 10px;">Phone #: {!usrDetails.Phone} </span><br/>
+                                    </apex:outputPanel>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Fax #: {!usrDetails.Fax}</span><br/>
+                                    <span align="left" style="padding-left: 5px; font-size: 10px;">Email: {!usrDetails.Email}</span>
+                                    <br/><br/>  
+                                </td> 
+                                <td align="right" height="200%" colspan="2" style="padding-top: 20px;">
+                                      
+                                    <apex:outputPanel rendered="{!if(slaesorgID == '1501',true,false)}">
+                                         <img src="{!$Resource.WMIContainer}" style="width: 90%; height: 80%;"/>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!if(slaesorgID == '1500',true,false)}">
+                                        <img src="{!$Resource.ETSContainer}" style="width: 90%; height: 150%;"/> 
+                                    </apex:outputPanel>
+                                </td>
+                            </tr>
+                            <!-- <tr rowspan="3">
+                                <td align="left" style="padding-left: 40px;" colspan="2">
+                                    <div style="width:50px;height:50px;"> <a id="docusignAnchor" href="" style="color:white">\s1\</a>  </div>
+                                </td>
+                            </tr> -->
+                            <tr style="border-bottom: 1px solid black;">
+                                <td colspan="3">
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="33%" nowrap="nowrap" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Customer:</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_address__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_City__c} , {!qHeader.Billling_State__c} {!qHeader.Billing_Zip__c}</span><br/> <!-- {!qHeader.Billing_Country__c} -->
+                                            </td>
+                                            <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Deliver To:</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px; ">{!qHeader.Shipto_address__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Shipto_City__c} , {!qHeader.Shipto_State__c} {!qHeader.Shipto_Zip__c}</span><br/> <!-- {!qHeader.Shipto_Country__c} -->                        
+                                            </td>
+                                            <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black;">
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quotation:</span><span style="padding-left: 2px; font-size: 12px;">{!qHeader.Transaction_Type__c}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Number:</span><span style="padding-left: 2px; font-size: 12px;">{!qHeader.Name}</span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">No Of Days:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <!--<apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteNOofdates}"/> 
+                                                    </apex:outputText>-->
+                                                    {!quoteNOofdates}
+                                                </span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Delivery Date:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteDeldate}"/> 
+                                                    </apex:outputText>
+                                                </span><br/>
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">End Date:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteEnddate }"/> 
+                                                    </apex:outputText>
+                                                </span><br/>
+                                                <apex:outputPanel >  <!-- rendered="{!isRental}" -->
+                                                <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quote expires:</span>
+                                                <span style="padding-left: 2px; font-size: 10px;">
+                                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                        <apex:param value="{!quoteEnd}"/>
+                                                    </apex:outputText>
+                                                </span><br/>
+                                                </apex:outputPanel>
+                                            </td> 
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <br/> 
+                            <tr style="page-break-after:always;">
+                               
+                               <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                  <apex:outputPanel rendered="{!!showlumpSum}">   
+                                     <table width="100%" cellpadding="4">
+                                        <tr style="background-color: #BDBDBD">
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="5%;">Qty</td>   
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>
+                                            <td style="border-bottom: font-size: 14px; white-space: nowrap ; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="120%;">Additional information</td>
+
+                                   <!--         <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">Period</td> -->
+                                            
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">&nbsp;Daily&nbsp;</td>
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">Weekly</td>
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">Monthly</td>
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;">Total Amount</td>
+
+                                            <!--
+                                            <apex:repeat value="{!listofcuststng}" var="charges">
+                                            <td  style="white-space: nowrap ;border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">{!charges}</td>
+                                            </apex:repeat>
+                                            -->
+                                            
+                                            <!--   <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">Period</td> -->
+                                        </tr>
+                                      
+                                        <apex:repeat value="{!quoteItems}" var="qi" >
+                                          <tr style="font-size: 12px;">   
+                                                
+                                                    <td><center>{!qi.Quoteitemlevels.Quantity__c}</center></td>  
+                                                    <td>
+                                                        <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}"> 
+                                                            <b><apex:outputText value="{!qi.Quoteitemlevels.Description__c}" /></b>
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                                            <apex:outputText style="padding-left:15px;" value="{!qi.Quoteitemlevels.Description__c}" />
+                                                        </apex:outputPanel>
+                                                        : $ {!qi.pricePerLineItm} each
+                                                        
+                                                    </td>
+                                                  <!--  <td style="white-space: nowrap"><center><apex:outputText value="{!IF(qi.Quoteitemlevels.Recurring__c != null ,'Per Period','One Time')}" />
+                                                       </center>
+                                                    </td> -->
+                                                    <td style="padding-left:15px;">
+                                                    <apex:outputPanel > <!-- rendered="{!OR(if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',false,true),if(qi.Quoteitemlevels.Accessory__c != 'X',false,true))}" -->
+                                                        {!qi.Quoteitemlevels.Short_Text__c}
+                                                    </apex:outputPanel>
+                                                    </td>  
+                                                    <apex:repeat value="{!qi.itemchargs}" var="chgs">
+                                                       <td style="text-align:left"> 
+                                                       <apex:outputLabel value="{!currencysymbol}" rendered="{!if(chgs='--',false,true)}"/><apex:outputLabel value="{!chgs}" /> 
+                                                       </td>
+                                                    </apex:repeat>
+                                          </tr>          
+                                                    <!--
+                                                    <td>
+                                                        <apex:outputPanel rendered="{!isRental}"> 
+                                                            <apex:outputLabel value="{!qi.Quoteitemlevels.Period__c}" />
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!isRental}">
+                                                            <apex:outputLabel value="{!qi.Quoteitemlevels.Period__c}"  />
+                                                        </apex:outputPanel>
+                                                    </td>
+                                                     --> 
+                                             
+                                             <apex:repeat value="{!qi.subitemlist}" var="subitems" >
+                                                <!-- <apex:outputPanel rendered="{!if(AND(subitems.Description__c != 'LLW',subitems.Description__c != 'PPE'),true,false)}">  -->
+                                                <tr style="font-size: 12px;">
+                                                        
+                                                    <td><center><apex:outputLabel value="{!qi.Quoteitemlevels.Quantity__c}" /></center></td>  
+                                                    <td colspan="2"><apex:outputLabel style="padding-left:25px;" value="{!subitems.Description__c}"/> : $ 
+                                                        <apex:outputText value="{0, number, 0.00}">
+                                                            <apex:param value="{!If(qi.Quoteitemlevels.Quantity__c > 0,subitems.Actual_Amount__c/qi.Quoteitemlevels.Quantity__c,subitems.Actual_Amount__c)}" />
+                                                        </apex:outputText> each
+                                                    </td>
+                                                    <!--<td style="padding-left:15px;"></td> -->
+                                                    <td style="text-align:left">
+                                                     <apex:outputLabel value="--" />
+                                                     </td>
+                                                     <td style="text-align:left">
+                                                      <apex:outputLabel value="--" />
+                                                     </td>
+                                                     <td style="text-align:left">
+                                                       <apex:outputLabel value="--" />
+                                                     </td>
+                                                    <td style="text-align:left"> 
+                                                        <apex:outputLabel value="{!currencysymbol}" rendered="{!if(subitems.Actual_Amount__c!=null,true,false)}"/>
+                                                        <!-- <apex:outputLabel value="{!CEILING((subitems.Actual_Amount__c/qi.Quoteitemlevels.Quantity__c))}" /> -->
+                                                        <apex:outputText value="{0, number, 0.00}">
+                                                              <!-- <apex:param value="{!If(qi.Quoteitemlevels.Quantity__c > 0,subitems.Actual_Amount__c/qi.Quoteitemlevels.Quantity__c,subitems.Actual_Amount__c)}" /> -->
+                                                              <apex:param value="{!subitems.Actual_Amount__c}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                    
+                                                </tr> <!-- </apex:outputPanel> -->
+                                            </apex:repeat>
+                                         
+                                        
+                                 </apex:repeat>       
+                                         
+                                        
+                                       <!--
+                                         <tr>
+                                             <td colspan="10" style="font-size: 12px;font-weight: bold;"><u>SALES ITEMS:</u></td>
+                                         </tr>
+                                        --> 
+                                        
+                                         <apex:repeat value="{!quoteItems2}" var="qi">
+                                            
+                                                <tr style="font-size: 12px;">
+                                                    <td><center>{!qi.Quoteitemlevels.Quantity__c}</center></td>  
+                                                    <td>
+                                                        <apex:outputPanel rendered="{!isRental}"> 
+                                                            <apex:outputText value="{!IF(qi.Quoteitemlevels.Description__c != null ,qi.Quoteitemlevels.Description__c,qi.Quoteitemlevels.Item_Code__c)}" />
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!isRental}"> 
+                                                            <apex:outputText value="{!IF(qi.Quoteitemlevels.Description__c != null ,qi.Quoteitemlevels.Description__c,qi.Quoteitemlevels.Item_Code__c)}" />
+                                                        </apex:outputPanel>
+                                                    </td>
+                                                <!--    <td style="white-space: nowrap"><center><apex:outputText value="{!IF(qi.Quoteitemlevels.Recurring__c != null ,'Per Period','One Time')}" />
+                                                       </center>
+                                                    </td> -->
+                                                    <apex:repeat value="{!qi.itemchargs}" var="chgs">
+                                                       <td style="text-align:left"> 
+                                                       <apex:outputLabel value="{!currencysymbol}" rendered="{!if(chgs='--',false,true)}"/><apex:outputLabel value="{!chgs}" rendered="{!if(chgs='--',false,true)}" /> 
+                                                       </td>
+                                                    </apex:repeat>
+                                                       
+                                                    <!--
+                                                    <td>
+                                                        <apex:outputPanel rendered="{!isRental}"> 
+                                                            <apex:outputLabel value="{!qi.Quoteitemlevels.Period__c}" />
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!isRental}">
+                                                            <apex:outputLabel value="{!qi.Quoteitemlevels.Period__c}"  />
+                                                        </apex:outputPanel>
+                                                    </td>
+                                                     --> 
+                                                </tr> 
+                                            
+                                        </apex:repeat>
+                                        
+                                        <tr>
+                                             <td colspan="7"><hr/></td>
+                                         </tr>
+                                        <tr>
+                                            <td colspan="4" style="padding-left: 40px; font-size: 14px; font-weight: bold;"><u>Totals:</u></td>
+                                        </tr>
+                                        <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                                            <tr style="font-size: 12px;"> 
+                                                <td></td>
+                                                <td>   
+                                                    <apex:outputLabel value="{!qsi.Description__c}" />   
+                                                 </td>
+                                                 <td colspan="11" align="left" style="padding-left:350px" >
+                                                    {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                                                 </td>
+                                            </tr>
+                                        </apex:repeat>
+                                        
+                                    </table>
+                                  </apex:outputPanel>
+                                  
+                                  <apex:outputPanel rendered="{!showlumpSum}">
+                                      
+                                      <table width="100%" cellpadding="4">
+                                        <tr style="background-color: #BDBDBD">
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" >Qty</td>
+                                            <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="65%;">Product Description</td>
+                                            <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;" >Additional Information&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        </tr>
+                                        
+                                        <apex:repeat value="{!quoteItems}" var="qi" >
+                                            <tr style="font-size: 12px;">   
+                                                <td><center>{!qi.Quoteitemlevels.Quantity__c}</center></td>  
+                                                <td>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}"> 
+                                                            <b><apex:outputText value="{!qi.Quoteitemlevels.Description__c}" /></b>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                                        <apex:outputText style="padding-left:15px;" value="{!qi.Quoteitemlevels.Description__c}" />
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td style="padding-left:15px;">
+                                                    <apex:outputPanel > 
+                                                        {!qi.Quoteitemlevels.Short_Text__c}
+                                                    </apex:outputPanel>
+                                                </td>       
+                                            </tr>          
+                                                
+                                            <apex:repeat value="{!qi.subitemlist}" var="subitems" >
+                                                <tr style="font-size: 12px;">
+                                                    <td><center><apex:outputLabel value="{!qi.Quoteitemlevels.Quantity__c}" /></center></td>  
+                                                    <td colspan="2"><apex:outputLabel style="padding-left:25px;" value="{!subitems.Description__c}"/></td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </apex:repeat>       
+                                        
+                                        <apex:repeat value="{!quoteItems2}" var="qi">
+                                            <tr style="font-size: 12px;">
+                                                <td><center>{!qi.Quoteitemlevels.Quantity__c}</center></td>  
+                                                <td colspan="2">
+                                                    <apex:outputPanel rendered="{!isRental}"> 
+                                                        <apex:outputText value="{!IF(qi.Quoteitemlevels.Description__c != null ,qi.Quoteitemlevels.Description__c,qi.Quoteitemlevels.Item_Code__c)}" />
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!!isRental}"> 
+                                                        <apex:outputText value="{!IF(qi.Quoteitemlevels.Description__c != null ,qi.Quoteitemlevels.Description__c,qi.Quoteitemlevels.Item_Code__c)}" />
+                                                    </apex:outputPanel>
+                                                </td>
+                                            </tr> 
+                                        </apex:repeat> 
+                                         
+                                        <tr>
+                                             <td colspan="3"><hr/></td>
+                                         </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-left: 40px; font-size: 14px; font-weight: bold;"><u>Totals:</u></td>
+                                            <td colspan="2" style=" font-size: 14px; font-weight: bold;"><u>Amount:</u></td>
+                                        </tr>
+                                         <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                                            <tr style="font-size: 12px;"> 
+                                                 <td colspan="2" style="padding-left: 40px;">   
+                                                    <apex:outputLabel value="{!qsi.Description__c}" />   
+                                                 </td>
+                                                 <td align="left"  >
+                                                    {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                                                 </td>
+                                            </tr>
+                                        </apex:repeat> 
+                                      </table>    
+                                      
+                                  </apex:outputPanel>
+                                </td>
+                            </tr><br/><br/> 
+                        </table>
+                       
+                        <apex:outputLabel style="padding-left: 5px; font-size: 13px;"><b>*Quote Comments:</b>&nbsp;</apex:outputLabel><apex:outputLabel style="font-size: 13px;" value="{!if(AND(qheader.Quote_Comments__c != null,qheader.Quote_Comments__c != ''),qheader.Quote_Comments__c,'NA')}"></apex:outputLabel>     
+                        </div><br/>
+                    <apex:outputPanel rendered="{!IF(slaesorgID == '1500',true,false)}">
+                        <apex:outputPanel rendered="{!!isRental}">
+                        <div style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <span style="font-size: 10px;"><b>Clarifications:</b><apex:outputLabel value=" Seller notifies buyer that seller has assigned its right (but not its obligations) in this quote, for the equipment described herein, to Mobile Mini Exchange LLC, a qualified intermediary, as part of an Internal Revenue Code Section 1031 exchange program." rendered="{!!isRental}" /></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        </apex:outputPanel> <br/>
+                        <table width="100%">
+                            <tr width="100%" style="page-break-inside:avoid;">
+                                <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                    <table width="100%">
+                                        <tr align="center"><td><span style="font-size: 12px; font-weight: bold;">ETS Master Lease Agreement Terms &amp; Conditions</span></td></tr>
+                                        <tr>
+                                            <td>
+                                                <span style="font-size: 10px;" > 
+                                                        ETS also offers non-hazardous waste hauling and in-plant trucks for re-spots.
+                                                        You have the right to purchase any rented equipment. Please contact our sales department for a price.
+                                                </span><br/> 
+                                                <span style="font-size: 10px;" > 
+                                                    This is a quotation on the goods and services named, subject to the conditions noted below: (Describe any conditions pertaining to these prices and any additional terms of the agreement. You may want to include contingencies that will affect the quotation).
+                                                    <li style="font-size: 10px;" >All costs are estimated based on customer provided job scope and durations.  Invoicing will be based on “actual” hours worked or days on rent.</li>
+                                                    <li style="font-size: 10px;" >  If equipment does not work properly, notify the office at once</li>
+                                                    <li style="font-size: 10px;" >  Multiple shifts or overtime rates may apply</li>
+                                                    <li style="font-size: 10px;" > Customer is responsible for refueling, damages or repairs</li>
+                                                    <li style="font-size: 10px;" > Notwithstanding anything to the contrary contained in this Agreement, Company herby grants Customer the option to purchase the Equipment for the option price available through the ETS sales department. Customer may not assign this option and may only exercise this option by providing written notice to Company together with the full payment of the option price prior to the termination of this agreement</li>
+                                                    <li style="font-size: 10px;" > Terms: Payment due Bet 30 days. Delinquency charges will be accessed to all balances unpaid after 30 days</li>
+                                                    <li style="font-size: 10px;" > Rates are valid for 30 days from the date of the quote </li>
+                                                    <span style="font-size: 10px;" > I have had the opportunity to read the terms and conditions on both sides of this agreement, I have received and understand the safety instructions on the operation of the equipment I am renting. I have received a complete copy of this agreement and agree to the terms and conditions on both sides. (Carefully read the terms and conditions on the reverse side of this page.)</span>
+                                                    
+                                                </span><br/> 
+                                            </td></tr>    
+                                    </table>
+                                </td> 
+                            </tr>
+                        </table> 
+                    </apex:outputPanel> 
+                    
+                    
+                    <apex:outputPanel rendered="{!IF(slaesorgID == '1501',true,false)}">
+                        <table width="100%">
+                            <tr width="100%" >
+                                <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                    <table width="100%">
+                                        <tr align="center"><td><span style="font-size: 12px; font-weight: bold;font-family: Arial">TERMS AND CONDITIONS</span></td></tr>
+                                        <tr align="center"><td><span style="font-size: 12px;font-family: Arial">THIS AGREEMENT IS FOR THE RENTAL OF ALL ITEMS, EQUIPMENT AND/OR VEHICLES SHOWN ON THE OTHER SIDE OF THIS PAGE, INCLUDING ALL PARTS OF AND ACCESSORIES TO SUCH (EQUIPMENT).</span></td></tr>
+                                        <tr>
+                                            <td>
+                                                <span style="font-size: 10px;" > 
+                                                        1. <u>RENTAL PERIOD:</u> Water Movers, Inc. ('Lessor') hereby rents the Equipment to Customer ('Lessee') for the period commencing when the Equipment leaves Lessor's premises and ending 
+                                                           upon its return to Lessor's premises, subject to charge for minimum rental period.  Lessor may terminate rental at any time by written notice to Lessee and/or by retaking the Equipment. Unless otherwise specified, rental is for one day period. No allowance will be made for Sundays, holidays, or time in transit nor for any period of time the Equipment may not be in actual use while in Lessee's possession.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        2. <u>EXCESS USAGE CHARGE:</u> Rental Rates are for normal and reasonable use of Equipment not exceeding 8 hours per day, five days per week (one-shift basis). Excess usage rates are prorated: 2 shifts charged at 1½ times normal rate. 3 shifts charged at 2 times normal rate.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        3. <u>RECEIPT AND USE OF EQUIPMENT:</u> By accepting delivery, Lessee acknowledges that he has received the Equipment, all devices, and materials used to connect the Equipment to
+                                                           Lessee's towing motor vehicles in good working and secure condition. Lessee shall not abuse, harm, or improperly operate the Equipment, and shall possess and operate it in conformance with all applicable laws and regulations. Lessee shall be solely responsible for the operation of the Equipment and allow only a licensed and experienced operator to operate the Equipment in accordance with all Equipment specifications and customary safety practices.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        4. <u>FAILURE OF EQUIPMENT:</u> In the event of any failure of the Equipment of any nature whatsoever, Lessee at its expense shall immediately return it to Lessor's premises. Without Lessor's written authorization Lessee shall not incur any expenses for Lessor's account for the repair of the Equipment.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        5. <u>TIRE REPAIR OR REPLACEMENT:</u>  Customer acknowledges that repair and replacement of tires are not included in the rental rate and agrees to pay for the repair or replacement
+                                                           (allowance for reasonable depreciation) of any tires returned to the Lessor in a damaged  condition, regardless of the cause of the damage, reasonable wear and tear excepted.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        6. <u>RETURN OF EQUIPMENT:</u> At the termination of this agreement, Lessee shall return all of the Equipment to Lessor's premises during Lessor's regular business hours in the condition and 
+                                                           repair as when delivered to Lessee, subject only to reasonable wear and tear. Lessee shall be liable for all damages to or loss of the Equipment occurring because it was not returned within Lessor's regular business hours. If Lessor has agreed to deliver the Equipment to Lessee or to pick up the Equipment from Lessee, Lessee shall be responsible for all loss or damage to the Equipment from time of delivery to Lessee and until picked up by Lessor.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        7. <u>HAZARDOUS MATERIALS:</u> Lessee represents and warrants that it shall return all Equipment, including any and all attachments, tools, and machinery leased from Lessor free of all
+                                                           regulated substances including, but not limited to, hazardous substances, hazardous materials, hazardous wastes, toxic substances, or pesticides, as those terms are defined in applicable  federal, state, and local environmental laws, regulations, and rules. Lessee shall indemnify and hold Lessor harmless from and against any and all liabilities, of whatsoever kind or nature, imposed on, incurred by, or served against Lessor in any way relating to Lessee's breach of the above warranty.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        8. <u>DAMAGED EQUIPMENT. REASONABLE WEAR AND TEAR:</u> If the Equipment is returned in a damaged or excessively worn condition, Lessee shall pay Lessor the reasonable cost of repair
+                                                           and pay rental on the Equipment at the regular rental rate until repairs have been completed.  Lessor shall be under no obligation to commence repair work until Lessee has paid therefore. Reasonable wear and tear shall mean only the normal deterioration of the Equipment caused by ordinary and reasonable use on a one-shift (eight hours per day, five days per week) basis. The following shall not be deemed reasonable wear and tear; damage resulting from lack of lubrication or maintenance such as water and air pressures, damage resulting from any collision, overturning, or improper operation of the Equipment, including overloading or exceeding the rated capacity of the Equipment; damage in the nature of dents, bending, tearing, staining and misalignment to the Equipment or any part thereof, and wear resulting from use in excess of a one shift basis. Repairs to Equipment shall be made to the reasonable satisfaction of Lessor and in a manner which will not adversely affect the operation or value of the Equipment such as welding instead of replacing a part.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        9. <u>DISCLAIMER OR WARRANTIES AND WAIVER OF DAMAGES:</u> Lessor makes no warranties, express or implied, as to the Equipment's merchantability or fitness for any particular purpose.
+                                                           Lessee's sole remedy for any failure of or defect in the Equipment shall be the termination of the rental charges at the time of failure, provided the Equipment is returned to Lessor within 24 hours. Lessor shall not be responsible for any loss, damage, or injury to Lessee and Lessee's property, including lost profits, incidental, special or consequential damages, in any way connected with the operation of, defect in, or failure of Equipment.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        10. <u>INDEMNITY AND HOLD HARMLESS:</u> Lessee, its officers, directors, members, managers, employees, shareholders, and affiliates shall indemnify and hold Lessor, its officers, directors, members, managers, employees, shareholders, and affiliates harmless from any claims, including third parties, for loss, injury and damage to their persons and property arising out of Lessee's possession, use, maintenance or return of Equipment, including legal costs incurred in defense of such claims. Lessee shall furnish Lessor with a complete report of any accident involving Equipment, including names and addresses of all persons involved and all witnesses.  Lessee is responsible for all damage, injuries or loss arising from any accident or act of any and every nature whatsoever, related to the possession or use of the rented Equipment, including particularly any damage caused by the failure of any device or material used in hitching the Equipment to a towing vehicle, regardless of whom furnished and regardless of who shall hitch the Equipment.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        11. <u>FAILURE TO DELIVER:</u> Customer releases and discharges Lessor from any and all liability or damages (including consequential and special damage) which might be caused by Lessor's failure or inability to deliver any Equipment by any specified date or time.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        12. <u>DAMAGE AND THEFT WAIVER (WHICH IS NOT INSURANCE):</u> By Lessee accepting DAMAGE AND THEFT WAIVER provided Lessee takes reasonable precautions to protect Equipment. Lessor assumes on a deductible basis risk of direct physical loss of or accidental damage to, the leased Equipment, <u>except the following risks assumed by Lessee</u>
+                                                        
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    A. A deductible of:
+                                                    <li style="font-size: 10px;" >$250 for accidental damage to each piece of equipment with a fair market value of less than $5,000.</li>
+                                                    <li style="font-size: 10px;" >$1000 or 20% of the repair cost of each piece of equipment, whichever is higher, for accidental damage to each piece of equipment with a fair market value or $5,000 or greater.</li>
+                                                    <li style="font-size: 10px;" >$1,000 or 20% of the fair market value of each piece of equipment, whichever is higher for loss of any piece of equipment as a result <u>of theft, vandalism, or malicious mischief</u>.</li>
+                                                </span>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    B. Loss or damage from improper use, abuse or negligence.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    C. Loss or damage resulting from overloading or exceeding the rated capacity  of Equipment.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    D. Damage to tires or tubes caused by blow, bruises, cuts, road hazards, or other causes inherent in the use of Equipment.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    E. Loss or damage resulting from improper fuel, lack of lubrication or other normal servicing of Equipment.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    F. Loss due to disappearance or shortage disclosed on inventory.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    G. Loss or damage by conversion of Lessee, his employees, or persons to whom the Equipment is entrusted.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    H. Use of the Equipment in violation of any terms of this agreement.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    I.  Failure to file police report.
+                                                </span><br/>
+                                                <span style="font-size: 10px;padding-left:10px;" > 
+                                                    J. Any loss when Equipment is not in a locked enclosure or guarded when not in use.
+                                                </span><br/>
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                       13. <u>INSURANCE COVERAGE:</u>  Lessee is responsible for any and all damage to, theft of, loss of and/or loss of use of Equipment at fair market value. If Lessee chooses to secure their own
+                                                           insurance protection, Lessor requires  that a certificate of insurance be given to Lessor specifying coverage for "Rental or Rented Equipment" with the per-item limit specified.  Damage Waiver will
+                                                           be charged until a certificate of insurance  is received and on all rental items with values exceeding the specified limit. "Commercial General Liability" with an occurrence limit of at least $1 million must be included.  Water Movers Inc., its officers, directors, members, managers, employees, shareholders, and affiliates must be named as an additional insured and loss payee on all coverages described above.
+                                                            
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        14. <u>SUBLETTING AND LOCATION:</u> No item of leased Equipment shall be sublet, assigned, removed from the location at which Lessee represented it was intended to be used, or removed
+                                                            from the State of Lessor's premises, except by written consent of Lessor.  This Agreement shall inure to the benefit of and be binding upon the parties hereto, their heirs, successors, and assigns.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        15. <u>RETAKING OF EQUIPMENT:</u> If the Equipment is not returned at the termination of the rental or for any reason it becomes necessary for the Lessor to retake the Equipment to protect it
+                                                            from loss or damage, Lessor and its agents may go upon Lessee's property and retake the Equipment, without notice and legal process, and Lessee waives all rights to a prior judicial hearing. Lessor and its agents may take all action reasonable necessary to retake the Equipment and Lessee waives for himself, agents, and employees all claims for damages and losses, physical and pecuniary, caused by retaking by the Lessor.  Lessee agrees to pay all costs and expenses incurred by Lessor in retaking the Equipment.
+
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        16. <u>COMPLIANCE WITH LAW AND SAFETY REGULATIONS:</u> As Lessor has no control over the use of the Equipment by Lessee, Lessee agrees at its sole expense to comply with all laws and regulations, including Occupational Safety and Health Administration Act of 1970 (OSHA) and all other Federal, State, and Local laws, regulations, and ordinances, which may affect the Equipment while it is in the possession of Lessee.  Lessee shall indemnify and hold Lessor harmless from any liability or expense, including attorney fees, resulting from any actual or asserted violations of such laws, regulations, and ordinances.
+                                                </span><br/> 
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        17. <u>LEGAL FEES AND VENUE:</u> lessee shall pay Lessor's reasonable legal fees and court costs incurred in enforcing the terms and conditions hereof. Lessee agrees that this agreement is to
+                                                            be construed under the laws of the State of Arizona, and that if legal action is brought to enforce this agreement, that Maricopa County, Arizona, shall be the jurisdiction and legal venue for said action, unless otherwise agreed by Lessee and Lessor at a later time.
+
+                                                </span><br/>
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        18. <u>TAXES AND FEES:</u> Lessee shall reimburse Lessor for any additional fees, imposts charges, or taxes sought to be imposed against Lessor by any municipal or local subdivision relating to the use of the Equipment by Lessee or rental as provided herein.
+                                                </span><br/>
+                                                
+                                                <span style="font-size: 10px;" > 
+                                                        19. <u>ENTIRE AGREEMENT:</u> This Agreement and the instruments to be delivered by the parties, constitutes the full and entire agreement with respect to the subject matter thereof. It may not be amended except by a written agreement signed by other parties.
+                                                </span><br/>
+                                                                                                 
+                                            </td></tr>    
+                                    </table>
+                                </td> 
+                            </tr>
+                        </table> 
+                    </apex:outputPanel>
+                          
+    </apex:page>

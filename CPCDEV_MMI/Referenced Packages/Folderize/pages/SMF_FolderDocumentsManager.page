@@ -1,0 +1,241 @@
+<apex:page controller="sharem.SMF_FolderDocumentsManagerController" extensions="sharem.SMF_DocsViewerExtension"
+  tabStyle="Folderize__tab" title="Add Docs to Folder">
+
+
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/styles.css')}" />
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery-1.9.0.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/scripts.js')}"></script>
+
+
+<style>
+	.small-note
+	{
+		font-size: 85%;
+	}
+	
+	.name-in-manual
+	{
+		font-style: italic;
+	}
+</style>
+
+<script type="text/javascript">
+	//configure the "scripts.js" file
+	SMF_PAGE_OPTIONS.fixPageContainer = true;
+</script>
+
+
+<div>
+	<span class="caption-logo smf-icon-logo-small"></span>
+	<span class="section-title">
+		Add Documents to Folder
+		<apex:outputText rendered="{!folder != null}">
+			"{!folder.Name}"
+		</apex:outputText>
+	</span>
+</div>
+
+
+<apex:outputPanel rendered="{!folder == null}" styleClass="page-load-error" layout="block">
+	The folder has not been found.
+</apex:outputPanel>
+
+
+<apex:outputPanel rendered="{!folder != null}">
+	
+	<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/cupertino/jquery-ui.css" />
+	<apex:stylesheet value="{!URLFOR($Resource.sharem__sm_jqgrid, '/css/ui.jqgrid.css')}" />
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/i18n/grid.locale-en.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery.jqGrid.min.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/utils/jqGridUtils.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/utils/filtersManager.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/folderDocumentsManager.js')}"></script>
+	
+	<!-- ADD the MANAGER of MESSAGES -->
+	<c:MessagesManager />
+	
+	
+	<script type="text/javascript">
+	
+	var MAX_FILES_IN_SERVER_RESPONSE = {!docsLimitInServerResponse};
+	//configure vars from the "jqGridUtils.js" file
+	SITE_PREFIX = "{!$Site.Prefix}";
+
+	var folderId = "{!folder.Id}";
+	var versionsFilter = {fieldCriterions: []};
+	var grid;
+	var uploadNewFilesDialog;
+
+	$(function()
+	{
+		//- initialize the dialogs
+		initUploadNewFilesDialog();
+
+		//- initialize the table of documents
+		var docColumnsVisibility = JSON.parse('{!JSENCODE(docColumnsVisibility_Json)}');
+		var docsSortingParameter = JSON.parse('{!JSENCODE(docsSortingParameter_Json)}');
+		initDocumentsTable(docColumnsVisibility, docsSortingParameter);
+
+		//- refresh the list of documents
+		refreshDocumentsTable();
+
+		//- show main block
+		$("#mainContent").css({"visibility": "visible"});
+	});
+	
+	
+	
+	
+	
+	/*
+	************************* REMOTE ACTIONS *************************
+	*/
+	function onServerSideFilterApplied()
+	{
+		//- refresh the table passing the callback, which clears the local filters
+		var onTableRefreshed = function() {grid[0].clearToolbar();};
+		refreshDocumentsTable(onTableRefreshed);
+	}
+	
+	function refreshDocumentsTable(onTableRefreshed)
+	{
+		//- clear the list of selected documents Ids
+		grid.selectedItems = {};
+		
+		//- load documents, update the list and refresh the table
+		performRemoteAction(sharem.SMF_FolderDocumentsManagerController.getFiles, [folderId, versionsFilter], {buffer: false},
+			function(result)
+			{
+				var documentsList = result.returnedObjects[0];
+				
+				//- manage server-side filter according to the documents list
+				manageServerSideFilter(documentsList);
+				//- re-render the table of documents
+				jqGrid_ReRender(grid, documentsList);
+				
+				//- execute the callback if it exists
+				if ($.isFunction(onTableRefreshed)) { onTableRefreshed(); }
+			},
+			function()
+			{
+				jqGrid_ReRender(grid, []);
+				//- execute the callback if it exists
+				if ($.isFunction(onTableRefreshed)) { onTableRefreshed(); }
+			}
+		);
+	}
+	
+	function addSelectedFilesToFolder()
+	{
+		//STEP #1: preprocessing
+		$("#resultsPanel").hide();
+		
+		//STEP #2: identify selected file Ids
+		var selectedFilesIds = [];
+		for (var fileId in grid.selectedItems)
+		{
+			selectedFilesIds.push(fileId);
+		}
+		//- stop the method if the operation cannot be continued
+		if (selectedFilesIds.length == 0)
+		{
+			showErrorMessageDialog(M_NO_FILES_SELECTED);
+			return;
+		}
+		else if (selectedFilesIds.length > MAX_FILES_COUNT_TO_ADD)
+		{
+			showErrorMessageDialog(M_TOO_MANY_FILES_SELECTED);
+			return;
+		}
+		else if (!confirm(M_CONIFRM_ADDITION))
+		{
+			return;
+		}
+		
+		//STEP #3: try to add the files into the folder and handle the results
+		performRemoteAction(sharem.SMF_FolderDocumentsManagerController.addFilesToFolder, [folderId, selectedFilesIds], {escape: false},
+			function(result)
+			{
+				//- show results (a positive message)
+				$("#resultsPanel").show();
+				//- refresh the table of documents
+				refreshDocumentsTable();
+			}
+		);
+	}
+	
+	</script>
+	
+	
+	
+	<div style="margin: 5px 0px;">
+		<input type="button" onclick="addSelectedFilesToFolder();" value="Add Documents to Folder" class="btn"/>
+		<input type="button" onclick="uploadNewFilesDialog.dialog('open');" value="Upload New Files" class="btn next-button5"/>
+		
+		<span id="resultsPanel" class="sfc-messages inline" style="display: none;">
+			Done. Click the folder to refresh and see the documents you added.
+		</span>
+	</div>
+	
+	<div id="serverSideFilter"></div>
+	
+	<div id="mainContent" style="visibility: hidden;">
+	
+		<!-- THE TABLE OF FILES -->
+		<div id="contentPane">
+			<div id="tableContainer">
+				<table id="documentsTable"><tr><td></td></tr></table>
+				<div id="paginator"></div>
+			</div>
+		</div>
+		
+		<!-- 'UPLOAD NEW FILES' DIALOG -->
+		<div id="uploadNewFilesDialog" title="How to upload new files to the folder?">
+			<div id="uploadNewFilesInfo">
+				<ul>
+					<li><a href="#Library_Documents">Library Documents</a></li>
+					<li><a href="#Chatter_Files">Chatter Files</a></li>
+				</ul>
+				<div id="Library_Documents">
+					<ol class="custom-list">
+						<li>
+							Go to 
+							<a href="{!$Site.Prefix}/sfc/#workspaces" target="_blank" class="smf-button-small">
+								<span class="smf-button-icon smf-icon-arrow"></span>
+								Libraries
+							</a>
+							and click <span class="name-in-manual">Contribute</span>.
+						</li>
+						<li>When finished, return to this page and refresh.</li>
+						<li>Select your file(s). <span class="small-note">(Use filter if needed.)</span></li>
+						<li>Click <span class="name-in-manual">Add Documents To Folder</span>.</li>
+					</ol>
+				</div>
+				<div id="Chatter_Files">
+					<ol class="custom-list">
+						<li>
+							Go to the
+							<a href="{!$Site.Prefix}/_ui/core/chatter/files/FileTabPage" target="_blank" class="smf-button-small">
+								<span class="smf-button-icon smf-icon-arrow"></span>
+								Files
+							</a>
+							tab and upload your files.
+						</li>
+						<li>When finished, return to this page and refresh.</li>
+						<li>Select your file(s). <span class="small-note">(Use filter if needed.)</span></li>
+						<li>Click <span class="name-in-manual">Add Documents To Folder</span>.</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</apex:outputPanel>
+
+<div style="margin-top: 5px;">
+	Copyright © 2013-2016 ShareMethods LLC All rights reserved
+</div>
+
+</apex:page>

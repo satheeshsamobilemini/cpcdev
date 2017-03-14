@@ -1,0 +1,7 @@
+<apex:page controller="BRNSHRK.SlideSharkPresentController">
+	<link rel="stylesheet" href="{!appHost}/brainshark/brainshark.net/common/basestyle/bskux.css" />
+	<div class="bsk-app bsk-ux bsk-page" style="padding: 20px 20px 0px 0px;">
+		<a id="previousObject" class="btn btn-default btn-sm btn-primary pull-right" href="/{!$CurrentPage.parameters.recordId}">Return to {!recordType}</a>
+	</div>
+	<iframe src="{!slidesharkHost}/Present.aspx?pid={!$CurrentPage.parameters.pid}&sid={!sessionId}&sky={!sessionKey}&uid={!userId}&presenter={!$User.Id}&viewer={!viewerId}&relatedId={!relatedId}&server={!serverName}&ui=16384" width="100%" height="750" frameBorder="0" allowfullscreen="true"></iframe>
+</apex:page>

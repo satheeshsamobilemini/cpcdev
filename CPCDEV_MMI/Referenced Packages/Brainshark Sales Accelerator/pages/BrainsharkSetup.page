@@ -1,0 +1,54 @@
+<apex:page controller="BRNSHRK.BrainsharkSetupController" action="{!initPage}" standardStylesheets="true" >
+
+<apex:stylesheet value="{!staticHost}/s2/Styles/search.css" />
+<apex:stylesheet value="{!staticHost}/s2/Styles/search-mobile.css" />
+<apex:stylesheet value="{!staticHost}/s2/Styles/bskux.css" />
+<style type="text/css">
+    .setup-panel {
+        min-height: 250px;
+    }
+    p.setup-marketing-message {
+        margin-top: 10px;
+    }
+</style>
+
+<apex:sectionHeader title="Brainshark for Salesforce" subtitle="Brainshark Setup"/>
+<div class="bsk-ux bsk-page">
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="setup-panel panel panel-primary">
+                <h3></h3>
+                <div class="panel-heading">Global Settings</div>
+                <div class="panel-body">
+                    <a role="button" class="btn {!IF(globalMissingCompanyDirectory || globalMissingAPIToken || globalSettingsMissing,'btn-danger','btn-success')} btn-lg btn-block" href="/apex/GlobalSettings">App Settings</a>
+                    <a role="button" class="btn {!IF(globalMissingCompanyDirectory || globalSettingsMissing,'disabled','')} {!IF(globalMissingCompanyDirectory || globalSettingsMissing || globalMissingAPIToken,'btn-danger','btn-success')} btn-lg btn-block" href="/apex/Authenticate_CADMIN">Add/Reset Access Token</a>
+                    <p class="setup-marketing-message"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <div class="setup-panel panel {!IF(globalSettingsMissing,'panel-default','panel-primary')}">
+                <div class="panel-heading">Brainshark Connector</div>
+                <div class="panel-body">
+                <a role="button" class="btn {!IF(synchSettingsMissing || globalSettingsMissing || synchMissingCompanyDirectory,'btn-danger','btn-success')} {!IF(globalSettingsMissing  || globalMissingAPIToken,'disabled','')} btn-lg btn-block"  href="/apex/BrainsharkConnectorSetup">Connector Settings</a>
+                <a role="button" class="btn {!IF(synchSettingsMissing || globalSettingsMissing || synchMissingCompanyDirectory,'btn-danger','btn-success')} {!IF(globalSettingsMissing  || globalMissingAPIToken,'disabled','')} btn-lg btn-block"  href="/apex/BrainsharkActivityMigration">Migration Tool</a>
+                <p class="setup-marketing-message"></p>
+                </div>
+            </div>            
+        </div>
+        <div class="col-xs-4">
+            <div class="setup-panel panel {!IF(globalSettingsMissing,'panel-default','panel-primary')}">
+                <div class="panel-heading">Sales Accelerator</div>
+                <div class="panel-body">
+                <a role="button" class="btn {!IF(globalMissingCompanyDirectory || globalSettingsMissing || globalMissingAPIToken,'btn-danger','btn-success')} {!IF(globalMissingCompanyDirectory|| globalSettingsMissing || globalMissingAPIToken,'disabled','')} btn-lg btn-block"  href="/apex/BrainsharkConfig">Search Settings</a>
+                <p class="setup-marketing-message"></p>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6"></div>
+        <div class="col-xs-6"></div>
+    </div>
+</div>
+</apex:page>

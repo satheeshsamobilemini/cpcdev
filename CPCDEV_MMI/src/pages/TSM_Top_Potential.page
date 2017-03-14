@@ -1,0 +1,15 @@
+<apex:page standardController="Account" extensions="BonusPurposeAndTSMController">
+<apex:pageBlock title="TSM Top Potential Account Request">
+    <apex:form id="form">
+        <apex:pageMessage id="msg" severity="Error" rendered="{!showTSMMessage}" summary="This account doesnt satisfy the conditions to be submitted for this kind of approval."/>
+        <apex:pageMessage id="errmsg" severity="Error" rendered="{!showErrorMessage}" summary="This account cannot be submitted for TSM Top Potential approval. This could be because 1) You dont have necessary privileges on this account. 2) You dont have credentials to operate on accounts with this Branch Id. 3) Account is already in approval process and waiting for the approver to approve. 4) It's also possible that there is no manager setup for your profile."/>
+
+    <apex:selectRadio value="{!requestValTSM}">
+            <apex:selectOptions value="{!tSMItems}"/>
+            </apex:selectRadio><p/>
+            <apex:commandButton value="Submit for Approval" action="{!submitForTSMApproval}" status="status" reRender="form, msg, errmsg"/>
+         <apex:commandButton value="Go Back" action="{!goBack}"/>
+        <apex:actionstatus id="status" startText="Submitting for Approval..."/> 
+     </apex:form>
+</apex:pageBlock>
+</apex:page>

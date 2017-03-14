@@ -1,0 +1,85 @@
+<apex:page controller="PostalCodeRateController" sidebar="false" showHeader="false" >
+<body class="lookupTab"> 
+<div class="bPageTitle">
+ <div class="ptBody secondaryPalette">
+  <div class="content">
+   <img title="" class="pageTitleIcon" alt="" src="/s.gif" />
+   <h1>Postal Code Rates Finder</h1>
+  </div>
+ </div>
+</div>
+</body>
+<br/>
+<apex:form >
+<apex:pageBlock title="Postal Code Rates Finder">
+ <table>
+  <tr>
+   <td><apex:outputLabel > Postal Code : </apex:outputLabel></td>
+   <td><apex:inputText value="{!zipCode}" id="searchZip" onkeypress="return checkKey(event);" /></td>
+   <td><apex:commandButton value="Search" action="{!searchZipCode}" rerender="tbSearch" status="acStatus"/></td>
+  </tr>
+ </table>
+</apex:pageBlock>
+
+<apex:actionStatus id="acStatus">
+<apex:facet name="start">
+  <img src="/img/loading.gif" /> Please wait... Search In Progress ...
+</apex:facet>
+</apex:actionStatus>
+
+<apex:outputpanel id="tbSearch">
+<!-- Table 1 -->
+<apex:PageBlock title="Search Result" rendered="{!dispResult2}">
+ <apex:pageBlockTable value="{!pcrwList}" var="pcrw" columns="2" >
+   
+   <apex:column value="{!pcrw.pFieldLabel}" headerValue="Fields" rendered="{!pcrw.pFieldLabel == 'Post Code'}"/> 
+   <apex:column headerValue="Values" rendered="{!pcrw.pFieldLabel == 'Post Code'}">
+    <a href="javascript:void(0);" onclick="redirectToURL('{!pcrw.pId}')">{!pcrw.pFieldValue}</a>
+   </apex:column>
+   
+   <apex:column value="{!pcrw.pFieldLabel}" headerValue="Fields" rendered="{!pcrw.pFieldLabel != 'Post Code'}"/> 
+   <apex:column value="{!pcrw.pFieldValue}" headerValue="Values" rendered="{!pcrw.pFieldLabel != 'Post Code'}"/>
+   
+ </apex:pageBlockTable> 
+</apex:PageBlock>
+
+<!-- Table 2 -->
+<apex:PageBlock title="Search Result" rendered="{!dispResult}">
+ <apex:pageBlockTable value="{!pcrwList}" var="pcrw" columns="2" >
+   <apex:column value="{!pcrw.pFieldLabel}" headerValue="Fields" /> 
+   <apex:column value="{!pcrw.pFieldValue}" headerValue="Values" />
+   
+ </apex:pageBlockTable> 
+</apex:PageBlock>
+
+
+<apex:outputLabel rendered="{!pcrwList.size == 0}"> No Records Found.. </apex:outputLabel>  
+</apex:outputpanel>
+<apex:actionFunction name="searchZip" action="{!searchZipCode}" reRender="tbSearch" status="acStatus"/>
+</apex:form>
+
+ <script>
+  function checkKey(e){
+   var key;
+    if(window.event)
+     key = window.event.keycode; // IE 
+    else 
+     key = e.which; // firefox
+    if(key != null && key == 13){
+     searchZip();
+     return false; 
+    }
+    return true;  
+  }
+  function redirectToURL(pcrId){
+   var url;
+   if(pcrId != null && pcrId != ''){
+     url =  '/' + pcrId + '/e?retURL=/' + pcrId;
+     //window.open(url,'_blank');
+     window.open(url);
+     window.close();
+   }
+  }
+ </script>
+
+</apex:page>

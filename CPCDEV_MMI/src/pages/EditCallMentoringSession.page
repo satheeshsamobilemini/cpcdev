@@ -1,0 +1,3 @@
+<apex:page action="{!CallEditPage}" standardController="Call_Mentoring_Session__c" extensions="EditCallMentoringSessionController">
+
+</apex:page>

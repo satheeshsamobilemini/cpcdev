@@ -1,0 +1,232 @@
+<apex:page controller="LeadLeaderboardMetricControllerUK" tabStyle="Lead_Response_Report__tab" readOnly="true">
+    <style>
+        div.hideCurrDate span.dateInput span.dateFormat{
+           display:none;
+        }
+    </style>
+    <apex:form >
+        <apex:sectionHeader title="UK Leaderboard Metric for Lead Response time"/>
+        <apex:outputPanel id="panel">
+        
+            <apex:pageMessages id="pgMessage"></apex:pageMessages>
+            <apex:pageBlock id="pgBlock" rendered="{!Not(showDrilledLeads)}">
+            <apex:outputPanel >
+                <apex:pageBlockSection columns="2" title="Filters" collapsible="false">
+
+                                    <apex:pageBlockSectionItem >
+                                    <apex:outPutlabel >Show</apex:outPutlabel>
+                                    <apex:selectList value="{!selectedTeamFilter}" multiselect="false" size="1">
+                                        <apex:selectOptions value="{!teamFilterList}"/>
+                                    </apex:selectList>              
+                                </apex:pageBlockSectionItem>
+                                
+                    <apex:pageBlockSectionItem >
+                                    <apex:outPutlabel >Time Frame<br/>Created Date</apex:outPutlabel>
+                                    <apex:outputpanel layout="block" id="timeFrame">
+                                    <apex:outPutlabel >Range</apex:outPutlabel>
+                                    <br/>
+                                    <apex:selectList value="{!selectedDateFilter}" multiselect="false" size="1" onchange="setDateRange();">
+                                        <apex:selectOptions value="{!dateFilterList}"/>
+                                    </apex:selectList>
+                                    <table>
+                                        <tr>
+                                            <td><apex:outPutlabel >From</apex:outPutlabel></td>
+                                            <td><apex:outPutlabel >To</apex:outPutlabel></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td><div class="hideCurrDate"><apex:inputField value="{!leadFrom.Date_Required__c}"/></div></td>
+                                            <td><div class="hideCurrDate"><apex:inputField value="{!leadTo.Date_Required__c}"/></div></td>
+                                        </tr>
+                                    
+                                    </table>
+                                    </apex:outputpanel>             
+                                </apex:pageBlockSectionItem>
+                    
+
+                    
+                                
+                                <apex:outputPanel layout="block"> 
+                        <apex:CommandBUtton action="{!retriveLeadReportDataNew}"  value="Go" rerender="pgBlock,pgMessage" status="viewPageStatusGo"/>
+                        <apex:actionStatus stopText="" id="viewPageStatusGo">
+                            <apex:facet name="start">
+                                <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+                            </apex:facet>
+                            </apex:actionStatus>
+                    </apex:outputPanel>
+                    
+                    <apex:outPutlabel />
+                                
+                            </apex:pageBlockSection>
+
+                                    <apex:pageBlockSection columns="1" collapsible="false">                             
+                    
+                    <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="PaginationPanel" rendered="{!IF((reportResult.size != 0), true, false)}">
+                         Total Records Found: <apex:outputText rendered="{!IF(Con.resultSize ==10000,true,false)}">&nbsp; 10000 + &nbsp;</apex:outputText><apex:outputText rendered="{!IF(Con.resultSize < 10000,true,false)}">&nbsp;{!Con.resultSize}&nbsp;</apex:outputText>
+                             
+                             <apex:commandLink action="{!First}" title="First Page" reRender="pgBlock" status="viewPageStatus" value="<< First" rendered="{!Con.HasPrevious}"/>
+                             <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasPrevious)}"><apex:outputText value="<< First" /></apex:outputPanel>&nbsp;
+                             
+                             <apex:commandLink action="{!Previous}" title="Previous Page" reRender="pgBlock" status="viewPageStatus" value="< Previous" rendered="{!Con.HasPrevious}"/>
+                             <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasPrevious)}"><apex:outputText value="< Previous" /></apex:outputPanel>         
+                             
+                             &nbsp;({!IF(Con.PageNumber == 1,1,((Con.PageNumber -1) * Con.PageSize)+1)}-{!IF(Con.resultSize < Con.PageSize,Con.resultSize,((Con.PageNumber-1) * Con.pageSize)+reportResult.Size)})&nbsp;&nbsp;
+                             
+                             <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasNext)}">Next ></apex:outputPanel>         
+                             <apex:commandLink title="Next Page" reRender="pgBlock" status="viewPageStatus" value="Next >" rendered="{!Con.HasNext}" action="{!Next}"/>&nbsp;
+                             
+                             <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasNext)}">Last >></apex:outputPanel>         
+                             <apex:commandLink title="Last Page" reRender="pgBlock" status="viewPageStatus" value="Last >>" rendered="{!Con.HasNext}" action="{!Last}"/>&nbsp;
+                           &nbsp;&nbsp;
+                           <apex:actionStatus stopText="" id="viewPageStatus">
+                               <apex:facet name="start">
+                                   <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+                               </apex:facet>
+                           </apex:actionStatus>
+                            
+                        </apex:outputPanel>
+                    
+                    <apex:pageBlockTable value="{!reportResult}" var="result" id="resultTbl">
+                        <apex:column headerValue="Rep">
+                                <apex:facet name="header">
+                                    <a href="javascript:void(0);" onclick="doSortJS('Name'); return false;">
+                                    Rep
+                                    <img src="{!IF(sortField = 'Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                    </a>
+                                </apex:facet>
+                                <apex:facet name="footer">
+                                    Totals
+                                </apex:facet>
+                            <apex:outputField value="{!result.leadOwner.OwnerId}"></apex:outputField>   
+                        </apex:column>
+                        
+                        <apex:column headerValue="Leads not Called">
+                             <apex:facet name="header">
+                                    <a href="javascript:void(0);" onclick="doSortJS('Leads_not_Called'); return false;">
+                                    Leads not Called
+                                    <img src="{!IF(sortField = 'Leads_not_Called',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                    </a>
+                                </apex:facet>
+                                
+                                <apex:facet name="footer">
+                                    {!totalLdNotCount.totalNotCalled}
+                                </apex:facet>
+                                
+                            <a href="javascript:drillDown('{!result.leadOwner.OwnerID}','false');" >{!result.totalNotCalled}</a>                            
+                        </apex:column>
+                        
+                        <apex:column headerValue="Leads not Called > {!responseTimeThreshold}">
+                             <apex:facet name="header">
+                                    <a href="javascript:void(0);" onclick="doSortJS('Leads_not_Called_Greater_Than_X'); return false;">
+                                    Leads not Called > {!responseTimeThreshold}
+                                    <img src="{!IF(sortField = 'Leads_not_Called_Greater_Than_X',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                    </a>
+                                </apex:facet>
+                                
+                                <apex:facet name="footer">
+                                    {!totalLdNotCount.greaterThan5}
+                                </apex:facet>
+                                
+                             <a href="javascript:drillDown('{!result.leadOwner.OwnerID}','true');" >{!result.greaterThan5}</a>
+                         </apex:column>
+                        
+                        <apex:column value="{!result.longestNoResponse}" headerValue="Longest not Called (min)">
+                              <apex:facet name="header">
+                                    <a href="javascript:void(0);" onclick="doSortJS('Longest_not_Called'); return false;">
+                                    Longest lead time not called (min)
+                                    <img src="{!IF(sortField = 'Longest_not_Called',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                    </a>
+                                </apex:facet>
+                                
+                                <apex:facet name="footer">
+                                    {!totalLdNotCount.longestNoResponse} &nbsp;&nbsp; (Average Lead Non-Response in min)
+                                </apex:facet>
+                                
+                            </apex:column>
+                                
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            </apex:pageBlock>
+            
+            <!---------------------------------------------------- Drill down Data Page Block Start ----------------------------------------------------->
+            
+            <apex:pageBlock rendered="{!showDrilledLeads}" title="Not Responded Leads for {!drilledUserName}" id="dlPgBlock">
+                <apex:commandLink action="{!goBack}" value="Back" rerender="panel" status="viewPageStatusGoBk"></apex:commandLink>&nbsp;&nbsp;&nbsp;
+                    <apex:actionStatus stopText="" id="viewPageStatusGoBk">
+                        <apex:facet name="start">
+                            <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+                        </apex:facet>
+                    </apex:actionStatus>
+                <br/><br/>
+                
+                <apex:pageBlockTable value="{!drillLeads}" var="l">
+                    <apex:repeat value="{!$ObjectType.Lead.FieldSets.drilledleadsfields}" var="f"> 
+                        <apex:column value="{!l[f]}" rendered="{!(LOWER(f.FieldPath) != 'name')}">
+                        
+                            <apex:facet name="header">
+                                <a href="javascript:void(0);" onclick="dodlSortJS('{!f}'); return false;">
+                                {!f.Label}
+                                <img src="{!IF(dlsortField = f,IF(dlisAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                </a>
+                        </apex:facet>
+                        
+                        </apex:column>
+                        <apex:column rendered="{!(LOWER(f.FieldPath) == 'name')}">
+                            <apex:facet name="header">
+                                <a href="javascript:void(0);" onclick="dodlSortJS('{!f}'); return false;">
+                                Name
+                                <img src="{!IF(dlsortField = f,IF(dlisAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                                </a>
+                        </apex:facet>  
+                            <a href="/{!l.Id}" target="_blank">{!l.Name}</a>
+                            </apex:column>
+                    </apex:repeat>
+                </apex:pageBlockTable>
+                
+                <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="PaginationPanel" rendered="{!IF((drillLeads.size != 0), true, false)}">
+                    Total Records Found: <apex:outputText rendered="{!IF(Con.resultSize==10000,true,false)}">&nbsp; 10000 + &nbsp;</apex:outputText><apex:outputText rendered="{!IF(Con.resultSize < 10000,true,false)}">&nbsp;{!Con.resultSize}&nbsp;</apex:outputText>
+                        
+                        <apex:commandLink action="{!First}" title="First Page" reRender="dlPgBlock" status="viewPageStatusDD" value="<< First" rendered="{!Con.HasPrevious}"/>
+                        <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasPrevious)}"><apex:outputText value="<< First" /></apex:outputPanel>&nbsp;
+                        
+                        <apex:commandLink action="{!Previous}" title="Previous Page" reRender="dlPgBlock" status="viewPageStatusDD" value="< Previous" rendered="{!Con.HasPrevious}"/>
+                        <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasPrevious)}"><apex:outputText value="< Previous" /></apex:outputPanel>         
+                        
+                        &nbsp;({!IF(Con.PageNumber == 1,1,((Con.PageNumber -1) * Con.PageSize)+1)}-{!IF(Con.resultSize < Con.PageSize,Con.resultSize,((Con.PageNumber-1) * Con.pageSize) + drillLeads.Size)})&nbsp;&nbsp;
+                        
+                        <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasNext)}">Next ></apex:outputPanel>         
+                        <apex:commandLink title="Next Page" reRender="dlPgBlock" status="viewPageStatusDD" value="Next >" rendered="{!Con.HasNext}" action="{!Next}"/>&nbsp;
+                        
+                        <apex:outputPanel styleClass="pShowLess noLink" style="color:grey" rendered="{!NOT(Con.HasNext)}">Last >></apex:outputPanel>         
+                        <apex:commandLink title="Last Page" reRender="dlPgBlock" status="viewPageStatusDD" value="Last >>" rendered="{!Con.HasNext}" action="{!Last}"/>&nbsp;
+                      &nbsp;&nbsp;
+                      <apex:actionStatus stopText="" id="viewPageStatusDD">
+                          <apex:facet name="start">
+                              <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+                          </apex:facet>
+                      </apex:actionStatus>
+              
+              </apex:outputPanel>
+        </apex:pageBlock>
+        <!---------------------------------------------------- Drill down Data Page Block End ----------------------------------------------------->
+        
+        </apex:outputPanel>
+        <apex:actionFunction action="{!drillDownLeads}" name="drillDown" reRender="panel" status="viewPageStatusGo">
+                <apex:param name="ownerId" value="" assignTo="{!selectedOwnerId}"/>
+                <apex:param name="isNotCalled5" value="false"></apex:param>
+       </apex:actionFunction>
+       
+       <apex:actionFunction action="{!setDateFilterRange}" name="setDateRange" reRender="timeFrame"/>
+       
+       <apex:actionFunction name="doSortJS" action="{!getSortedData}" rerender="pgBlock,pgMessage" status="viewPageStatusGo">
+            <apex:param value="" name="firstParam" assignTo="{!sortField}"/>
+             </apex:actionFunction>
+             
+             <apex:actionFunction name="dodlSortJS" action="{!getdlSortedData}" rerender="dlPgBlock,pgMessage" status="viewPageStatusGoBk">
+            <apex:param value="" name="dlfirstParam" assignTo="{!dlsortField}"/>
+             </apex:actionFunction>
+       
+        <!--<apex:actionPoller action="{!retriveLeadReportDataNew}" rerender="panel" interval="60"/>   modified interval value by Lalit for case 37840 -->
+    </apex:form>
+</apex:page>

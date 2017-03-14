@@ -1,0 +1,10 @@
+<!--* (c) 2015 TEKsystems Global Services
+*
+* Name           : FullQuoteEditFormUK_VF
+* Created Date   : 18 April, 2015 @ 1130
+* Created By     : Sreenivas M
+* Purpose        : Visual Force page to edit/clone FullQuote UK -->
+
+<apex:page standardcontroller="MMI_Full_Quotes_UK__c" extensions="FullQuoteEditFormUK_Extn" action="{!gotoEdit}">
+
+</apex:page>

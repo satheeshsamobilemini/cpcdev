@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>33.0</apiVersion>
+    <description>A component used in Postcode Anywhere finder pages. Provides a single address search box with support for custom address fields.</description>
+    <label>Address Finder</label>
+</ApexComponent>

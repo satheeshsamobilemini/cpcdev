@@ -1,0 +1,13 @@
+<apex:page sidebar="false" showHeader="false">
+    <script type="text/javascript">
+        //post message the session id to the parent frame
+        var message = 'sfdcssid={"check": "ready", "ssid": "{!$Api.Session_ID}"}';
+     
+        window.onload = function () {
+            var w = window;
+            while ((w = w.parent) && (window.top !== w)) {
+                w.postMessage(message,'*');
+            }
+        }
+    </script>
+</apex:page>

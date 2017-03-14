@@ -1,0 +1,81 @@
+<apex:page controller="openOppSelectionCntrl" action="{!loadPage}" showHeader="false" sidebar="false">
+  <script>
+   function getSelectedOpp(oppId)
+   {  
+      document.getElementById('opptyId').value = oppId;
+      //var x = document.getElementById("noneV").checked;
+      //var y = document.getElementById("option").checked;
+      //alert(x);
+      //alert(y);
+      //if(document.getElementById("noneV").checked ==true){
+       //document.getElementById("noneV").checked =false; 
+      //} 
+      //if(document.getElementById("noneV").checked ==false){
+        // document.getElementById("noneV").checked =false;
+      //}      
+   } 
+
+   function checkSelection()
+   { 
+      //var x = document.getElementById("noneV").checked;
+      //var y = document.getElementById("option").checked;
+      //alert(x);
+      //alert(y);
+      //if(document.getElementById("option").checked ==true){
+       //document.getElementById("option").checked =false;  
+      //}
+      //if(document.getElementById("option").checked ==false){
+       //alert('I am here');
+       //document.getElementById("option").checked =false;  
+      //}
+      
+   }
+  </script>
+  
+  <apex:form >
+   <apex:pageBlock title=" Please select an open opportunity: ">
+  
+  <apex:pageBlockButtons >
+      
+    </apex:pageBlockButtons>
+   
+  <input type="hidden" name="opptyId" id="opptyId" />
+  <apex:outputPanel id="noChoice">
+  <input type="radio" id="noneV" onclick="checkSelection();" name="test2"/>  <b>None</b>
+  <apex:actionSupport event="onclick" rerender="oppChoice,nButton" action="{!setVisible}"/>
+  </apex:outputPanel>
+  <br/><br/>
+<apex:outputPanel id="oppChoice"> 
+<apex:actionSupport event="onclick" rerender="noChoice,nButton" action="{!setVisible}"/>     
+   <table style = "width:100%">
+  
+    <thead><tr>
+      <th style="width:15%">Select</th>
+      <th style="width:40%">Name</th>
+      <th style="width:15%">Delivery City</th>
+      <th style="width:15%">Delivery State</th>
+      <th style="width:15%">Shipping Territory</th>
+    </tr></thead>
+    
+    <tbody>
+      <apex:repeat value="{!Opplist}" var="opp"><tr>
+       <td>
+           <input type="radio" id="option" onclick="getSelectedOpp('{!opp.Id}');" name="option"/>
+       </td>
+       <td ><apex:outputField value="{!opp.Name}"/></td>
+       <td><apex:outputField value="{!opp.Delivery_City__c}"/></td>
+       <td><apex:outputField value="{!opp.Delivery_State_Province__c}"/></td>
+       <td><apex:outputField value="{!opp.Shipping_Territory__c}"/></td>
+      </tr></apex:repeat> 
+    </tbody>
+  
+   </table>   
+</apex:outputPanel>   
+</apex:pageBlock>  
+
+<apex:outputpanel id="nButton">
+  &nbsp;&nbsp;<apex:commandButton value="Next" action="{!Next}" rendered="{!buttonVisible}"/>
+</apex:outputpanel> 
+   
+  </apex:form>
+</apex:page>

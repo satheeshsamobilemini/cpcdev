@@ -1,0 +1,5 @@
+<apex:page >
+
+<c:BrainsharksAction recordId="{!$CurrentPage.parameters.id}"/>
+
+</apex:page>

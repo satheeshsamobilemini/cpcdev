@@ -1,0 +1,61 @@
+<!--
+Name   : NationalAccInfo
+Usage  : Used to display and edit "National Account Information" fields of related Account.
+Author : Aashish Mathur
+Date   : November 19, 2009
+-->
+
+<apex:page standardController="Account" extensions="NationalAccInfoController">
+  <apex:sectionHeader subtitle="{!Account.Name} - National Account Information"
+      title="{!Account.RecordType.Name}" />
+  
+  <apex:pageMessages />
+  <apex:form >
+    <apex:outputPanel layout="block" style="text-align:right;width:100%;font-weight:bold;">
+      <apex:outputLink value="/{!Account.Id}">&lt;&lt; Back to {!Account.Name}</apex:outputLink>
+    </apex:outputPanel>
+    <br />
+    
+    <apex:pageBlock >
+      <apex:pageBlockButtons location="top">
+        <apex:commandButton value="Edit" action="{!editAcc}" rendered="{!NOT(editMode)}" />
+        <apex:commandButton value="Save" action="{!saveAcc}" rendered="{!editMode}" />
+        <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!editMode}" />
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection title="National Account Information" rendered="{!NOT(editMode)}">
+        <apex:outputField value="{!Account.NumberOfEmployees}" />
+        <apex:outputField value="{!Account.AnnualRevenue}" />
+        <apex:outputField value="{!Account.National_Account_Start_Date__c}" />
+        <apex:outputField value="{!Account.Locations__c}" />
+        <apex:outputField value="{!Account.Account_Anniversary_Date__c}" />
+        <apex:outputField value="{!Account.Size_of_Business_Number_of_Locations__c}" />
+        <apex:outputField value="{!Account.Expiration_Date__c}" />
+        <apex:outputField value="{!Account.Rental_Discount__c}" />
+        <apex:outputField value="{!Account.Last_Renewal_Date__c}" />
+        <apex:outputField value="{!Account.Trucking_Discount__c}" />
+        <apex:outputField value="{!Account.Eligible_For_Rebate__c}" />
+        <apex:outputField value="{!Account.Rental_Units_Covered_By__c}" />
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!Account.Family_Code__c}" />
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection title="National Account Information" rendered="{!editMode}">
+        <apex:inputField value="{!Account.NumberOfEmployees}" />
+        <apex:inputField value="{!Account.AnnualRevenue}" />
+        <apex:inputField value="{!Account.National_Account_Start_Date__c}" />
+        <apex:inputField value="{!Account.Locations__c}" />
+        <apex:inputField value="{!Account.Account_Anniversary_Date__c}" />
+        <apex:inputField value="{!Account.Size_of_Business_Number_of_Locations__c}" />
+        <apex:inputField value="{!Account.Expiration_Date__c}" />
+        <apex:inputField value="{!Account.Rental_Discount__c}" />
+        <apex:inputField value="{!Account.Last_Renewal_Date__c}" />
+        <apex:inputField value="{!Account.Trucking_Discount__c}" />
+        <apex:inputField value="{!Account.Eligible_For_Rebate__c}" />
+        <apex:inputField value="{!Account.Rental_Units_Covered_By__c}" />
+        <apex:pageBlockSectionItem />
+        <apex:inputField value="{!Account.Family_Code__c}" />
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

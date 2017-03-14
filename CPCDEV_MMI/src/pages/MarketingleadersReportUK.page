@@ -1,0 +1,164 @@
+<apex:page controller="MarketingLeadersReportUK" tabStyle="Marketing_Leaders_Report__tab" readOnly="true">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <style>
+        #gradient-style td {
+            background: darkblue;
+            border-bottom: 1px solid #FFFFFF;
+            border-top: 1px solid #FFFFFF;
+            color:#FFFFFF;
+            padding: 8px;
+            font-weight:bold;
+        }
+        #gradient-style tbody tr:hover td, td.hover {
+            background: black !important;
+        }
+        
+            div.hideCurrDate span.dateInput span.dateFormat{
+           display:none;
+            }
+    </style>
+    <script>
+        var counter = 0;
+        var selectedId;
+        var initialSize = '{!resultReportData.size}';
+        $(document).ready(function(){
+            setFirstRow('{!resultReportData.size}');
+        });
+        function setFirstRow(size){
+            if(parseInt(size) != parseInt(initialSize)) {
+              counter = 0;
+              initialSize = size;
+            }
+            var table = document.getElementById("gradient-style");
+            var row = table.rows[counter];
+            counter++;
+            if(parseInt(size) == counter) {
+              counter = 0;
+            }
+            rowHover(row);
+        }
+        function rowHover(row) {
+                $('.cls').hide();
+                var offset = $(row).offset();
+                var parentOffset = $('#gradient-style').offset();
+                var id = $(row).attr('id');
+                selectedId = id;
+                $('.td td').attr('class','');
+                $('#'+id+' td').attr('class','hover');
+                $("#div"+id).show();
+                var parentWidth = $('#gradient-style').width();
+                $("#div"+id).offset({ top: parentOffset.top, left: parentOffset.left + parentWidth})
+            }
+    </script>
+    
+  <apex:sectionHeader title="Marketing Leaders" subtitle="UK Lead Response Times"></apex:sectionHeader>
+  <apex:form >
+     
+      <apex:actionFunction action="{!setDateFilterRange}" name="setDateRange" reRender="timeFrame"/>
+      <apex:pageMessages id="pgMessage"></apex:pageMessages>
+      <apex:pageblock id="pbTable">
+                 <apex:actionpoller action="{!retriveReportData}" rerender="pbTable,pgMessage" interval="10" oncomplete="setFirstRow('{!resultReportData.size}');"></apex:actionpoller>      
+        <apex:pageBlockSection columns="2" title="Filters" collapsible="false">
+            
+            
+                           <apex:pageBlockSectionItem >
+                                    <apex:outPutlabel >Show</apex:outPutlabel>
+                                    <apex:selectList value="{!selectedTeamFilter}" multiselect="false" size="1">
+                                        <apex:selectOptions value="{!teamFilterList}"/>
+                                    </apex:selectList>              
+                                </apex:pageBlockSectionItem>
+                                
+                                
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >Time Frame<br/>Created Date</apex:outPutlabel>
+                <apex:outputpanel layout="block" id="timeFrame">
+                <apex:outPutlabel >Range</apex:outPutlabel>
+                <br/>
+                <apex:selectList value="{!selectedDateFilter}" multiselect="false" size="1" onchange="setDateRange();">
+                    <apex:selectOptions value="{!dateFilterList}"/>
+                  </apex:selectList>
+                  <table>
+                        <tr>
+                            <td><apex:outPutlabel >From</apex:outPutlabel></td>
+                            <td><apex:outPutlabel >To</apex:outPutlabel></td>
+                        </tr>
+                        
+                        <tr>
+                            <td><div class="hideCurrDate"><apex:inputField value="{!leadFrom.Date_Required__c}"/></div></td>
+                            <td><div class="hideCurrDate"><apex:inputField value="{!leadTo.Date_Required__c}"/></div></td>
+                        </tr>
+                    
+                    </table>
+                    </apex:outputpanel>             
+            </apex:pageBlockSectionItem>
+            
+
+     
+                
+            <apex:outputPanel layout="block"> 
+             <apex:CommandBUtton value="Go" action="{!retriveReportData}" rerender="pbTable,pgMessage" status="viewPageStatusGo" oncomplete="setFirstRow();"/>
+             <apex:actionStatus stopText="" id="viewPageStatusGo">
+                 <apex:facet name="start">
+                     <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+                 </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+          
+            <apex:outPutlabel />
+                                
+          </apex:pageBlockSection>
+          <br/>
+
+        <div> 
+            <table cellspacing="0">
+                <tr>
+                    <td>
+                        <table width="600" id="gradient-style" cellspacing="0">
+                            <apex:variable var="i" value="{!1}"></apex:variable>
+                            <apex:repeat value="{!resultReportData}" var="l">
+                                <tr id="{!l.userId}" class="td" onmouseover="rowHover(this)">
+                                    <td>
+                                        {!i}
+                                    </td>
+                                    <td>
+                                        {!userMap[l.userId].Name}
+                                    </td>
+                                    <td>
+                                        {!l.avgResponseTime}
+                                    </td>
+                                </tr>
+                                <apex:variable var="i" value="{!i+1}"></apex:variable>
+                            </apex:repeat>
+                        </table>
+                    </td>
+                    <td>
+                        <div style="position:absolute">
+                            <apex:variable var="i" value="{!1}"></apex:variable>
+                            <apex:repeat value="{!resultReportData}" var="l" >
+                                <div style="position:absolute;background-color:black;border-radius:10px;display:none;" id="div{!l.userId}" class="cls" >
+                                    <table cellspacing="0" cellpadding="5" width="400">
+                                        <tr>
+                                            <td>
+                                                <img src="{!userMap[l.userId].FullPhotoUrl}" style="border-radius:10px;border:2px solid white;"></img>
+                                            </td>
+                                            <td style="color:white;font-size:18px;font-weight:bold;">
+                                                <apex:outputText value="{!l.totalLdCount}"></apex:outputText><br/> 
+                                                <apex:outputLabel value="LEADS"></apex:outputLabel><br/>
+                                                <br/>
+                                                <apex:outputText value="{!l.avgResponseTime}"></apex:outputText><br/>
+                                                <apex:outputLabel value="Average Response Time"></apex:outputLabel><br/>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                                <apex:variable var="i" value="{!i+1}"></apex:variable>
+                            </apex:repeat>
+                        </div> 
+                    </td>
+                </tr>
+            </table>
+        </div>
+      </apex:pageblock>
+  </apex:form>
+</apex:page>

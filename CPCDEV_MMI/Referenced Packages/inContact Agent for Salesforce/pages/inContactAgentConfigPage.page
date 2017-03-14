@@ -1,0 +1,738 @@
+<apex:page tabStyle="icAgentConsole__incAgentConfiguration__c" controller="icAgentConsole.inContactAgentConfigController" standardStylesheets="false">
+  <apex:outputPanel layout="block"  rendered="{! !IsTokenAvailable}">
+    <c:inContactAuthentication ></c:inContactAuthentication>
+  </apex:outputPanel>
+  <apex:form styleClass="icAgentconsole">
+    <apex:inputText style="display:none;" styleClass="_sfMode" value="{!sfMode}" id="_sfMode"/>
+    <apex:actionfunction name="loggedIn" action="{!loggedIn}"></apex:actionfunction>
+    <apex:outputPanel layout="block" rendered="{!IsTokenAvailable}" id="masterPanel">
+      <div class="header" >
+        <div class="floating" >
+          <div class="title-panel">
+            <div class="slds-icon_container setting-icn icn" title="{!$Label.salesforceAgent}">
+              <img src="{!URLFOR($Resource.AgentConsoleApp,'css/images/servlet.png')}" width="38px"/>
+            </div>
+            <div class="title">
+              <div class="primary">
+                <label>{!$Label.agentConsoleConfiguration}</label>
+              </div>
+              <div class="secondary">
+                <label>{!$Label.configurationSettings}</label>
+              </div>
+            </div>
+            <div class="buttons config-action">
+                <apex:commandButton title="{!$Label.icagentconsole__cancel}" value="{!$Label.icagentconsole__cancel}" action="{!cancelConfiguration}" reRender="parentOutputPanel, messages, scriptPanel" styleClass="slds-button slds-button--neutral btn" id="btn_cancel"/>
+                <input type="button" value="{!$Label.save}" class="slds-button slds-button--brand btn" onclick="saveConfiguration();" id="btn_save"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <apex:outputPanel styleClass="message-panel" id="messages" >
+        <div class="msg-container {!LOWER(pageMessage.messageType)}">
+          <h2 style="padding: 8px;">
+            <apex:image width="28" rendered="{!IF(AND(pageMessage.messageType != '', $User.UITheme == 'Theme4d') , true, false)}"
+                        url="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/images/lightning/'+LOWER(pageMessage.messageType)+'.png')}"/>
+            <apex:image width="28" rendered="{!IF(AND(pageMessage.messageType != '', $User.UITheme == 'Theme3') , true, false)}"
+                        url="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/images/'+LOWER(pageMessage.messageType)+'.png')}" styleClass="alertIconClassic"/>
+            <span class="messageTxt">{!pageMessage.message}</span>
+            <apex:outputPanel styleClass="close_icn" onclick="closeAlert();" rendered="{!IF(pageMessage.messageType != '' , true, false)}">
+              &#10006;
+            </apex:outputPanel>
+          </h2>
+        </div>
+      </apex:outputPanel>
+
+      <div class="content bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette remove-border">
+        <table style="width:100%;">
+          <tr>
+            <td style="width:20%; vertical-align:100%;horizontal-align:left;" >
+              <span style="font-weight: bold;font-size: 14px;margin-left: 1px;">{!$Label.profiles}</span>
+              <br />
+              <br />
+              <div class="slds-form-element__row">
+                <div class="slds-form-element">
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <apex:selectlist id="ddlProfileNames" style="vertical-align:100%;" multiselect="false" styleClass="slds-select" onchange="closeAlert();actionProfileSelected()" value="{!selectedProfileId}" size="{!IF(sfMode == 'Lightning', 12, 20)}" >
+                        <apex:selectOptions value="{!profileNames}"></apex:selectOptions>
+                      </apex:selectlist>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td style="width:80%; vertical-align:top;horizontal-align:left;padding-left:20px;">
+              <apex:actionStatus id="updateProfileStatus">
+                <apex:facet name="start" >
+                  <div class="slds-spinner_container">
+                    <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                      <span class="slds-assistive-text"></span>
+                      <div class="slds-spinner__dot-a"></div>
+                      <div class="slds-spinner__dot-b"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="loading-layer" />
+                    <div class="loading-panel">
+                      <span class="loading-icn"></span>
+                      <span class="loading-txt">{!$Label.processing}...</span>
+                    </div>
+                  </div>
+                </apex:facet>
+                <apex:facet name="stop">
+                  <apex:outputPanel id="parentOutputPanel">
+                    <apex:outputText style="font-size: 14px;margin-left: 1px;">
+                      {!$Label.icagentconsole__configure} <b>{!SelectedProfileName}</b> {!$Label.icagentconsole__profile}
+                    </apex:outputText>
+                    <apex:panelGroup id="profileOptionsGroup" rendered="{!selectedProfileId != '_default'}">
+                      <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                          <label class="slds-radio" for="optionDefault" style="float: left;">
+                            <input type="radio" name="profileOptions" id="optionDefault" value="_default"/>
+                            <span class="slds-radio--faux"></span>
+                            <span class="slds-form-element__label">{!$Label.useDefault}</span>
+                          </label>
+                          <label class="slds-radio" for="optionCustom">
+                            <input type="radio" name="profileOptions" id="optionCustom" value="custom"/>
+                            <span class="slds-radio--faux"></span>
+                            <span class="slds-form-element__label">{!$Label.custom}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </apex:panelGroup>
+                    <apex:actionStatus id="customSettingStatus">
+                      <apex:facet name="start">
+                        <div class="slds-spinner_container">
+                          <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                            <span class="slds-assistive-text"></span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="loading-layer" />
+                          <div class="loading-panel">
+                            <span class="loading-icn"></span>
+                            <span class="loading-txt">{!$Label.processing}...</span>
+                          </div>
+                        </div>
+                      </apex:facet>
+                      <apex:facet name="stop">
+                        <apex:outputPanel id="cutomProfileOptionPanel" >
+                          <apex:outputpanel rendered="{!selectedProfileOption == 'custom'}">
+                            <table style="width:100%;">
+                              <!--ST-->
+                              <tr>
+                                <td style="width:100%;display:{!IF(isOmniChannelEnabled == true ,'block','none')}">
+                                  <div style="padding-top: 10px;">
+                                    <span style="font-weight: bold;">{!$Label.presenceSyncSettings}</span>
+                                    <div style="padding-top: 4px;padding-bottom: 5px;">
+                                      <div class="slds-form-element__row">
+                                        <div class="slds-form-element">
+                                          <div class="slds-form-element__control">
+                                            <label class="slds-checkbox" for="chkAgentAppSync">
+                                              <input name="default" type="checkbox" id="chkAgentAppSync" value="{!canAgentAppSync}" onchange="resetAgentSyncSelectionJS(this.checked);"/>
+                                              <span class="slds-checkbox--faux"></span>
+                                              <span class="slds-form-element__label">{!$Label.enableAgentPresenceSync}</span>
+                                            </label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div style="margin-top: 10px;display:{!IF(canAgentAppSync == true ,'block','none')}">
+                                        <div class="slds-form-element" style="margin-bottom: 5px;">
+                                          <span style="font-weight: bold;">{!$Label.presenceMaster}</span>
+                                          <div class="slds-form-element__control">
+                                            <label class="slds-radio" for="inContact" style="float: left;margin-right: 20px;">
+                                              <input type="radio" name="isMasterApp" id="inContact" value="{!$Label.inContact}"/>
+                                              <span class="slds-radio--faux"></span>
+                                              <span class="slds-form-element__label">{!$Label.inContact}</span>
+                                            </label>
+                                            <label class="slds-radio" for="salesforce">
+                                              <input type="radio" name="isMasterApp" id="salesforce" value="{!$Label.salesforce}"/>
+                                              <span class="slds-radio--faux"></span>
+                                              <span class="slds-form-element__label">{!$Label.salesforce}</span>
+                                            </label>
+                                          </div>
+                                        </div>
+
+                                        <span style="font-weight: bold;padding-top: 1px;">{!$Label.stateMappings}</span>
+
+                                        <div id="agentSyncStateUn" style="margin-top:6px;">
+                                          <div style="padding-top: 2px;display:{!IF(isMasterApp == 'Salesforce','block','none')};" id="inContactState">
+                                            <div style="float:left;white-space: nowrap;padding-right:6px;padding-left: 6px;max-width: 90px;overflow: hidden;text-overflow: ellipsis;margin-top: 6px;">{!$Label.unavailable}</div>
+                                            <div style="float:left;">
+                                              <div class="slds-form-element__row">
+                                                <div class="slds-form-element">
+                                                  <div class="slds-form-element__control">
+                                                    <div class="slds-select_container">
+                                                      <apex:selectList styleClass="slds-select selectCodes" value="{!selectedInContactUnavailableCodes}" multiselect="false" size="1" style="margin-right:4px;" disabled="{!IF(InContactUnavailableCodes.size==0,true,false)}">
+                                                        <apex:selectOptions value="{!InContactUnavailableCodes}"></apex:selectOptions>
+                                                      </apex:selectList>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div style="display:{!IF(isMasterApp == 'inContact' ,'block','none')}">
+
+                                            <div style="padding-top: 2px;" id="sfUnavailableCodes" >
+                                              <div style="float:left;white-space: nowrap;padding-right:6px;padding-left: 6px;max-width: 90px;overflow: hidden;text-overflow: ellipsis;margin-top: 6px;">{!$Label.unavailable}</div>
+                                              <div style="float:left;">
+                                                <div class="slds-form-element__row">
+                                                  <div class="slds-form-element">
+                                                    <div class="slds-form-element__control">
+                                                      <div class="slds-select_container">
+                                                        <apex:selectList styleClass="slds-select selectCodes" value="{!selectedUnavailableCodes}" multiselect="false" size="1" style="margin-right:4px;"  disabled="{!IF(SFUnavailableCodes.size==0,true,false)}">
+                                                          <apex:selectOptions value="{!SFUnavailableCodes}"></apex:selectOptions>
+                                                        </apex:selectList>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div style="width:100%;padding-right: 10px;" id="sfAvailableCodes">
+                                              <div style="width:100%;">
+                                                <div style="float:left;margin-left: 18px;white-space: nowrap;padding-right:6px;max-width: 90px;overflow: hidden;text-overflow: ellipsis;margin-top: 6px;">{!$Label.available}</div>
+                                                <div style="float:left;">
+                                                  <div class="slds-form-element__row">
+                                                    <div class="slds-form-element">
+                                                      <div class="slds-form-element__control">
+                                                        <div class="slds-select_container">
+                                                          <apex:selectList styleClass="slds-select selectCodes" value="{!selectedAvailableCodes}" multiselect="false" size="1" style=""  disabled="{!IF(SFAvailableCodes.size==0,true,false)}">
+                                                            <apex:selectOptions value="{!SFAvailableCodes}"></apex:selectOptions>
+                                                          </apex:selectList>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+
+                              <!--ED-->
+
+                              <tr>
+                                <td style="width:50%;">
+                                  <div style="padding-top: 6px;">
+                                    <span style="font-weight: bold;">{!$Label.taskCreation}</span>
+                                    <br/>
+                                    <br/>
+                                    <apex:outputPanel style="padding-top: 10px;" id="popBlock">
+                                      <div class="slds-form-element__row">
+                                        <div class="slds-form-element">
+                                          <div class="slds-form-element__control">
+                                            <label class="slds-checkbox" for="taskCreation">
+                                              <input name="default" type="checkbox" id="taskCreation" onchange="taskCreateJS(this.checked)"  value="{! canCreateTask}"/>
+                                              <span class="slds-checkbox--faux"></span>
+                                              <span class="slds-form-element__label">{!$Label.createTask}</span>
+                                            </label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div style="padding-top:10px;padding-left:20px;" class="infoM4">
+                                          <div style="float: left;width: 48%;">
+                                            <div class="slds-form-element__row">
+                                              <div class="slds-form-element">
+                                                <div class="slds-form-element__control">
+                                                  <label class="slds-checkbox" for="chkAlwaysNewTask">
+                                                    <input name="default" type="checkbox" id="chkAlwaysNewTask"  onchange="onCheckboxChange('always', this.checked);" value="{! canAlwaysCreateNewTask}"/>
+                                                    <span class="slds-checkbox--faux"></span>
+
+                                                    <apex:outputText styleClass="slds-form-element__label check-box {!IF(canCreateTask == true,'', 'label-disable')}" value="{!$Label.icagentconsole__alwaysCreateNewTask}"/>
+
+                                                  </label>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div style="    padding-top: 4px;padding-left: 20px;clear: both;">
+                                          <div class="slds-form-element__row">
+                                            <div class="slds-form-element">
+                                              <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" for="chkPopTask">
+                                                  <input name="default" type="checkbox" id="chkPopTask" onchange="onCheckboxChange('pop', this.checked);" value="{!canPopTask}" />
+                                                  <span class="slds-checkbox--faux"></span>
+
+                                                  <apex:outputText styleClass="slds-form-element__label check-box {!IF(canCreateTask == true,'', 'label-disable')}" value="{!$Label.icagentconsole__popTask}"/>
+
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </apex:outputPanel>
+                                  </div>
+                                </td>
+                                <td style="width:50%;">
+                                  <div style="padding-top: 10px; width:100%;">
+                                    <span style="font-weight: bold;">{!$Label.inContactDataStorage}</span>
+                                    <div style="padding-top: 10px; width:100%;">
+                                      <div class="slds-form-element__row">
+                                        <div class="slds-form-element">
+                                          <div class="slds-form-element__control">
+                                            <label class="slds-checkbox" for="chkStoreVar">
+                                              <input name="default" type="checkbox" id="chkStoreVar" onchange="onCheckboxChange('data', this.checked);" value="{!canStoreVaribles}"/>
+                                              <span class="slds-checkbox--faux"></span>
+                                              <span class="slds-form-element__label">{!$Label.storeIncontactScriptVar}</span>
+                                            </label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td colspan="2">
+                                  <apex:actionStatus id="entityCollectionStatus">
+                                    <apex:facet name="start">
+                                      <div class="slds-spinner_container">
+                                        <div class="slds-spinner--brand slds-spinner slds-spinner--large" role="alert">
+                                          <span class="slds-assistive-text"></span>
+                                          <div class="slds-spinner__dot-a"></div>
+                                          <div class="slds-spinner__dot-b"></div>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <div class="loading-layer" />
+                                        <div class="loading-panel">
+                                          <span class="loading-icn"></span>
+                                          <span class="loading-txt">{!$Label.processing}...</span>
+                                        </div>
+                                      </div>
+                                    </apex:facet>
+                                    <apex:facet name="stop" >
+                                      <apex:outputPanel id="entityCollectionPanel">
+                                        <table width="100%;" style="margin-top: 14px;">
+                                          <tr>
+                                            <td>
+                                              <div class="slds-form-element__row" style="float: left;">
+                                                <div class="slds-form-element" style="width:200px">
+                                                  <div class="slds-form-element__control">
+                                                    <div class="slds-select_container">
+                                                      <apex:selectList value="{!selectedEntityName}" multiselect="false" size="1" styleClass="slds-select">
+                                                        <apex:selectOptions value="{!EntityNames}"></apex:selectOptions>
+                                                      </apex:selectList>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div style="float: left; padding-left: 10px;">
+                                                <apex:commandButton action="{!addEntity}" status="entityCollectionStatus" value="{!$Label.icagentconsole__addEntity}" reRender="pnlFieldContainer, messages" styleClass="slds-button slds-button--neutral"/>
+                                              </div>
+                                            </td>
+                                            <td>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td colspan="2">
+                                              <br/>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td colspan="2">
+                                              <div class="message infoM4 info-panel">
+                                                <table class="messageTable" cellspacing="0" cellpadding="0" border="0" style="padding:0px;margin:0px;">
+                                                  <tr>
+                                                    <td>
+                                                      <!--<img class="msgIcon" title="info" src="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/images/lightning/info.png')}" alt="info" />-->
+                                                      <apex:image styleClass="msgIcon" title="info" rendered="{!IF($User.UITheme == 'Theme4d' , true, false)}"
+                                                                  url="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/images/lightning/info.png')}"/>
+                                                      <apex:image styleClass="msgIcon" title="info" rendered="{!IF($User.UITheme == 'Theme3' , true, false)}"
+                                                                  url="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/images/info.png')}"/>
+                                                    </td>
+                                                    <td class="messageCell">
+                                                      <div class="messageText">
+                                                        {!$Label.icagentconsole__configWarning}
+                                                      </div>
+                                                    </td>
+                                                  </tr>
+                                                </table>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td colspan="2">
+                                              <br/>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td colspan="2">
+                                              <apex:outputPanel id="pnlFieldContainer">
+                                                <apex:repeat value="{!entityDetails}" var="entity">
+                                                  <div class="remove-border bPageBlock brandSecondaryBrd apexDefaultPageBlock secondaryPalette">
+                                                    <apex:outputPanel id="pnlInfoItems">
+                                                      <apex:commandButton value="{!$Label.icagentconsole__remove}" action="{!removeEntity}" reRender="pnlFieldContainer, messages" styleClass="slds-button slds-button--neutral cus-field-entity">
+                                                        <apex:param name="EntityName" assignTo="{!entityName}" value="{!entity.entityName}"/>
+                                                      </apex:commandButton>&nbsp;&nbsp;
+                                                      <span style="font-weight:bold;font-size:large;padding-left:20px;"> {!entity.entityLabel} &nbsp; &nbsp;&nbsp; &nbsp;</span>
+                                                      <apex:commandButton value="{!$Label.icagentconsole__addField}" status="entityCollectionStatus" action="{!addEntityField}" reRender="pnlFieldContainer, messages" styleClass="slds-button slds-button--neutral">
+                                                        <apex:param name="EntityName" assignTo="{!entityName}" value="{!entity.entityName}"/>
+                                                      </apex:commandButton>
+                                                      <apex:variable value="{!0}" var="index"/>
+                                                      <table class="entity-table">
+                                                        <apex:repeat value="{!entity.configFields}" var="field">
+                                                          <tr>
+                                                            <td style="padding-left:10px; width:5%;">
+                                                              <apex:commandButton id="btnRemoveField" Value="{!$Label.icagentconsole__remove}" action="{!removeEntityField}" reRender="pnlFieldContainer, messages" styleClass="slds-button slds-button--neutral">
+                                                                <apex:param name="EntityName" assignTo="{!entityName}" value="{!entity.entityName}"/>
+                                                                <apex:param name="FieldIndex" assignTo="{!removeIndex}" value="{!index}"/>
+                                                              </apex:commandButton>
+                                                              <apex:variable value="{!index + 1}" var="index"/>
+                                                            </td>
+                                                            <td style="padding-left:10px; width:30%">
+                                                              <div class="slds-form-element__row">
+                                                                <div class="slds-form-element" style="width:100%;" >
+                                                                  <div class="slds-form-element__control">
+                                                                    <div class="slds-select_container">
+                                                                      <apex:selectList value="{!field.fieldName}" size="1" multiselect="false" styleClass="slds-select">
+                                                                        <apex:selectOptions value="{!entity.entityFields}"></apex:selectOptions>
+                                                                      </apex:selectList>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </td>
+                                                            <td style="width:2%;padding-left: 10px;">
+                                                              =
+                                                            </td>
+                                                            <td style="padding-left:10px; width:26%;">
+                                                              <div class="slds-form-element__row">
+                                                                <div class="slds-form-element" >
+                                                                  <div class="slds-form-element__control">
+                                                                    <div class="slds-select_container">
+                                                                      <apex:selectList value="{!field.valueObject}" id="ddlValObjects" size="1" style="width:100%;" onchange="return onValueObjectChange(this)" multiselect="false" styleClass="slds-select">
+                                                                        <apex:selectOption itemValue="--SELECT--"></apex:selectOption>
+                                                                        <apex:selectOptions value="{!ValueObjects}"></apex:selectOptions>
+                                                                      </apex:selectList>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </td>
+                                                            <td style="width:2%;padding-left: 10px;">
+                                                              -
+                                                            </td>
+                                                            <td style="padding-left:10px; padding-right:10px; width:35%;">
+                                                              <apex:outputPanel id="ddlCallInfoItems" style="{!IF(field.valueObject == 'CallInfo','display:block;width:100%;','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element">
+                                                                    <div class="slds-form-element__control">
+                                                                      <div class="slds-select_container">
+                                                                        <apex:selectList value="{!field.valueFieldCall}" size="1"  multiselect="false" styleClass="slds-select" style="width:100%;">
+                                                                          <apex:selectOptions value="{!CallInfoItems}"></apex:selectOptions>
+                                                                        </apex:selectList>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                              <apex:outputPanel id="txtScriptVariable" style="{!IF(field.valueObject  == 'ScriptVariable','display:block;width:100%','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element slds-size--1-of-1">
+                                                                    <apex:inputtext value="{!field.valueFieldScript}" id="txtScriptVariableHidden" styleClass="slds-input" style="width:100%;"/>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                              <apex:outputPanel id="ddlWorkItems" style="{!IF(field.valueObject  == 'WorkItemInfo','display:block;width:100%;','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element">
+                                                                    <div class="slds-form-element__control">
+                                                                      <div class="slds-select_container">
+                                                                        <apex:selectList value="{!field.valueFieldWorkItem}" size="1"  multiselect="false" styleClass="slds-select" style="width:100%;">
+                                                                          <apex:selectOptions value="{!WorkItemInfoItems}"></apex:selectOptions>
+                                                                        </apex:selectList>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                              <apex:outputPanel id="ddlChatInfoItems" style="{!IF(field.valueObject  == 'ChatInfo','display:block;width:100%;','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element">
+                                                                    <div class="slds-form-element__control">
+                                                                      <div class="slds-select_container">
+                                                                        <apex:selectList value="{!field.valueFieldChat}" size="1" multiselect="false" styleClass="slds-select" style="width:100%;">
+                                                                          <apex:selectOptions value="{!ChatInfoItems}"></apex:selectOptions>
+                                                                        </apex:selectList>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                              <apex:outputPanel id="ddlEmailInfoItems" style="{!IF(field.valueObject  == 'EmailInfo','display:block;width:100%;','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element">
+                                                                    <div class="slds-form-element__control">
+                                                                      <div class="slds-select_container">
+                                                                        <apex:selectList value="{!field.valueFieldEmail}" size="1" multiselect="false" styleClass="slds-select" style="width:100%;">
+                                                                          <apex:selectOptions value="{!EmailInfoItems}"></apex:selectOptions>
+                                                                        </apex:selectList>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                              <apex:outputPanel id="ddlVoicemailInfoItems" style="{!IF(field.valueObject  == 'VoicemailInfo','display:block;width:100%;','display:none;width:100%;')}">
+                                                                <div class="slds-form-element__row">
+                                                                  <div class="slds-form-element">
+                                                                    <div class="slds-form-element__control">
+                                                                      <div class="slds-select_container">
+                                                                        <apex:selectList value="{!field.valueFieldVoicemail}" size="1"  multiselect="false" styleClass="slds-select" style="width:100%;">
+                                                                          <apex:selectOptions value="{!VoicemailInfoItems}"></apex:selectOptions>
+                                                                        </apex:selectList>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </apex:outputPanel>
+                                                            </td>
+                                                          </tr>
+                                                        </apex:repeat>
+                                                      </table>
+                                                    </apex:outputPanel>
+                                                  </div>
+                                                </apex:repeat>
+                                              </apex:outputPanel>
+                                            </td>
+                                          </tr>
+                                        </table>
+                                      </apex:outputPanel>
+                                    </apex:facet>
+                                  </apex:actionStatus>
+                                </td>
+                              </tr>
+                            </table>
+                          </apex:outputpanel>
+                        </apex:outputPanel>
+                      </apex:facet>
+                    </apex:actionStatus>
+                  </apex:outputPanel>
+                </apex:facet>
+              </apex:actionStatus>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+
+      <apex:actionfunction name="actionProfileSelected" action="{!onProfileSelected}" status="updateProfileStatus"  rerender="parentOutputPanel, scriptPanel">
+      </apex:actionfunction>
+      <apex:actionfunction name="actionSettingSelectionChanged" action="{!actionSettingSelectionChanged}" status="customSettingStatus" rerender="cutomProfileOptionPanel, messages, scriptPanel" >
+        <apex:param name="selectedProfileOption" assignTo="{!selectedProfileOption}" value=""/>
+      </apex:actionfunction>
+      <apex:actionfunction name="resetAgentSyncSelectionJS" action="{!ResetAgentSyncSelection}" rerender="cutomProfileOptionPanel, messages, scriptPanel" status="updateProfileStatus" >
+        <apex:param name="canAgentAppSync" assignTo="{!canAgentAppSync}" value=""/>
+      </apex:actionfunction>
+      <apex:actionfunction name="taskCreateJS" action="{!TaskCreate}" status="entityCollectionStatus" reRender="popBlock, scriptPanel">
+        <apex:param name="canCreateTask" assignTo="{!canCreateTask}" value=""/>
+      </apex:actionfunction>
+      <apex:actionfunction name="saveConfigurationJS" action="{!saveConfiguration}" status="updateProfileStatus" reRender="parentOutputPanel,messages, scriptPanel" oncomplete="scrollTopAction()">
+        <apex:param name="canPopTask" assignTo="{!canPopTask}" value=""/>
+        <apex:param name="canAlwaysCreateNewTask" assignTo="{!canAlwaysCreateNewTask}" value=""/>
+        <apex:param name="canStoreVaribles" assignTo="{!canStoreVaribles}" value=""/>
+      </apex:actionfunction>
+      <apex:actionfunction name="changeMasterJS" action="{!changeMaster}" rerender="cutomProfileOptionPanel, scriptPanel" status="updateProfileStatus">
+        <apex:param name="isMasterApp" assignTo="{!isMasterApp}" value=""/>
+      </apex:actionfunction>
+    </apex:outputPanel>
+    <apex:actionfunction name="setModeJS" action="{!setMode}" rerender="masterPanel, messages, scriptPanel">
+      <apex:param name="sfMode" assignTo="{!sfMode}" value=""/>
+    </apex:actionfunction>
+  </apex:form>
+
+  <apex:includeScript value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp, 'js/lib/jquery-1.10.2.min.js')}"/>
+
+  <script type="text/javascript">
+    var chkPopTask = false,
+    chkAlwaysNewTask = false,
+    chkDataStore = false,
+    sfMode = '';
+
+    function onLoginSuccess()
+    {
+    loggedIn();
+    }
+
+    function saveConfiguration () {
+    saveConfigurationJS(chkPopTask, chkAlwaysNewTask, chkDataStore);
+    }
+
+    function onCheckboxChange(element, val){
+    if(element === 'pop'){
+    chkPopTask = val;
+    }else if(element === 'always'){
+    chkAlwaysNewTask = val;
+    }else if(element === 'data'){
+    chkDataStore = val;
+    }
+    }
+
+    function onValueObjectChange(selectList) {
+    var element = selectList,
+    infoType = selectList.options[selectList.selectedIndex].value,
+    ddlCallInfo = selectList.id.replace('ddlValObjects','ddlCallInfoItems'),
+    ddlWorkItemInfo = selectList.id.replace('ddlValObjects','ddlWorkItems'),
+    ddlChatInfo = selectList.id.replace('ddlValObjects','ddlChatInfoItems'),
+    ddlEmailInfo = selectList.id.replace('ddlValObjects','ddlEmailInfoItems'),
+    ddlVoicemailInfo = selectList.id.replace('ddlValObjects','ddlVoicemailInfoItems'),
+    txtScriptvar = element.id.replace('ddlValObjects','txtScriptVariable'),
+    pnlInfoItem = element.id.replace('ddlValObjects','pnlInfoItems');
+    if(infoType === 'ScriptVariable'){
+    document.getElementById(ddlEmailInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='block';
+    document.getElementById(txtScriptvar).style.width='100%';
+    } else if(infoType === 'CallInfo'){
+    document.getElementById(ddlEmailInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='block';
+    document.getElementById(ddlCallInfo).style.width='100%';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    } else if(infoType === 'WorkItemInfo') {
+    document.getElementById(ddlEmailInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='block';
+    document.getElementById(ddlWorkItemInfo).style.width='100%';
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    }else if (infoType === 'ChatInfo'){
+    document.getElementById(ddlEmailInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(ddlChatInfo).style.display='block';
+    document.getElementById(ddlChatInfo).style.width='100%';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    } else if (infoType === 'EmailInfo'){
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    document.getElementById(ddlEmailInfo).style.display='block';
+    document.getElementById(ddlEmailInfo).style.width='100%';
+    } else if (infoType === 'VoicemailInfo'){
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='block';
+    document.getElementById(ddlVoicemailInfo).style.width='100%';
+    document.getElementById(ddlEmailInfo).style.display='none';
+    } else {
+    document.getElementById(ddlEmailInfo).style.display='none';
+    document.getElementById(ddlCallInfo).style.display='none';
+    document.getElementById(ddlWorkItemInfo).style.display='none';
+    document.getElementById(ddlChatInfo).style.display='none';
+    document.getElementById(txtScriptvar).style.display='none';
+    document.getElementById(ddlVoicemailInfo).style.display='none';
+    }
+    return false;
+    }
+    function closeAlert(){
+    j1102(".message-panel").hide();
+    }
+  </script>
+  <!--Classic Theme-->
+  <apex:outputPanel rendered="{!$User.UITheme == 'Theme3'}">
+    <script>
+      sfMode = 'Classic';
+      setModeJS(sfMode);
+      <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/inContactAgentConfig.css')}"/>
+    </script>
+  </apex:outputPanel>
+
+  <!--Lightning Theme-->
+  <apex:outputPanel rendered="{!$User.UITheme == 'Theme4d'}" >
+    <script>
+      sfMode = 'Lightning';
+      setModeJS(sfMode);
+    </script>
+    <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/salesforce-lightning-design-system-vf.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/inContactAgentLightning.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.icAgentConsole__AgentConsoleApp,'css/lightning/inContactAgentConfigLightning.css')}"/>
+  </apex:outputPanel>
+
+  <apex:outputPanel id="scriptPanel">
+
+    <script type="text/javascript">
+
+      var j1102 = jQuery.noConflict();
+
+      j1102(document).ready(function ($) {
+      setTaskCreation();
+      setPresentSync();
+      setMasterApp();    
+      setProfileOptions();
+      j1102("input[name='isMasterApp']").change(function(e){
+      changeMasterJS(''+j1102(this).val());
+      });
+      j1102("input[name='profileOptions']").click(function(e){
+      actionSettingSelectionChanged(''+j1102(this).val());
+      });
+      setFocusOnLoad();
+      });
+
+      function setFocusOnLoad() {
+      }
+
+      function setTaskCreation(){
+      j1102('input[id$=taskCreation]').prop( "checked", {!canCreateTask});
+      j1102('input[id$=chkPopTask]').prop( "checked", {!canPopTask});
+      j1102('input[id$=chkAlwaysNewTask]').prop( "checked", {!canAlwaysCreateNewTask});
+      j1102('input[id$=chkStoreVar]').prop( "checked", {!canStoreVaribles});
+
+      chkPopTask = {!canPopTask};
+      chkAlwaysNewTask = {!canAlwaysCreateNewTask};
+      chkDataStore = {!canStoreVaribles};
+
+      if({!!canCreateTask}) {
+      j1102("#chkPopTask").attr("disabled", true);
+      j1102("#chkAlwaysNewTask").attr("disabled", true);
+      chkPopTask = false;
+      chkAlwaysNewTask = false;
+      }
+      }
+
+      function setPresentSync(){
+      j1102('input[id$=chkAgentAppSync]').prop( "checked", {!canAgentAppSync});
+      }
+
+      function setMasterApp(){
+      j1102("input[name=isMasterApp][value='{!JSENCODE(isMasterApp)}']").prop('checked', true);
+      }
+      function setProfileOptions(){
+      j1102("input[name=profileOptions][value='{!JSENCODE(selectedProfileOption)}']").prop('checked', true);
+      }
+
+      function scrollTopAction(){
+      j1102("html, body").animate({ scrollTop: 0 }, "slow");
+      }
+    </script>
+
+  </apex:outputPanel>
+</apex:page>

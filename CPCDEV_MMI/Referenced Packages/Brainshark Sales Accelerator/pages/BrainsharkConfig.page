@@ -1,0 +1,53 @@
+<apex:page controller="BRNSHRK.BrainsharkConfigController" action="{!initPage}" sideBar="false">
+
+<apex:sectionHeader title="Brainshark for Salesforce" subtitle="Search Component Settings"/>
+
+<apex:outputPanel rendered="{!errorMessage != null}" layout="block" style="margin-bottom: 15px;">
+    <apex:outputText value="{!errorMessage}" style="color: red; font-style: italic; font-weight: bold" />
+</apex:outputPanel>
+
+<apex:form >
+
+<apex:pageBlock id="settings">
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton value="Edit" action="{!edit}" rerender="settings" rendered="{!NOT(editMode)}"/>
+        <apex:actionStatus id="saveStatus" rendered="{!editMode}">
+            <apex:facet name="start">
+                <apex:commandButton value="Saving..." disabled="true"/>
+            </apex:facet>
+            <apex:facet name="stop">
+                <apex:commandButton value="Save" action="{!save}" rerender="settings" status="saveStatus" oncomplete="location.reload()" />
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:commandButton value="Cancel" action="{!cancel}" rerender="settings" rendered="{!editMode}"/>
+    </apex:pageBlockButtons>
+    <div class="bsk-editor">
+        <apex:inputField value="{!brainsharkConfig.BRNSHRK__Data__c}" rendered="{!editMode}" />
+        <div class="bsk-noedit"><apex:outputField value="{!brainsharkConfig.BRNSHRK__Data__c}" rendered="{!NOT(editMode)}" /></div>
+    </div>
+</apex:pageBlock>
+
+<apex:iframe src="apex/ConfiguratorPreview?inline=1" html-class="js-preview-frame"></apex:iframe>
+
+</apex:form>
+<style>
+/* inline stylesheet to support the edit and non-edit mode */
+.bsk-editor {
+    width:100%;
+    min-height: 280px;
+    height: auto;
+    overflow-y: auto;
+}
+
+.bsk-editor textarea {
+    width:99%;
+    height:280px;
+    border:1px solid #ccc;
+}
+
+.bsk-editor .bsk-noedit {
+    max-height:280px;
+}
+</style>
+
+</apex:page>

@@ -1,0 +1,490 @@
+<apex:page sidebar="false" showheader="false" renderAs="pdf" controller="QuickQuoteEmailQuote" action="{!GetPDFcontent}">
+    <head>
+        <style type="text/css" media="print">
+            @page {
+                @top-center {
+                    content: element(header);
+                }
+                @top-right{
+                    content: element(footer);
+                }
+            }
+            div.header {
+                position: running(header); 
+            }
+            div.footer {
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page); 
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+           <div class="header" >
+                <table width="100%">
+                    <tr>
+                        <td colspan="4">
+                            <table width="100%" style="padding-bottom: 20%;">
+                                <tr align="center" >
+                                    <td width="50%" align="right"><img src="{!$Resource.mobileminiinc}" width="70%" height="70%" /></td>
+                                    <td width="60%" style=" padding-right: 20px; font-size: 30px; font-weight: bold;">Quotation</td>
+                                </tr>
+                                <tr align="center">
+                                    <td align="right" style="padding-right: 80px;"><a href="http://www.mobilemini.com/">www.mobilemini.com</a></td>
+                                    <td style="padding-right: 20px;">Page <span class="pagenumber"/> of <span class="pagecount"/></td>
+                                </tr>           
+                            </table>
+                        </td>
+                    </tr>
+                    
+                </table>
+           </div>
+              <apex:form >
+                 <div style="page-break-inside:avoid;margin-top:50px;"> 
+                    <table width="100%">
+                        <tr>
+                            <td width="40%" nowrap="nowrap">
+                                <span align="left" style="padding-left: 5px; font-size: 20px; font-weight: bold;" >Branch Location:</span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">{!weeklyBranchSnop.Street__c}</span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">{!weeklyBranchSnop.City__c}, {!weeklyBranchSnop.State__c} {!weeklyBranchSnop.Zipcode__c} , {!weeklyBranchSnop.Country__c}</span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">Phone: {!loginUserRec.Phone} Ext: {!loginUserRec.Extension__c}  </span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">Fax: {!loginUserRec.Fax}</span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">Salesperson: {!loginUserRec.Name}</span><br/>
+                                <span align="left" style="padding-left: 5px; font-size: 10px;">Email: {!loginUserRec.Email}</span>
+                                <br/><br/>  
+                            </td> 
+                            <td align="right" height="200%" colspan="2" style="padding-top: 20px;">
+                                <img src="{!$Resource.mobileminiTheStoragePDF}" style="width: 100%; height: 400%;"/>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid black;">
+                            <td colspan="3">
+                                <table width="100%" cellspacing="0">
+                                    <tr>
+                                        <td width="33%" nowrap="nowrap" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black;">
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Customer:</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!accData.Name}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!accData.BillingStreet}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!accData.BillingCity}, {!accData.BillingState} {!accData.BillingPostalCode}</span><br/>
+                                        </td>
+                                        <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;">
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Deliver To:</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!accData.Name}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px; ">{!qqData.Address__c}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qqData.City__c} , {!qqData.State__c} {!qqData.Zip_Code__c} </span><br/>
+                                            
+                                        </td>
+                                        <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black;">
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quotation:</span><span style="padding-left: 2px; font-size: 12px;">{!transactionTypeName}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Number:</span><span style="padding-left: 2px; font-size: 12px;">{!qqData.Quote_Id__c}</span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Date:</span>
+                                            <span style="padding-left: 2px; font-size: 10px;">
+                                                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                    <apex:param value="{!qqData.Start_Date__c}"/>
+                                                </apex:outputText>
+                                            </span><br/>
+                                            <span align="left" style="padding-left: 3px; font-size: 12px; font-weight: bold;">Quote expires:</span>
+                                            <span style="padding-left: 2px; font-size: 10px;">
+                                                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                                    <apex:param value="{!ExpDate}"/>
+                                                </apex:outputText>
+                                            </span>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr><td colspan="3" height="15px"></td></tr>
+                        <tr>
+                            <td colspan="3" width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                <apex:outputPanel rendered="{!IF(isSalesType = false && securityCharge > 0, true, false)}" > 
+                                <table width="100%" cellpadding="4" cellspacing="0">
+                                    <tr style="background-color: #BDBDBD">
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;">Amount</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;">Period</td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                <!--{!qqData.Product_description__c}-->
+                                                {!qqData.Product__c} ( {!qqData.Product_description__c} )
+                                                
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                               <!--  {!qqData.Rental_Rate__c} -->
+                                               {!productPrice}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Security Deposit 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                               <!--  {!qqData.Rental_Rate__c} -->
+                                               {!securityCharge}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" > 
+                                                Container Guard Lock
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                               {!qqData.Locks_Total__c}
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                                one time
+                                            </apex:outputPanel>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Delivery + Fuel Surcharge
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!delPlusFuel}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                PickUp + Fuel Surcharge
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!puPlusFuel}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Personal Property Expense
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.Rental_PP_E_Total__c}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Loss Limitation Waiver
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.LLW_Total__c}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" colspan="3">
+                                            <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','[Other Fees and Charges CA, CO, AR, MO, MI, NV]','')}" />
+                                        </td>
+                                    </tr>   
+                                    <tr >
+                                        <td colspan="4">
+                                            <table align="right" style="font-size: 14px;">
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total Rental Charges</td>
+                                                    <td align="right">${!totalRentalCharge}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total One Time Charges</td>
+                                                    <td align="right">${!totalOneTimeCharge}</td>
+                                                </tr> 
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">
+                                                        <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','Other Fees and Charges','Sales Tax')}" />
+                                                    </td>
+                                                    <td  align="right">${!qqData.Tax_Total__c}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total Initial Charges</td>
+                                                    <td align="right">${!totalinitialCharge}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!IF(isSalesType = false && securityCharge = 0, true,false)}"> 
+                                <table width="100%" cellpadding="4" cellspacing="0">
+                                    <tr style="background-color: #BDBDBD">
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;">Amount</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;">Period</td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                <!--{!qqData.Product_description__c}-->
+                                                {!qqData.Product__c} ( {!qqData.Product_description__c} )
+                                                
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                               <!--  {!qqData.Rental_Rate__c} -->
+                                               {!productPrice}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" > 
+                                                Container Guard Lock
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                               {!qqData.Locks_Total__c}
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                                one time
+                                            </apex:outputPanel>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Delivery + Fuel Surcharge
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!delPlusFuel}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                PickUp + Fuel Surcharge
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!puPlusFuel}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Personal Property Expense
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.Rental_PP_E_Total__c}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!!isSalesType}"> 
+                                                Loss Limitation Waiver
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.LLW_Total__c}
+                                        </td>
+                                        <td>
+                                            per period
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" colspan="3">
+                                            <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','[Other Fees and Charges CA, CO, AR, MO, MI, NV]','')}" />
+                                        </td>
+                                    </tr>       
+                                    <tr >
+                                        <td colspan="4">
+                                            <table align="right" style="font-size: 14px;">
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total Rental Charges</td>
+                                                    <td align="right">${!totalRentalCharge}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total One Time Charges</td>
+                                                    <td align="right">${!totalOneTimeCharge}</td>
+                                                </tr> 
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">
+                                                        <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','Other Fees and Charges','Sales Tax')}" />
+                                                    </td>
+                                                    <td  align="right">${!qqData.Tax_Total__c}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total Initial Charges</td>
+                                                    <td align="right">${!totalinitialCharge}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </apex:outputPanel>
+                                
+                                
+                                <apex:outputPanel rendered="{!isSalesType}"> 
+                                <table width="100%" cellpadding="4">
+                                    <tr style="background-color: #BDBDBD">
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;" >Amount</td>
+                                        <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;" >Period</td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel > 
+                                                {!qqData.Product__c} ( {!qqData.Product_description__c} )
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                               {!qqData.Rental_Rate__c}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" > 
+                                                Container Guard Lock
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                               {!qqData.Locks_Total__c}
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            <apex:outputPanel rendered="{!isLockPresent}" >
+                                                one time
+                                            </apex:outputPanel>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel > 
+                                                Fuel Surcharge Delivery 
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.Fuel_Surcharge_N__c}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size: 12px;">
+                                        <td>
+                                            <apex:outputPanel > 
+                                                Transport Charge
+                                            </apex:outputPanel>
+                                        </td>
+                                        <td>
+                                            {!qqData.Transport_Costs__c}
+                                        </td>
+                                        <td>
+                                            one time
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" colspan="3">
+                                            <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','[Other Fees and Charges CA, CO, AR, MO, MI, NV]','')}" />
+                                        </td>
+                                    </tr>   
+                                    <tr >
+                                        <td colspan="4">
+                                            <table align="right" style="font-size: 14px;">
+                                                <tr >
+                                                    <td></td> 
+                                                    <td></td>
+                                                    <td colspan="2" align="left">
+                                                        <apex:outputLabel value="{!IF(qqData.State__c == 'CA' || qqData.State__c == 'CO' || qqData.State__c == 'AR' || qqData.State__c == 'MO' || qqData.State__c == 'MI' || qqData.State__c == 'NV','Other Fees and Charges','Sales Tax')}" />
+                                                    </td>
+                                                    <td  align="right">${!qqData.Tax_Total__c}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td colspan="2" align="left">Total Charges</td>
+                                                    <td align="right">${!totalCharge}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </apex:outputPanel>
+                            </td>
+                        </tr>
+                        <tr><td colspan="3" height="15px"></td></tr>
+                        <tr>
+                            <td colspan="3" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <p><span style="font-size: 10px; font-weight: bold;">Clarifications:</span> <span style="font-size: 10px;">This Quotation is based on the standard terms and conditions of the Mobile Mini Rental or Sale Agreement. Customer is responsible for all taxes, permits, fees, licenses, utility connections, foundation engineering, and the preparation of a level, compact 2000psf soil bearing capacity and accessible site. Mobile Mini does not warrant that the equipment meets any local or state code not specifically listed.</span></p><p><Span style="font-size: 10px;">Customer must insure all Mobile Mini leased equipment. One period equals four weeks.<span style="font-size: 10px; font-weight: bold;"> When scheduling a PICK-UP, we require 10 business days notice.</span> Rental charges apply for the earlier of 5 days after pick-up request or actual pick-up date.</span></p><p><span style="font-size: 10px;">**All Offices Require a <span style="font-size: 10px; font-weight: bold;">TWO</span> Period Minimum Rental Length**</span></p> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td> 
+                        </tr>
+                    </table> 
+                </div>
+            </apex:form> 
+</apex:page>

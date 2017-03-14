@@ -1,0 +1,382 @@
+<apex:page controller="FullQuotePDF_UK_Ctrl" id="pageId" sidebar="false" showHeader="false" renderAs="pdf" standardstylesheets="false"> 
+    <head>
+       <style type="text/css" media="print">
+       tr.PerformanceTable {
+    display:table;
+     table-layout: fixed;
+    width:100%;
+}
+     
+            @page {
+                margin-top: 2.5in;
+                @top-center {
+                    content: element(header);
+                }
+                @top-right{
+                    content: element(footer);
+                }
+                @bottom-center { /* Page footer */
+                     content: counter(page);
+                }
+            }
+            div.header {
+                position: running(header);
+            }
+            div.footer {
+                position: running(footer);
+            }
+            .pagenumber:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+        </style>
+    </head>
+           <div class="header" >
+                <table width="100%">
+                    <tr>
+                        <td colspan="4">
+                            <table width="100%" style="padding-bottom: 20%;">
+                                <tr align="center" >
+                                    <td width="50%" align="center"><img src="{!$Resource.MMItickerImage}" width="50%" height="70%" /></td>
+                                    
+                                </tr>
+                                    
+                               
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+           </div>
+              <apex:form >
+                 <div style="page-break-inside:avoid;"> 
+                    <table width="100%">
+                        <tr></tr><tr></tr>
+                        <tr style="border-bottom: 1px solid black;">
+                        <td colspan="3">
+                        
+                        <table width="100%" table-layout = "fixed" >
+
+                    <tr class="PerformanceTable">
+    <td><span align="left" style="padding-left: 5px;"><b>Quote Ref:</b> {!fullQuote.Quote_Ref__c} </span></td>
+    <td><span align="left" style="padding-left: 5px;"><b>Sales Person:</b> {!fullQuote.Rep_Name__c}</span></td>
+  </tr>
+  <tr class="PerformanceTable">
+    <td><span align="left" style="padding-left: 5px;"><b>Quote Date:</b> {!quoteDate}</span></td>
+    <td><span align="left" style="padding-left: 5px;"><b>Branch Address:</b>{!$CurrentPage.parameters.address}</span></td>
+  </tr>
+  <tr class="PerformanceTable">
+    <td><span align="left" style="padding-left: 5px;"><b>Estimate Hire Start Date:</b> {!reqDate }</span></td>
+    <td><span align="left" style="padding-left: 5px;"><b>Telephone:</b> {!fullQuote.Sales_Rep__r.Phone}</span></td>
+  </tr>
+  <tr class="PerformanceTable">
+    <td><span align="left" style="padding-left: 5px;"><b>Estimated Hire Length:</b> {!fullQuote.Rental_Length__c} Week(s).
+                                </span></td>
+    <td><span align="left" style="padding-left: 5px;"><b>Mobile:</b> {!fullQuote.Sales_Rep__r.MobilePhone}</span></td>
+  </tr>
+  <tr class="PerformanceTable">
+    <td><span align="left" style="padding-left: 5px;"></span></td>
+    <td><span align="left" style="padding-left: 5px;"><b>Email:</b> {!fullQuote.Sales_Rep__r.email}</span></td>
+  </tr>
+  </table><br/><br/><br/>
+                        
+                        
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <span align="left" style="padding-left: 5px; font-size: 18px; font-weight: bold;">Quotation for {!fullQuote.Billing_Company_Name__c}</span><br/><br/>
+                        </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid black;">
+                            <td colspan="3">
+                                <table width="100%">
+                                <tr>
+                               <th width="33%" nowrap="nowrap" style="border: 1px solid black" ><span align="left" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Customer Details</span><br/></th>
+                               <th width="33%" nowrap="nowrap" style="border-right: 1px solid black; border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black;"><span align="left" style="padding-left: 5px; font-size: 14px; font-weight: bold;">Site Details</span><br/></th>
+                               </tr>
+                                    <tr>
+                                        <td width="33%" nowrap="nowrap" style="border: 1px solid black; vertical-align:top; padding-left: 5px; font-size: 14px">
+                                            <span align="left">{!fullQuote.Billing_First_Name__c} {!fullQuote.Billing_Last_Name__c}</span><br/>
+                                            <span align="left">{!fullQuote.Billing_Address__c}</span><br/>
+                                            <span align="left">{!fullQuote.Billing_City__c}</span><br/>
+                                            <span align="left">{!fullQuote.Billing_Postcode__c}</span><br/>
+                                            <span align="left">{!fullQuote.Billing_Phone__c}</span><br/>
+<!--                                            <span align="left" style="padding-left: 5px; font-size: 12px;"></span> -->
+                                        </td>
+                                        <td width="33%" style="border: 1px solid black; font-size: 14px; vertical-align:top; padding-left: 5px">
+                                            
+                                            <span align="left">{!fullQuote.Delivery_First_Name__c} {!fullQuote.Delivery_Last_Name__c}</span><br/>
+                                            <span align="left">{!fullQuote.Delivery_Address__c}</span><br/>
+                                            <span align="left">{!fullQuote.Delivery_City__c}</span><br/>
+                                            <span align="left">{!fullQuote.Delivery_Postcode__c}</span><br/>
+                                            <span align="left">{!fullQuote.Delivery_Phone__c}</span><br/>
+                                            
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <br/> 
+                        <tr >
+                        
+                        <tr align="center" width="100%;">
+                        <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;"><b>Rates and Transport Costs</b></td>
+                        </tr >
+                        
+                            <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                                <table width="100%" cellpadding="4" style="page-break-inside:auto">
+                        
+                                    <tr style="background-color: #BDBDBD">
+                                        <td style="text-align: center; border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="10%;">Qty</td>
+                                        <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="50%;">Description</td>
+                                        <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">Rate</td>
+                                        <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="15%;">Per</td>
+                                        <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">Total</td>
+                                    </tr>
+                                    <apex:repeat value="{!allSelectedProducts}" var="l">
+                                        <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td style="text-align: center;">
+                                           {!l.Quantity__c}
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    {!l.Description__c} {!IF (l.Details__c == '','', '-')} {!l.Details__c}
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    £{!l.Price__c}
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    {!l.Unit_Type__c}
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td>£{!l.Total__c}</td>
+                                        </tr>    
+                                    </apex:repeat>
+                                  <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td>
+                                         
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    <b>Hire Total per Week</b>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td><b>£{!hireTotal}</b></td>
+                                        </tr>
+                                        <apex:repeat value="{!allOtherProducts}" var="other" rendered="{!(IF(allOtherProducts.size>0, true, false ))}">
+                                        <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td style="text-align: center;">
+                                           {!other.Quantity__c}
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    {!other.Description__c} {!IF (other.Details__c == '','', '-')} {!other.Details__c}
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    £{!other.Price__c}
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    {!other.Unit_Type__c}
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td>£{!other.Total__c}</td>
+                                        </tr>    
+                                    </apex:repeat>
+                                    <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td>
+                                         
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    <b>Other Services Total</b>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td><b>£{!fullQuote.OtherServicesTotal__c}</b></td>
+                                        </tr>
+                                        <apex:repeat value="{!allOneTimeCostProducts}" var="oneTime" rendered="{!(IF(allOneTimeCostProducts.size>0, true, false ))}">
+                                        <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td style="text-align: center;">
+                                           {!oneTime.Quantity__c}
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    {!oneTime.Description__c} {!IF (oneTime.Details__c == '','', '-')} {!oneTime.Details__c}
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    £{!oneTime.Price__c}
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    {!oneTime.Unit_Type__c}
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td>£{!oneTime.Total__c}</td>
+                                        </tr>    
+                                    </apex:repeat>
+                                    <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td>
+                                         
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    <b>One off Cost Total</b>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td><b>£{!IF (fullQuote.OneoffcostTotal__c == null,0, fullQuote.OneoffcostTotal__c)}</b></td>
+                                        </tr>
+                                       <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td style="text-align: center;">
+                                            1
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    Total Transport based on {!fullQuote.No_of_units__c} Load(s) - Delivery
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td>£{!fullQuote.Delivery__c}</td>
+                                        </tr> 
+                                        <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td style="text-align: center;">
+                                            1
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    Total Transport based on {!fullQuote.No_of_units__c} Load(s) - Collection
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td>£{!fullQuote.Collection__c}</td>
+                                        </tr>
+                                        <tr style="page-break-inside:avoid; page-break-after:auto;">
+                                            <td>
+                                            
+                                            </td>
+                                            <td>
+                                                <apex:outputPanel > 
+                                                    <b>Transport total</b>
+                                                </apex:outputPanel>
+                                                
+                                            </td>
+                                            <td>
+                                                
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                             </td>
+                                            <td>
+                                               
+                                                <apex:outputPanel >
+                                                    
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td><b>£{!fullQuote.Total_Transport_Charges__c}</b></td>
+                                        </tr>                                       
+                                </table>
+                            </td>
+                        </tr><br/><br/>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td style="font-size: 14px;">
+                                            <!--<p><span style="font-size: 10px; font-weight: bold;">Clarifications:</span> <span style="font-size: 10px;">This Quotation is based on the standard terms and conditions of the Mobile Mini Rental or Sale Agreement. Customer is responsible for all taxes, permits, fees, licenses, utility connections, foundation engineering, and the preparation of a level, compact 2000psf soil bearing capacity and accessible site. Mobile Mini does not warrant that the equipment meets any local or state code not specifically listed.</span></p><p><Span style="font-size: 10px;">Customer must insure all Mobile Mini leased equipment. One period equals four weeks.<span style="font-size: 10px; font-weight: bold;"> When scheduling a PICK-UP, we require 10 business days notice.</span> Rental charges apply for the earlier of 5 days after pick-up request or actual pick-up date.</span></p><p><span style="font-size: 10px;">**All Offices Require a <span style="font-size: 10px; font-weight: bold;">TWO</span> Period Minimum Rental Length**</span></p>-->
+                                            <p>Thank you for your enquiry, this quote is valid until {!quoteExpires} and is subject to availability at time of order.</p><p>All prices are subject to VAT at the current rate.</p><p>This quotation is supplied on the basis of Mobile Mini UK Ltd’s standard terms and conditions of hire and sale, a copy of which is attached for your information.</p><p>Standard cleaning charges will apply at off-hire. Additional charges will apply should significant additional cleaning be required. The hirer is responsible for any loss or damage caused to units whilst on site, and for the return of all locks, keys, furniture and accessories.</p><p>It is the hirer’s responsibility to ensure suitable access for our delivery vehicles and adequate ground conditions. Additional charges may apply if delivery is delayed or cannot be completed because of inadequate access or poor ground conditions.</p><p>
+                                            Unless specifically stated, the following items are not included in our quotation:<p></p></p><p>- Groundworks, foundations, plinths or other base works<br/>- Connection and disconnection of mains services <br/>- Furniture and white goods<br/>- Fuel<br/>- Fire extinguishers, fire alarms, intruder alarms or emergency lighting<br/>- Steps, staircases or ramps<br/>- Approval under planning, building control, fire or other regulations, and associated fees <br/>- Periodic electrical testing <br/>- Insurance</p><p> <br/>Please note there is a minimum hire period of 28 days </p><p> Unless agreed otherwise in writing, delivery and collection charges are billed at start of hire. Hire charges are billed every 4 weeks in advance. Our standard payment terms are 30 days from date of invoice.</p>
+                                                                                       
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table> 
+                </div>
+              
+            </apex:form>  
+</apex:page>

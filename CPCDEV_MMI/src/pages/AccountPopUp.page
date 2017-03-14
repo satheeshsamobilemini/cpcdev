@@ -1,0 +1,216 @@
+<apex:page controller="JobProfileListAccount" showHeader="false" sidebar="false" id="accPop">
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.3.min.js"/>
+    <apex:includeScript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"/>
+    <apex:stylesheet value="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+    <!--<apex:includeScript value="{!$Resource.DataTableJsLib}"/>-->
+    <!--<apex:includeScript value="{!$Resource.pagenation}"/>-->
+    <link rel="stylesheet" href="bootstrap.min.css"/> 
+
+    <style>
+        table.dataTable thead .sorting{background:url('{!$Resource.DT_sort_both}') no-repeat center right}
+        table.dataTable thead .sorting_asc{background:url('{!$Resource.DT_sort_asc}') no-repeat center right}
+        table.dataTable thead .sorting_desc{background:url('{!$Resource.DT_sort_desc}') no-repeat center right}
+        table.dataTable thead .sorting_asc_disabled{background:url('{!$Resource.DT_sort_asc_disabled}') no-repeat center right}
+        table.dataTable thead .sorting_desc_disabled{background:url('{!$Resource.DT_sort_desc_disabled}') no-repeat center right}
+    
+    </style>
+
+   <script>
+                $(document).ready(function() {
+                     //$('#pgId:frmId:conPb:conTbl').dataTable();
+                     $('#tablequote').dataTable();
+                    // $( '[id$=opBtn]').hide();
+                } );
+                
+                var accid;
+                var accname;
+                var oppid;
+                
+                function showNext(conRowId, accountname,blState){
+                    //alert(conRowId+"$"+accountname);
+                    
+                       // $( '[id$=opBtn]').show();
+                        //alert(conRowId);
+                    
+                   // alert(document.getElementById('hiddenconID').value);    
+                    if(blState == '' || blState == null || blState.length != 2){
+                        alert("Please enter a valid capital two-letter billing state code for Account: "+accountname); 
+                        document.getElementById('bottomDiv').style.display="none";
+                    }
+                    else{
+                        document.getElementById('bottomDiv').style.display="block";
+                        document.getElementById('hiddenconID').value  =conRowId;
+                        getContractorRole(conRowId);
+                        accid = conRowId;
+                        accname = accountname;
+                    }
+                }
+                
+             /*    function callfunction(){
+                //alert(result);
+                JobProfileListAccount.Createopportunity(accname,function{alert('cal back');});
+                function(result, event){
+                    alert(event.status);
+                    if(event.status) {
+                    alert(result);
+                     oppid = result.id;   
+                    }
+                });
+                } */
+                
+                function callfunction()
+{
+               
+      JobProfileListAccount.Createopportunity(accname,function(){alert('cal back');});
+                
+    }
+                
+           function openContactPopup(){
+               //alert(accid+"$"+accname);
+              //createopportunity(accid, accname);
+              // alert("contractorRole.."+contractorRole);
+              var contractorRole = document.getElementById('accPop:frm:pgBlk:roleList').value;
+               
+              //alert('contractorRole..'+contractorRole );
+              var left = (screen.width/2)-(900/2); 
+              var top = (screen.height/2)-(500/2); 
+              //var opptyId ='{!oppId}';
+              //alert('opp..'+opptyId);
+             // window.open('{!$Page.SelectConatctPopup}?id='+accid+'&FromAccount=true&fromProfile=true&accDashboard=true&opportunityid='+'{!oppId}' +'&jobprofileid={!$CurrentPage.parameters.ProfileId}'+'&jobprofilename={!$CurrentPage.parameters.profilename}', 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+             window.open('{!$Page.SelectConatctPopup}?id='+accid+'&FromAccount=true&fromProfile=true&accDashboard=true&opportunityid='+'{!oppId}' +'&jobprofileid={!$CurrentPage.parameters.ProfileId}&conrole='+contractorRole, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500'); 
+           }
+           
+           function openContactPopup1(role){
+               //alert(role);
+               var contractorRole = role; //document.getElementById('accPop:frm:pgBlk:conRole').value;
+               var left = (screen.width/2)-(900/2); 
+               var top = (screen.height/2)-(500/2); 
+               window.open('{!$Page.SelectConatctPopup}?id='+accid+'&FromAccount=true&fromProfile=true&accDashboard=true&opportunityid='+'{!oppId}' +'&jobprofileid={!$CurrentPage.parameters.ProfileId}&conrole='+contractorRole, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500'); 
+           }
+   </script>             
+                
+ 
+  <apex:form id="frm">
+  
+   <apex:outputPanel id="abc" rendered="false">
+     <script>
+      var dopptyId ='{!oppId}';
+      //alert('dopptyId..'+dopptyId);
+      if(dopptyId!=null && dopptyId!='')
+      {
+       //alert(dopptyId);
+       window.open('{!$Page.SelectConatctPopup}?id='+accid+'&FromAccount=true&fromProfile=true&accDashboard=true&opportunityid='+dopptyId, 'w1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, top="+top+", left="+left+", width=900, height=500');
+     
+     }
+     </script>
+   </apex:outputPanel>
+   <apex:actionFunction name="createopportunity" action="{!Createopportunity}" reRender="opBtn">
+   <apex:param name="firstParam"  value="" />
+   <apex:param name="secondParam"  value="" />
+
+  </apex:actionFunction>
+   <apex:actionstatus id="updatingJobProfileRole" >
+    <apex:facet name="start">
+       <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+           <div class="waitingHolder" >
+               <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                <font color="Red"><b>Please wait we are fetching the contractor role....</b></font> 
+            </div>
+        </div>
+    </apex:facet>
+    </apex:actionstatus>   
+  <apex:actionFunction action="{!ContractorRoles}" name="getContractorRole" rerender="outrPanel,outrPanel1" status="updatingJobProfileRole">
+                            <apex:param name="firstParam" value="" />
+  </apex:actionFunction>
+  <input type="hidden" id="hiddenconID" name="hiddenconID" />
+           <apex:PageBlock title="List of Records" id="pgBlk">
+            
+            <apex:outputPanel id="quoteTable" layout="block">
+                          <apex:outputPanel id="quoteTableLabel" styleClass="quoteTableLabel" layout="block">
+              <apex:outputText value="List of Account"/>
+              <!--<input type="search" id="global_filter" class="searchFieldClass" placeholder="search" name="Search" size="25" value=""/>-->
+          </apex:outputPanel>
+          
+          <apex:outputPanel id="quoteTabelEmptyMsg" layout="block" styleClass="emptyTableMsg" rendered="{!(IF(AccList.size <= 0, true, false))}">
+              No Account found for this Job profile.
+          </apex:outputPanel>
+          
+          <apex:outputPanel id="quoteTableDate" layout="block" rendered="{!(IF(AccList.size > 0, true, false))}">
+          <div class="paging-container" id="demo">
+              <table id="tablequote" class="table" align="center" cellspacing="0" width="98%">
+                <thead>
+                       <tr>
+                            <th >Select</th>
+                            <th>Name</th>
+                            <th>Phone #</th>
+                            <th>Fax #</th>
+                            <th>BillingPostalCode </th>
+                           
+                        </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!AccList}" var="item">
+                            <tr>
+                                <td >
+                                  <apex:outputPanel layout="inline">
+                                    <input type="radio" onclick="showNext('{!item.id}','{!item.name}','{!item.BillingState}');" name="test" />
+                                  </apex:outputPanel>
+                                </td>
+                                
+                                <td>
+                                    {!item.Name}
+                                </td>
+                                <td>
+                                    {!item.Phone}
+                                </td>
+                                <td>
+                                    {!item.Fax}
+                                </td>
+                                <td>
+                                    {!item.BillingPostalCode }
+                                </td>
+                              
+                            </tr>
+                        </apex:repeat>
+                </tbody>
+              </table>
+              </div>
+          </apex:outputPanel>
+          </apex:outputPanel> <!--
+          <apex:outputPanel id="outrPanel">
+               <apex:outputPanel id="opBtn" rendered="{!isAccSelected}">
+                    <br/><apex:outputLabel><b>Job Profile Role:</b>&nbsp;&nbsp;&nbsp; </apex:outputLabel>
+                    <apex:selectList value="{!subContactorList}"  id="roleList" size="1" multiselect="false">
+                            <apex:selectOptions value="{!ContractorRole}"/>
+                    </apex:selectList>
+                    <br/><br/>
+                    <apex:commandButton onclick="openContactPopup();" value="Next" reRender="conPb"/>
+                </apex:outputPanel>
+          </apex:outputPanel> -->
+          <div id="bottomDiv">
+          <apex:outputPanel id="outrPanel">
+               
+               <apex:outputPanel id="opBtn" rendered="{!isAccSelected}">
+                    <br/><apex:outputLabel ><b>Job Profile Role:</b>&nbsp;&nbsp;&nbsp; </apex:outputLabel>
+                    <apex:outputPanel rendered="{!!isSingleRole}">
+                        <apex:selectList value="{!subContactorList}"  id="roleList" size="1" multiselect="false">
+                                <apex:selectOptions value="{!ContractorRole}"/>
+                        </apex:selectList>
+                        <br/><br/>
+                        <apex:commandButton onclick="openContactPopup();" value="Next" reRender="conPb"/>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!isSingleRole}"> 
+                        <apex:outputLabel id="conRole" value="{!subConRole}"></apex:outputLabel>
+                        <br/><br/>
+                        <apex:commandButton onclick="openContactPopup1('{!subConRole}');" value="Next" reRender="conPb"/>
+                    </apex:outputPanel>    
+                    
+                </apex:outputPanel>
+          </apex:outputPanel>
+          </div>
+          
+        </apex:PageBlock>
+         
+         
+</apex:form>          
+</apex:page>

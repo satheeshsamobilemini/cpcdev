@@ -1,0 +1,734 @@
+<apex:page controller="SendEmailQuote" id="pageId" sidebar="false"  title="Send Email Quote">
+<script type="text/javascript">
+          window.onload = setFocus
+          function setFocus() {
+            attachPDF();
+          }
+      </script>
+<script>
+    function attachmentPopUp() {
+       var quoteIdforEmail;
+       var salesorg = '{!salesOrgID}';
+       quoteIdforEmail = document.getElementById('pageId:mainForm:theHiddenInput').value;
+    
+        if(quoteIdforEmail != null ){
+            //newwindow=window.open('/apex/QuickQuoteEmailAttachment?parentId='+quoteIdforEmail,'name','height=300,width=600,scrollbars=yes,resizable=yes');
+            
+            var x = screen.width/2 - 700/2;
+            var y = screen.height/2 - 450/2;
+            newwindow = window.open('/apex/QuickQuoteEmailAttachment?parentId='+quoteIdforEmail+'&salesorg='+salesorg, 'name','height=485,width=700,left='+x+',top='+y);
+        }
+
+        if (window.focus) {newwindow.focus()}
+        return false;
+    }
+        
+    function getSelectedTempId(templateId,tempName){
+        confirm('Proceed to apply template: '+tempName);
+       // document.getElementById('hiddenSelectedEmailTemplate').value = '';
+        document.getElementById('hiddenSelectedEmailTemplate').value = templateId;
+    }
+    
+    function previewQuote(){
+        
+        var qhID = '{!quoteID}';
+        var salesorg = '{!salesOrgID}';
+        var pdfType = '{!pdfType}';
+        var qtype = '{!quoteType}';
+        var pdfNE = document.getElementById('hiddenPDF').value;
+        var istoc = document.getElementById('hiddenTOC').value;
+        var WMIAcc = document.getElementById('hiddenWMIAcc').value;
+        var lumpSum = document.getElementById('hiddenLumpSum').value;
+        //'{!selectedPDF}';
+        
+        //var options = document.getElementByID('pageId:mainForm:j_id28:j_id29:j_id30:listOfPDF').value;
+        //alert(options);        
+        
+        if(salesorg == '1200') 
+        { 
+            window.open('/apex/QuotePDF_UK?id='+qhID+'&salorg='+salesorg); 
+        } 
+        
+        if(salesorg == '1500' || salesorg == '1501'){ 
+            if(qtype == 'ZREN') 
+                window.open('/apex/QuotePDF_ETS?quoteid='+qhID +'&type=rental&salorg='+salesorg+'&accflag='+WMIAcc+'&lumpSum='+lumpSum); 
+            else 
+                window.open('/apex/QuotePDF_ETS?quoteid='+qhID +'&type=sales&salorg='+salesorg+'&accflag='+WMIAcc+'&lumpSum='+lumpSum); 
+        } 
+        if(salesorg == '1000' || salesorg == '1100'){ 
+            if(qtype == 'ZREN') 
+                window.open('/apex/QuotePDF_US?quoteid='+qhID +'&type=rental&salorg='+salesorg+'&pdftype='+pdfNE+'&toc='+istoc); 
+            
+            else {
+                window.open('/apex/QuotePDF_US?quoteid='+qhID +'&type=sales&salorg='+salesorg+'&pdftype='+pdfNE+'&toc='+istoc);
+                    
+                }
+        }
+        
+    }
+    
+    function sendWithDocusign(){
+        
+        var mailTxt = document.getElementById('pageId:mainForm:pb:pbs:pbsi1:mailText').value;
+        mailTxt = mailTxt.replace(/[\n\r]/gi, '\\n');
+        mailTxt = mailTxt.replace(/[#&%]/gi, ' ');
+        
+        var mailfooter1 = document.getElementById('pageId:mainForm:pb:pbs:pbsi1:footer1').value;
+        mailfooter1 = mailfooter1.replace(/[\n\r]/gi, '\\n');
+        mailfooter1 = mailfooter1.replace(/[#&%]/gi, ' ');
+        
+        var mailfooter2 = document.getElementById('pageId:mainForm:pb:pbs:pbsi1:footer2').value;
+        mailfooter2 =mailfooter2.replace(/[\n\r]/gi, '\\n');
+        mailfooter2 = mailfooter2.replace(/[#&%]/gi, ' ');
+        
+        completeMailBody = mailTxt + '\\n\\n' + mailfooter1 + '<img src="https://www.mobilemini.com/Image Library/general/external/IGotThisBanner-SignatureLine.png" href="https://www.mobilemini.com/" style="height:37px;width:147px;">\\n' + mailfooter2 + '\\n<img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcR6Qy0S7Z0X3RbRUuOBRHgXMl_EBq3UKo8iUVX_s_rysFaEHA5Jdg" href="https://www.mobilemini.com/" style="height:65px;width:250px;">';
+                                
+        var mailSub = document.getElementById('pageId:mainForm:pb:pbs:pbsi1:subject').value;
+                        
+        var toAddr = document.getElementById('pageId:mainForm:pb:pbs:pbsi1:toAddr').value;
+        var conDetails = toAddr.split(";");
+        
+        var docusignCRL = ''; //'Email~{!toAddress1};Role~Signer 1;FirstName~{!firstName};LastName~{!lastName};RoutingOrder~1';
+        for(i=0; i < conDetails.length; i++)
+        {
+            //var emailName = conDetails[i].split("[");
+            var cemail = conDetails[i]; 
+            var cname = conDetails[i]; 
+            var indx = i + 1;
+            var srole = 'Signer ' + indx;
+            docusignCRL = docusignCRL + 'Email~' + cemail +';Role~'+srole+';LastName~' +cname +';RoutingOrder~1,';
+        }
+        
+        //alert('docusign button  '+docusignCRL);
+        
+        //Get current user/Sender details and include in Recipient's list
+        var uname = "{!repName}";
+        var uemail = "{!loginUserRec.Email}";
+        
+        docusignCRL = docusignCRL + 'Email~' + uemail +';Role~CCSigner;LastName~' +uname +';RoutingOrder~1;';
+                
+        var qhid = "{!quoteID}";
+                
+        // Option Declarations (Do not modify )
+        var CCRM='';var CCTM=''; var CRL='';var OCO='';var DST='';var LA='';var CEM='';var CES='';var RES='';
+        
+        // Modify individual options here: 
+        // Custom Contact Role Map (default config role) 
+        CCRM = '';  
+        
+        // Custom Contact Type Map (default Signer) 
+        CCTM = 'CCSigner~Carbon Copy'; 
+        
+        // Custom Recipient List 
+        CRL = docusignCRL ; //'Email~{!toAddress};Role~Signer 1;FirstName~{!firstName};LastName~{!lastName},Email~mholekad@teksystems.com;Role~Signer 2;FirstName~{!firstName};LastName~{!lastName},Email~ankurapg1@gmail.com;Role~Signer 3;FirstName~{!firstName};LastName~{!lastName};'; 
+        
+        // One Click Option (default edit envelope screen) 
+         OCO = 'Send';
+        
+        // DocuSign Template ID (default no template) 
+        DST = '75314F79-C0B4-4005-B306-D676DCE4C787'; 
+        
+        // Load Attachments (default on) 
+        LA = '1'; 
+        
+        // Custom Email Message (default in config)   Hello {!fullName},\\n 
+        var body1 = '\\nAs we discussed, here is the finalized quote(s) for your reference. We take great pride in our commitment to our customers, and providing people like you with outstanding value in the quality of products and services we provide at very competitive prices. \\n \\nWe offer a wide variety of storage, office, and containment solutions for all your future projects. Keep us in mind. \\n \\nShould you need additional information, please contact me directly at {!loginUserRec.Phone} x {!loginUserRec.Extension}. I will follow-up with a call so we can get your project started. \\n \\n';
+        var body2 = 'Best regards,\\n{!repName}\\n{!loginUserRec.Title}\\n{!JSENCODE(loginUserRec.Street)} {!loginUserRec.City}, {!loginUserRec.State} {!loginUserRec.PostalCode} \\nO: {!loginUserRec.Phone} x {!loginUserRec.Extension} \\nM: {!loginUserRec.MobilePhone} \\n{!loginUserRec.Email} \\nwww.mobilemini.com\\n<img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcR6Qy0S7Z0X3RbRUuOBRHgXMl_EBq3UKo8iUVX_s_rysFaEHA5Jdg" style="height:200px;width:300px;">\\n\\n<img src="{!$Resource.mobileminiinc}" style="height:200px;width:300px;">';
+        CEM = completeMailBody;      
+        
+        // Custom Email Subject (default in config) 
+        CES = mailSub;   //"{!subject}";  
+        
+        // Reminder and Expiration Settings 
+        RES = ''; //Ex: '0,1,2,0,120,3' 
+        
+        // Page Callout (Do not modify) 
+        window.open('/apex/dsfs__DocuSign_CreateEnvelope?DSEID=0&SourceID={!quoteID}&CCRM='+CCRM+'&CCTM='+CCTM+'&CRL='+CRL+'&OCO='+OCO+'&DST='+DST+'&LA='+LA+'&CEM='+CEM+'&CES='+CES+'&RES='+RES);
+                 
+    }
+    
+</script> 
+<apex:pageMessages id="pgMsgId" /> 
+
+<apex:form id="mainForm">
+<script>
+    document.getElementById('hiddenPDF').value = '{!selectedPDF}';
+    document.getElementById('hiddenTOC').value = '{!selectedTOC}';
+    document.getElementById('hiddenWMIAcc').value = '{!selectedAccOpt}';
+    document.getElementById('hiddenLumpSum').value = '{!selectedLumpSum}';
+</script>
+<input type="hidden" id="hiddenPDF" />
+<input type="hidden" id="hiddenTOC" />
+<input type="hidden" id="hiddenWMIAcc" />
+<input type="hidden" id="hiddenLumpSum" />
+<apex:outputPanel id="outerPnl"></apex:outputPanel>
+<apex:actionFunction name="attachPDF" action="{!attachPDFtoQuoteHeader}" reRender="outerPnl"/>
+
+    <apex:inputHidden value="{!quoteID}" id="theHiddenInput"/>
+    <apex:outputPanel rendered="{!validParams}">
+    <apex:pageBlock id="pb" title="Email Quote" rendered="{!!isUK}" > <!-- rendered="{!!isUK}" -->
+        
+        <apex:pageBlockSection columns="2" id="pbs">
+        
+            <apex:pageBlockSectionItem id="pbsi1">
+                <apex:outputPanel id="composeOp">
+                    <apex:actionstatus id="LoadingPDFS" >
+                       <apex:facet name="start">
+                           <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+                               <div class="waitingHolder" >
+                                   <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                                    <font color="Red"><b>Please wait we are generating the PDF....</b></font> 
+                                </div>
+                            </div>
+                        </apex:facet>
+                      </apex:actionstatus>
+                      <apex:actionstatus id="LoadingPDFS1" >
+                       <apex:facet name="start">
+                           <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+                               <div class="waitingHolder" >
+                                   <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                                    <font color="Red"><b>Please wait we are updating the PDF....</b></font> 
+                                </div>
+                            </div>
+                        </apex:facet>
+                      </apex:actionstatus>
+                    <div id="pbsidiv" style="width:100%;height:415px; overflow:auto; border:1px solid #cccccc;">
+                        <table>
+                            <tr>
+                                <th colspan="2">Compose Mail</th>
+                            </tr>
+                            
+                            <tr> 
+                                <td>To</td>
+                                <td><apex:inputText style="width:600px;" id="toAddr" value="{!toAddress}" /> </td>
+                            </tr>
+                            <tr> 
+                                <td>&nbsp;</td>
+                                <td><apex:OutputLabel style="width:500px;font-size:9px;Font-Weight:bold" value="Please enter email IDs separated by semicolon(;)" /> </td>
+                            </tr>
+                            <tr>
+                                <td>Subject</td>
+                                <td><apex:inputText style="width:600px;" id="subject" value="{!subject}" /> </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>Body</td>
+                                <td><apex:inputTextarea rows="10" cols="90" id="mailText" value="{!mailBody}" style="margin: 2px; height: 155px; width: 596px;" /></td>
+                            </tr>
+                            
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><apex:inputTextarea rows="5" cols="90" id="footer1" value="{!usMailFooter1}" style="margin: 2px; height: 45px; width: 596px;" /></td>
+                            </tr>
+                            
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><apex:inputTextarea rows="6" cols="90" id="footer2" value="{!usMailFooter2}" style="margin: 2px; height: 85px; width: 596px;" /></td>
+                            </tr>                            
+                            
+                        </table>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+       
+            <apex:pageBlockSectionItem >  
+                <apex:outputPanel >
+                    <div id="pbsidiv1" style="width:100%;height:415px; overflow:auto; border:1px solid #cccccc;">
+                    <br/><br/>
+                    <table>     
+                        <tr >
+                            <td style="padding-left:25px;" colspan="2">
+                            <apex:outputPanel id="selectPDFPanel" rendered="{!if(salesOrgID='1100' || salesOrgID ='1000',true,false)}">
+                                <apex:selectList id="listOfPDF" value="{!selectedPDF}" size="1">
+                                    <apex:outputLabel ><b>*Select a PDF to attach :</b> &nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                    <apex:selectOptions value="{!PDFtypeNE}"></apex:selectOptions>
+                                    <apex:actionSupport action="{!attachPDFtoQuoteHeader}" event="onchange" reRender="mainForm" status="LoadingPDFS" />
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:outputPanel id="selectTOC" rendered="{!if(salesOrgID='1100' || salesOrgID ='1000',true,false)}">
+                                <apex:selectList id="listOfTOC" value="{!selectedTOC}" size="1">
+                                    <apex:outputLabel ><b>*Term Of Contract? </b> &nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                    <apex:selectOptions value="{!termOfCont}"></apex:selectOptions>
+                                    <apex:actionSupport action="{!attachPDFtoQuoteHeader}" event="onchange" reRender="mainForm" status="LoadingPDFS1" /> 
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="WMIAcc" rendered="{!if(salesOrgID='1501',true,false)}">
+                                <apex:selectList id="WMIAccOpt" value="{!selectedAccOpt}" size="1">
+                                    <apex:outputLabel ><b>*Show Accessories? </b> &nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                    <apex:selectOptions value="{!WMIAccessories}"></apex:selectOptions>
+                                    <apex:actionSupport action="{!attachPDFtoQuoteHeader}" event="onchange" reRender="mainForm" status="LoadingPDFS1" /> 
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:outputPanel id="wmiLumpSum" rendered="{!if(salesOrgID='1501',true,false)}">
+                                <apex:selectList id="listLumpSum" value="{!selectedLumpSum}" size="1">
+                                    <apex:outputLabel ><b>Lump Sum? </b> &nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                    <apex:selectOptions value="{!lumpSum}"></apex:selectOptions>
+                                    <apex:actionSupport action="{!attachPDFtoQuoteHeader}" event="onchange" reRender="mainForm" status="LoadingPDFS1" /> 
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            </td>
+                        </tr>
+                        <tr><td colspan="2"> &nbsp; </td> </tr>
+                        <tr><td colspan="2"> &nbsp; </td> </tr>
+                        
+                        <tr>
+                            <td colspan="2" style="padding-left:25px">
+                                <input type="button" value="Attachment" id="attchmentBtn" tabindex="18" onclick="return attachmentPopUp();">
+                                    <apex:actionPoller id="ActionPollerStartEnd" action="{!attachmentListViewMethod}" interval="5" reRender="attachListDiv" enabled="{!IF(isEnableAction = 'Start',true,false)}"/>
+                                </input>
+                                <apex:outputLabel style="font-size:11px">(Use this button to attach more documents if required)</apex:outputLabel>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="2">
+                                <apex:outputPanel id="attachListDiv">
+                                    <table width="100%">
+                                        <apex:repeat value="{!attachmentList}" var="attItem">
+                                            <tr>
+                                                <td width="15%"></td>
+                                                <td style="width:15%;" heigth="15px">
+                                                    <apex:actionRegion >
+                                                        <apex:actionStatus id="DeleteId">
+                                                            <apex:facet name="stop">
+                                                                <apex:outputLabel >
+                                                                    <apex:commandLink reRender="attachListDiv" action="{!deleteAttachach}" value="Delete" status="DeleteId">
+                                                                        <apex:param name="attachId" value="{!attItem.id}"/>
+                                                                    </apex:commandLink>
+                                                                </apex:outputLabel>
+                                                            </apex:facet>
+                                                            
+                                                            <apex:facet name="start">
+                                                                <apex:outputLabel >
+                                                                    <apex:commandLink value="Deleting..." status="DeleteId" ></apex:commandLink>
+                                                                </apex:outputLabel>
+                                                            </apex:facet>                                                                
+                                                        </apex:actionStatus>
+                                                    </apex:actionRegion>
+                                                </td>
+                                                <td style="padding-left: 5px;" width="70%">
+                                                    <apex:outputText value="{!attItem.Name}" ></apex:outputText>
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </table>
+                                </apex:outputPanel>   <br/>                                     
+                            </td>
+                        </tr>                        
+                        
+                    </table>
+                    
+                    <br/><br/>
+                    <apex:outputPanel style="padding-left:120px;text-align:center" id="buttonPanel">
+                    <apex:actionStatus id="sendMailStatus">
+                        <apex:facet name="stop">
+                            <apex:outputlabel > 
+                                                               
+                                <apex:outputPanel rendered="{!renderButtons}">
+                                    <apex:commandButton onclick="previewQuote()" value="Preview Quote" rerender="composeOp,pgMsgId,mainForm" status="sendMailStatus" />&nbsp;&nbsp;
+                                    <apex:outputPanel rendered="{!if((salesOrgID=='1000' || salesOrgID == '1100'),true,false)}">
+                                        <apex:commandButton onclick="sendWithDocusign()" value="Send Email/Docu-Sign" rerender="composeOp,pgMsgId,mainForm" status="sendMailStatus"/>&nbsp;&nbsp;
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!if((salesOrgID=='1500' || salesOrgID == '1501' || salesOrgID == '1200'),true,false)}">
+                                        <apex:commandButton action="{!sendMail}" value="Send Email" rerender="pgMsgId,buttonPanel" status="sendMailStatus" disabled="{!isMailSent}" />&nbsp;&nbsp;
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                                
+                                <apex:commandButton action="{!cancelMail}" value="Cancel" rerender="composeOp,pgMsgId" status="sendMailStatus" />&nbsp;&nbsp;
+                                <apex:commandButton action="{!resetMail}" value="Reset" rerender="pgMsgId,buttonPanel" status="sendMailStatus"  rendered="{!isMailSent}" />
+                            
+                            </apex:outputlabel>
+                        </apex:facet>
+                        
+                        <apex:facet name="start">
+                            <apex:outputlabel >
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                            </apex:outputlabel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    
+                </apex:outputPanel>
+                </div>
+                </apex:outputPanel>    
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:outputPanel>    
+</apex:form>    
+    
+<apex:form id="ukForm" rendered="{!isUK}">  
+    <apex:pageBlock rendered="{!validParams}">
+    
+        <apex:pageBlockSection columns="2" id="pbs">
+        
+            <apex:pageBlockSectionItem id="pbsi1">
+                <apex:outputPanel id="composeOp1">
+                    <apex:actionstatus id="LoadingPDFS" >
+                       <apex:facet name="start">
+                           <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:50%;opacity:0.65;width:100%;">
+                               <div class="waitingHolder" >
+                                   <img class="waitingImage" src="{!$Resource.Loading}" title="Please Wait..." />
+                                    <font color="Red"><b>Please wait we are generating the PDF....</b></font> 
+                                </div>
+                            </div>
+                        </apex:facet>
+                      </apex:actionstatus>
+                      
+                    <div id="pbsidiv" style="width:100%;height:450px; overflow:auto; border:1px solid #cccccc;">
+                        <table>
+                            <tr>
+                                <th colspan="2">Compose Mail</th>
+                            </tr>
+                            
+                            <tr> 
+                                <td>To</td>
+                                <td><apex:inputText style="width:500px;" id="toAddr" value="{!toAddress}" /> </td>
+                            </tr>
+                            
+                            <tr> 
+                                <td>&nbsp;</td>
+                                <td><apex:OutputLabel style="width:500px;font-size:9px;Font-Weight:bold" value="Please enter email IDs separated by semicolon(;)" /> </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>Subject</td>
+                                <td><apex:inputText style="width:500px;" id="subject" value="{!subject}"/> </td>
+                            </tr>
+                            <!--
+                            <tr>
+                                <td>Body</td>
+                                <td><apex:inputTextarea rows="2" cols="90" value="{!ukMailHeader}" style="margin: 2px; height: 30px; width: 496px;" disabled="true"/></td>
+                            </tr> -->
+                            <tr>
+                                <td>Body</td>
+                                <td><apex:inputTextarea rows="10" cols="90" value="{!ukMailBody}" style="margin: 2px; height: 150px; width: 496px;" /></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><apex:inputTextarea rows="9" cols="90" value="{!ukMailFooter}" style="margin: 2px; height: 150px; width: 496px;" disabled="true"/></td>
+                            </tr>
+                            <!--
+                            <tr >
+                                <td style="padding-left:45px;" colspan="2">
+                                <apex:outputPanel id="selectPDFPanel" rendered="{!if(salesOrgID='1100' || salesOrgID ='1000',true,false)}">
+                                    <apex:selectList id="listOfPDF" value="{!selectedPDF}" size="1">
+                                        <apex:outputLabel ><b>*Select a PDF to attach :</b> &nbsp;&nbsp;&nbsp;</apex:outputLabel>
+                                        <apex:selectOptions value="{!PDFtypeNE}"></apex:selectOptions>
+                                        <apex:actionSupport action="{!attachPDFtoQuoteHeader}" event="onchange" reRender="mainForm" status="LoadingPDFS" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                                </td>
+                            </tr> -->
+                            
+                           
+                          
+                        </table>
+                     </div>
+                                        
+                </apex:outputPanel>    
+            </apex:pageBlockSectionItem>
+       
+            <apex:pageBlockSectionItem > 
+                <apex:outputPanel id="UKAttachments">
+                    <div style="width:100%;height:450px; overflow:auto; border:1px solid #cccccc;">
+                        <table width="100%" style="padding-left:10px;">
+                            <tr>
+                                <td Style="font-weight:bold;" colspan="3">Select Documents to be attached:</td>
+                            </tr>
+                            
+                            
+                            <tr>
+                                <td><apex:inputCheckbox value="{!brochureChecked}" label="Product brochure" >
+                                      <!--  <apex:actionSupport event="onchange"  action="{!toggleDocs}"  rerender="brochureDocs1" id="brochure"/>    -->
+                                    </apex:inputCheckbox> &nbsp;&nbsp;<apex:outputLabel value="Product brochure" />
+                                </td>
+                                    
+                                <td><apex:inputCheckbox value="{!unitChecked}" label="Unit Info" > 
+                                      <!--  <apex:actionSupport event="onchange" action="{!toggleUnitDocs}" rerender="unitDocs1" id="unit"/>  -->
+                                    </apex:inputCheckbox> &nbsp;&nbsp;<apex:outputLabel value="Unit Info" />
+                                </td>
+                                
+                                <td><apex:inputCheckbox value="{!shafChecked}" label="SHAF" />
+                                    &nbsp;&nbsp;<apex:outputLabel value="SHAF" />
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><apex:inputCheckbox value="{!hireGuide}" label="Hire Guidelines" >
+                                      <!--  <apex:actionSupport event="onchange"  action="{!toggleDocs}"  rerender="brochureDocs1" id="brochure"/>    -->
+                                    </apex:inputCheckbox> &nbsp;&nbsp;<apex:outputLabel value="Hire Guidelines" />
+                                </td>
+                                                                
+                                <td><apex:inputCheckbox value="{!newAccForm}" label="New Account Form" />
+                                    &nbsp;&nbsp;<apex:outputLabel value="New Account Form" />
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" >&nbsp; </td></tr>
+                            <tr><td colspan="2" >&nbsp; </td></tr>
+                            <tr>
+                                <td colspan="2" style="padding-left:0px">
+                                    <input type="button" value="Attachment" id="attchmentBtn" tabindex="18" onclick="return attachmentPopUp();"> 
+                                        <apex:actionPoller id="ActionPollerStartEnd" action="{!attachmentListViewMethod}" interval="5" reRender="attachListDiv" enabled="{!IF(isEnableAction = 'Start',true,false)}"/>
+                                    </input> 
+                                    <apex:outputLabel style="font-size:11px">(Use this button to attach more documents if required)</apex:outputLabel> 
+                                </td>
+                            </tr>
+                            <tr><td colspan="2" >&nbsp; </td></tr>
+                             <tr>
+                                <td colspan="2">
+                                    <apex:outputPanel id="attachListDiv">
+                                        <table width="100%">
+                                            <apex:repeat value="{!attachmentList}" var="attItem">
+                                                <tr>
+                                                    <td width="15%"></td>
+                                                    <td style="width:15%;" heigth="15px">
+                                                        <apex:actionRegion >
+                                                            <apex:actionStatus id="DeleteId">
+                                                                <apex:facet name="stop">
+                                                                    <apex:outputLabel >
+                                                                        <apex:commandLink reRender="attachListDiv" action="{!deleteAttachach}" value="Delete" status="DeleteId">
+                                                                            <apex:param name="attachId" value="{!attItem.id}"/>
+                                                                        </apex:commandLink>
+                                                                    </apex:outputLabel>
+                                                                </apex:facet>
+                                                                
+                                                                <apex:facet name="start">
+                                                                    <apex:outputLabel >
+                                                                        <apex:commandLink value="Deleting..." status="DeleteId" ></apex:commandLink>
+                                                                    </apex:outputLabel>
+                                                                </apex:facet>                                                                
+                                                            </apex:actionStatus>
+                                                        </apex:actionRegion>
+                                                    </td>
+                                                    <td style="padding-left: 5px;" width="70%">
+                                                        <apex:outputText value="{!attItem.Name}" ></apex:outputText>
+                                                    </td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </table>
+                                    </apex:outputPanel>   <br/>                                     
+                                </td>
+                            </tr> 
+                            
+                        </table>
+                        
+                        <apex:outputPanel style="padding-left:120px;text-align:center" id="buttonPanel">
+                            <apex:actionStatus id="sendMailStatus">
+                                <apex:facet name="stop">
+                                    <apex:outputlabel > 
+                                        <apex:commandButton onclick="previewQuote()" value="Preview Quote" rerender="composeOp,pgMsgId,mainForm" status="sendMailStatus" />&nbsp;&nbsp;
+                                        <apex:commandButton action="{!sendMailUK}" value="Send Email" rerender="pgMsgId,buttonPanel" status="sendMailStatus" disabled="{!isMailSentUK}" />&nbsp;&nbsp;
+                                        <apex:commandButton action="{!cancelMail}" value="Cancel" rerender="composeOp,pgMsgId" status="sendMailStatus" />&nbsp;&nbsp;
+                                        <apex:commandButton action="{!resetMailUK}" value="Reset" rerender="pgMsgId,buttonPanel,UKAttachments" status="sendMailStatus"  rendered="{!isMailSentUK}" />
+                                    </apex:outputlabel>
+                                </apex:facet>
+                                
+                                <apex:facet name="start">
+                                    <apex:outputlabel >
+                                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                    </apex:outputlabel>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </div>            
+                </apex:outputpanel>
+                    
+         <!--        <apex:outputPanel >
+                    <div style="width:100%;height:350px; overflow:auto; border:1px solid #cccccc;">
+                        <table width="100%">
+                            <tr>
+                                <td Style="font-weight:bold;" colspan="3">Contacts</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" Style="height:15px;"></td>
+                            </tr>
+                            <tr>
+                                <td Style="font-weight:bold;width:8%;">Select</td>
+                                <td Style="font-weight:bold;width:42%;">Name</td>
+                                <td Style="font-weight:bold;width:50%;">Email</td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="3">
+                                    <apex:outputPanel id="conOp">
+                                        <table width="100%" height="200%">
+                                            <apex:repeat value="{!lstConWrapper}" var="con">
+                                                <tr>
+                                                    <td><apex:inputCheckbox value="{!con.isChecked}" /></td>
+                                                    <td><apex:outputLabel value="{!con.conObj.contactName}" /></td>
+                                                    <td><apex:outputLabel value="{!con.conObj.contactEmail}" /></td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </table>
+                                    </apex:outputPanel>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </apex:outputPanel>  --> 
+            </apex:pageBlockSectionItem> 
+           <!--
+            <apex:pageBlockSectionItem >  
+                <apex:outputPanel style="padding-left:120px;text-align:center" id="buttonPanel">
+                    <apex:actionStatus id="sendMailStatus">
+                        <apex:facet name="stop">
+                            <apex:outputlabel > 
+                                <apex:commandButton onclick="previewQuote()" value="Preview Quote" rerender="composeOp,pgMsgId,mainForm" status="sendMailStatus" />&nbsp;&nbsp;
+                                <apex:commandButton action="{!sendMailUK}" value="Send Email" rerender="pgMsgId,buttonPanel" status="sendMailStatus" disabled="{!isMailSentUK}" />&nbsp;&nbsp;
+                                <apex:commandButton action="{!cancelMail}" value="Cancel" rerender="composeOp,pgMsgId" status="sendMailStatus" />&nbsp;&nbsp;
+                                <apex:commandButton action="{!resetMailUK}" value="Reset" rerender="pgMsgId,buttonPanel,UKAttachments" status="sendMailStatus"  rendered="{!isMailSentUK}" />
+                            </apex:outputlabel>
+                        </apex:facet>
+                        
+                        <apex:facet name="start">
+                            <apex:outputlabel >
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                                <apex:commandButton value="Loading..." disabled="true" status="sendMailStatus" />
+                            </apex:outputlabel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+          -->
+          
+          <!--  
+            <apex:pageblockSectionItem >
+                <apex:outputPanel rendered="{!isContactPresent}">
+                    <apex:actionStatus id="fillAddress">
+                        <apex:facet name="stop">
+                            <apex:outputLabel >
+                                <apex:commandButton action="{!fillTO}" value="Set To" reRender="toAddr,conOp" status="fillAddress" />
+                                <apex:commandButton action="{!removeTO}" value="Remove TO" reRender="toAddr,conOp" status="fillAddress" />
+                             
+                            </apex:outputLabel>
+                        </apex:facet>
+                        
+                        <apex:facet name="start">
+                            <apex:outputLabel >
+                                <apex:commandButton value="Loading..." status="fillAddress" disabled="true" />
+                                
+                            </apex:outputLabel>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>
+            </apex:pageblockSectionItem>
+            -->
+        </apex:pageBlockSection>
+    
+    
+    
+    <!-- ------------------------------------------------------------------------------
+    <table width="60%" height="100%" style="padding-left:100px;">
+        <tr>
+            <td Style="font-weight:bold;" colspan="3">Select Documents to be attached:</td>
+        </tr>
+        <tr>
+            <td colspan="3" Style="height:15px;"></td>
+        </tr>
+        
+        <tr>
+            <td><apex:inputCheckbox value="{!brochureChecked}" label="Brochure" >
+                    <apex:actionSupport event="onchange"  action="{!toggleDocs}"  rerender="brochureDocs1" id="brochure"/>    
+                </apex:inputCheckbox> &nbsp;&nbsp;<apex:outputLabel value="Brochure" />
+            </td>
+                
+            <td><apex:inputCheckbox value="{!unitChecked}" label="Unit Info" > 
+                    <apex:actionSupport event="onchange" action="{!toggleUnitDocs}" rerender="unitDocs1" id="unit"/>
+                </apex:inputCheckbox> &nbsp;&nbsp;<apex:outputLabel value="Unit Info" />
+            </td>
+            <td><apex:inputCheckbox value="{!shafChecked}" label="SHAF" />
+                &nbsp;&nbsp;<apex:outputLabel value="SHAF" />
+            </td>
+        </tr>
+    </table>
+    
+    <apex:pageBlockSection columns="3"  >
+      <apex:pageBlockSectionItem >  
+        <apex:outputPanel id="brochureDocs1">
+            <apex:outputPanel rendered="{!brochureChecked}" id="brochureDocs">
+                <table width="80%" height="100%" style="padding-left:100px;">
+                    <tr><td colspan="2" Style="font-weight:bold;">Select Brochure documents</td></tr>
+                    <tr><td colspan="2" Style="height:7px;"></td></tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!Accomodation_Brochure_UK}" /></td>
+                        <td><apex:outputLabel value="Accomodation Brochure UK" /></td>
+                    </tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!STORAGE_UK}" /></td>
+                        <td><apex:outputLabel value="STORAGE UK" /></td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlockSectionItem>
+      <apex:pageBlockSectionItem dataStyle="right" >
+        <apex:outputPanel id="unitDocs1">
+            <apex:outputPanel rendered="{!unitChecked}" id="unitDocs">
+                <table  align="left" style="padding-right:100px;">
+                    <tr><td colspan="2" Style="font-weight:bold;">Select Unit info documents</td></tr>
+                    <tr><td colspan="2" Style="height:7px;"></td></tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!Welfare_Unit_Product_Card_A4}" /></td>
+                        <td><apex:outputLabel value="Welfare Unit Product Card A4" /></td>
+                    </tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!Storage_Container_Product_Card_A4_pdf}" /></td>
+                        <td><apex:outputLabel value="Storage Container Product Card A4" /></td>
+                    </tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!Accommodation_Product_Card_A4}" /></td>
+                        <td><apex:outputLabel value="Accommodation Product Card A4" /></td>
+                    </tr>
+                    <tr>
+                        <td><apex:inputCheckbox value="{!Anti_Vandal_Toilet_Units_Product_Card_A4_pdf}" /></td>
+                        <td><apex:outputLabel value="Anti Vandal Toilet Units Product Card A4" /></td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlockSectionItem>
+      
+      <apex:pageBlockSectionItem >  
+          
+      </apex:pageBlockSectionItem>
+         
+    </apex:pageBlockSection>
+    
+    <table width="60%" height="100%" style="padding-left:100px;">
+        <tr>
+            <td colspan="3">
+                <apex:outputPanel >
+                <apex:actionStatus id="sendMailStatusUK">
+                    <apex:facet name="stop">
+                    <apex:outputlabel > 
+                        <apex:commandButton onclick="sendWithDocusign()" value="Docu-sign" rerender="pgMsgId,ukForm" status="sendMailStatusUK"/>&nbsp;&nbsp;
+                        <apex:commandButton action="{!sendMailUK}" value="Send Mail" rerender="pgMsgId,ukForm" status="sendMailStatusUK"  disabled="{!isMailSentUK}" />&nbsp;&nbsp;
+                        <apex:commandButton action="{!cancelMailUK}" value="Cancel" rerender="pgMsgId" status="sendMailStatusUK" />&nbsp;&nbsp;
+                        <apex:commandButton action="{!resetMailUK}" value="Reset" rerender="pgMsgId,ukForm" status="sendMailStatusUK"  rendered="{!isMailSentUK}" />
+                    </apex:outputlabel>
+                    </apex:facet>
+        
+                    <apex:facet name="start">
+                    <apex:outputlabel >
+                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatusUK" />&nbsp;&nbsp;
+                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatusUK" />
+                        <apex:commandButton value="Loading..." disabled="true" status="sendMailStatusUK" />
+                    </apex:outputlabel>
+                    </apex:facet>
+                </apex:actionStatus>
+                </apex:outputPanel>
+            </td>
+        </tr>
+    </table>
+    -->
+    </apex:pageBlock>
+</apex:form>  
+</apex:page>

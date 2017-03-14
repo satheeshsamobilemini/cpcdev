@@ -1,0 +1,504 @@
+<apex:page sidebar="false" renderAs="pdf" showheader="false"  controller="QuotePDFCtrl" action="{!getPDFContent}" applyHtmlTag="false" applyBodyTag="false" standardStylesheets="false">
+       <head>
+            <style type="text/css" media="print">
+             @page {
+                    size:portrait;
+                    padding-top:200px;
+                    margin-bottom: 4cm;
+                                       
+                    @top-left {
+                      content: element(header);
+                    }
+                    @bottom-left{
+                      
+                      content: element(footer);
+                    }
+                    
+                }
+                
+                .pagenumber:before {
+                    content: counter(page);
+                }
+                
+                .pagecount:before {
+                    content: counter(pages);
+                }              
+                div.header {
+                    padding: 10px;
+                    position: running(header);
+                }
+                div.footer {
+                    display: block;
+                    padding: 5px;
+                    position: running(footer);
+                }
+            </style>
+        </head> 
+    <div class="header" >
+        <table width="100%">
+            <tr>
+               <!-- <td colspan="4">
+                    <table width="100%" style="padding-bottom: 20%;">
+                        <tr align="left" > -->
+                            <td width="40%" align="left"> 
+                                <apex:outputPanel >
+                                    <img src="{!$Resource.MMIUKLogo}" width="100%" height="100%" /> 
+                                </apex:outputPanel>
+                                
+                            </td>
+                            <td width="100%">
+                                <span align="left" style="padding-left: 30px; font-size: 11px;">Salesperson Name: {!usrDetails.Name} </span><b><span align="right" style="padding-left: 90px; font-size: 12px;"> Page <span class="pagenumber"/> of &nbsp;<span class="pagecount"/> </span></b><br/>
+                                <span align="left" style="padding-left: 30px; font-size: 11px;">{!usrDetails.Street},{!usrDetails.City}, {!usrDetails.State}&nbsp;{!usrDetails.postalcode}</span><br/>
+                                <!-- <span align="left" style="padding-left: 40px; font-size: 9px;">{!usrDetails.City}, {!usrDetails.State}&nbsp;{!usrDetails.postalcode}</span><br/> -->
+                                <span align="left" style="padding-left: 30px; font-size: 11px;">Tel: {!usrDetails.Phone} &nbsp; | &nbsp;Fax #: {!usrDetails.Fax} </span><br/>  <!-- Ext #: {!usrDetails.Extension__c}  -->
+                                <!-- <span align="left" style="padding-left: 40px; font-size: 9px;">Fax #: {!usrDetails.Fax}</span> -->
+                                <span align="left" style="padding-left: 30px; font-size: 11px;">Email: {!usrDetails.Email} &nbsp; | &nbsp;Web: <a href="http://www.mobilemini.co.uk/">www.mobilemini.co.uk</a></span>
+                                <!-- <span align="left" style="padding-left: 40px; font-size: 9px;">Web: <a href="http://www.mobilemini.co.uk/">www.mobilemini.co.uk</a> </span> -->
+                            </td>
+                       <!-- </tr>
+                              
+                    </table>
+                </td> -->
+            </tr>
+        </table>
+    <!-- </div>
+               
+    <div >  -->
+    <table width="100%">
+        
+        <tr>
+            <td width="87%" >
+              <apex:outputLabel style="font-size: 20px"><b>Quote for {!qHeader.Account__r.name}  </b></apex:outputLabel>  
+            </td>
+            <td width="13%">
+                <!--<span align="left" style="padding-left: 305px; font-size: 9px;">Email: {!usrDetails.Email}</span><br/>
+                <span align="left" style="padding-left: 305px; font-size: 9px;">Web: <a href="http://www.mobilemini.co.uk/">www.mobilemini.co.uk</a> </span> -->
+               <!-- <span style="padding-right: 0px; font-size: 11px;"> Page <span class="pagenumber"/> of &nbsp;<span class="pagecount"/> </span> -->
+            </td>
+            
+        </tr>
+        <!--
+        <tr rowspan="3">
+            <td align="left" style="padding-left: 40px;" colspan="2">
+                <div style="width:50px;height:50px;"> <a id="docusignAnchor" href="" style="color:white">\s1\</a>  </div>
+            </td>
+        </tr> -->
+        <tr style="border-bottom: 1px solid black;">
+            <td colspan="3">
+                <table width="100%">
+                    <tr>
+                        <td width="33%" nowrap="nowrap" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black;">
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Billing To:</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_address__c}</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Billing_City__c} , {!qHeader.Billling_State__c} {!qHeader.Billing_Zip__c}</span><br/> <!-- {!qHeader.Billing_Country__c} -->
+                        </td>
+                        <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;">
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Deliver To:</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Account__r.name}</span><br/>  <!-- {!delDetails.Name} -->
+                            <span align="left" style="padding-left: 3px; font-size: 10px; ">{!qHeader.Shipto_address__c}</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px;">{!qHeader.Shipto_City__c} , {!qHeader.Shipto_State__c} {!qHeader.Shipto_Zip__c}</span><br/> <!-- {!qHeader.Shipto_Country__c} -->
+                            
+                        </td>
+                        <td width="33%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-right: 1px solid black;">
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Account No:</span><span style="padding-left: 2px; font-size: 10px;">{!qHeader.Account__r.SAP_Bill_To__c}</span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Quote Date:</span>
+                            <span style="padding-left: 2px; font-size: 10px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!quoteDeldate}"/> 
+                                </apex:outputText>
+                            </span><br/>
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Quote Ref Number:</span><span style="padding-left: 2px; font-size: 10px;">{!qHeader.Name}</span><br/>
+                            <apex:outputPanel >  <!-- rendered="{!isRental}" -->
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Estimated Start Date:</span>
+                            <span style="padding-left: 2px; font-size: 10px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!quoteStart}"/>
+                                </apex:outputText>
+                            </span><br/>
+                            </apex:outputPanel>
+                            <span align="left" style="padding-left: 3px; font-size: 10px; font-weight: bold;">Requested Start Date:</span>
+                            <span style="padding-left: 2px; font-size: 10px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!quoteReqStart}"/> 
+                                </apex:outputText>
+                            </span><br/>
+                        </td> 
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>    
+    </div> 
+    
+    <div class="footer">
+    <table>       
+        <tr>
+            <td style="font-size:12px">Mobile Mini UK Ltd. </td>
+        </tr>
+        <tr style="page-break-inside:avoid;">
+            <td style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                <table>
+                    <tr>
+                        <td>
+                            <span style="font-size: 8px;"> Thank you for your enquiry, this quote is valid until <span style="font-size: 9px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!quoteValidTill}"/> 
+                                </apex:outputText>
+                            </span> and is subject to availability at time of order.</span><br/>
+                            <span style="font-size: 8px;"><apex:outputLabel value="This Quotation is supplied on the basis of Mobile Mini UK Ltd's standard terms and conditions of hire and sale, a copy of which is attached for your information."/></span><br/>
+                            <span style="font-size: 8px;"><apex:outputLabel value="It is the hirer's responsibility to ensure suitable access for our delivery vehicles and adequate ground conditions. Additional charges may apply if delivery is delayed or cannot be completed because of inadequate access or poor ground conditions."/></span> <br/>
+                            <span style="font-size: 8px; "><apex:outputLabel value="Please note there is a minimum hire period of 28 days." /></span><br/>
+                        </td>
+                    </tr>
+                </table>
+            </td> 
+        </tr>
+    </table> 
+    </div>
+    
+    
+    <div > 
+    <table width="100%"> 
+        <tr > <!-- style="page-break-after:always;" -->
+           <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                 <table width="100%" cellpadding="4">
+                    <tr style="background-color: #BDBDBD">
+                        <td style="font-size: 16px;border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="35%;">Product Description</td>   
+                        <td style="font-size: 16px;border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="45%;">Additional Information</td>
+                        <!-- <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="500%;">Item</td> -->
+                        <td style=" font-size: 16px;border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" >QTY</td>
+                        <td style="font-size: 12px;font-weight:bold;border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;"><apex:outputLabel value="{!if(qheader.Type__c = 'ZSLS','Sale price (excl. VAT)','Price/Rate per week (excl. VAT)')}"></apex:outputLabel> </td>
+                     </tr>
+                   
+                    <apex:repeat value="{!quoteItems}" var="qi">
+                        <tr style="font-size: 12px;">
+                            <td>
+                                <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c = '000000',true,false)}"> 
+                                    <b><apex:outputText value="{!qi.Quoteitemlevels.Description__c}" /></b>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!if(qi.Quoteitemlevels.Quote_Item_Higher_Level__c != '000000',true,false)}"> 
+                                    <apex:outputText style="padding-left:15px;" value="{!qi.Quoteitemlevels.Description__c}" />
+                                </apex:outputPanel>
+                            </td>
+                            <td style="text-align:left;"><apex:outputText value="{!Left(qi.Quoteitemlevels.Short_Text__c,40)}" /></td>
+                            <!-- <td><center><apex:outputText value="Master Number??" />
+                               </center>
+                            </td> -->
+                            <td><center><apex:outputLabel value="{!FLOOR(qi.Quoteitemlevels.Quantity__c)}"/></center></td> 
+                            <apex:repeat value="{!qi.itemchargs}" var="chgs">
+                               <td style="text-align:left;padding-left: 20px;"> 
+                               <apex:outputLabel value="{!currencysymbol}" rendered="{!if(chgs='--',false,true)}"/><apex:outputLabel value="{!chgs}" />
+                               </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <apex:repeat value="{!qi.subitemlist}" var="subitems" >
+                                                
+                            <tr style="font-size: 12px;">
+                                                             
+                                <td>
+                                    <apex:outputPanel > 
+                                        <apex:outputText style="padding-left:15px;" value="{!subitems.Description__c}" />
+                                    </apex:outputPanel>
+                                </td>
+                                
+                                <td style="text-align:left;"><apex:outputText value="{!Left(qi.Quoteitemlevels.Short_Text__c,40)}" /></td>
+                                
+                                <td><center><apex:outputLabel value="{!FLOOR(qi.Quoteitemlevels.Quantity__c)}"/></center></td>
+                                
+                                <td style="text-align:left;padding-left: 20px;">
+                                    <apex:outputLabel value="{!currencysymbol}" rendered="{!if(subitems.Actual_Amount__c=null,false,true)}"/>
+                                    <apex:outputText value="{0, number, 0.00}">
+                                          <apex:param value="{!subitems.Actual_Amount__c}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                    </apex:repeat>
+                    <!--<tr>
+                        <td colspan="5"><hr/></td>
+                    </tr>
+                    <tr>
+                       
+                        <td colspan="4" style="padding-left: 40px; font-size: 14px; font-weight: bold;"><u>Totals:</u></td>
+                    </tr> 
+                    <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                        <tr style="font-size: 12px;"> 
+                            <td ></td>
+                            <td colspan="3" style="padding-left: 120px;">   
+                                <apex:outputLabel value="{!qsi.Description__c}" />    
+                             </td>
+                             <td  align="left" style="padding-left:20px" >
+                                {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                             </td>
+                        </tr>
+                    </apex:repeat> -->
+                    <tr>
+                        <td colspan="5" align="center" style="font-size: 14px;">  </td>   
+                    </tr>
+                   <!-- <tr>
+                        <td colspan="5" align="center" style="font-size: 14px;"> </td>   
+                    </tr> -->
+                    <tr>
+                        <td colspan="5" align="center" style="font-size: 14px;font-weight: bold;"> Standard UK VAT rates apply </td>   
+                    </tr> 
+                </table>
+            </td>
+        </tr> <br/>
+        <!-- <tr> <td style="font-size:18px;font-weight:bold;text-align:center">Quote Summary</td> </tr> -->
+        <apex:outputPanel rendered="{!if(qheader.Type__c != 'ZSLS',true,false)}">
+        <tr style="page-break-inside:avoid;">
+           
+           <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                 <table width="100%" cellpadding="4">
+                    <tr> <td colspan="3" style="font-size:18px;font-weight:bold;text-align:center">Quote Summary</td> </tr>
+                    <tr style="background-color: #BDBDBD">
+                        <td style="font-size: 16px;border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>   
+                        <!-- <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">MMI No.</td>
+                        <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="500%;">Item</td> -->
+                        <td style="font-size: 16px; border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" >QTY</td>
+                        <td style="font-size: 12px;font-weight:bold; border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;"><apex:outputLabel value="{!if(qheader.Type__c = 'ZSLS','Sale price (excl. VAT)','Price/Rate per week (excl. VAT)')}"></apex:outputLabel></td>
+                    </tr>
+                                        
+                    <apex:repeat value="{!quoteSum.productTots}" var="qsum" >
+                        <tr style="font-size: 12px;">
+                            <td>
+                                <apex:outputText value="{!qsum.productDesc}" />
+                            </td>
+                            <!-- <td><center><apex:outputText value="{!qsum.mmiNo}" />
+                               </center>
+                            </td>
+                            <td><center><apex:outputText value="{!qsum.item}" />
+                               </center>
+                            </td> -->
+                            <td><center><apex:outputLabel value="{!qsum.quantity}"/></center></td> 
+                            <td style="text-align:left;padding-left: 20px;"> 
+                               <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!qsum.ratePrice}"/> 
+                            </td>
+                            
+                        </tr>
+                    </apex:repeat>
+                                        
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="{!if(qheader.Type__c = 'ZSLS','Total Sale','Total Hire')}" /> </b>
+                        </td>
+                        
+                        <td style="font-weight:bold"><center><apex:outputLabel value="{!quoteSum.totalRentalUnits}"/></center></td> 
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.totalRentalCharges}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="Delivery Total" /> </b>
+                        </td>
+                        
+                        <td style="font-weight:bold">  </td>  <!-- <center><apex:outputLabel value="{!quoteSum.delCount}"/></center>  -->
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.deliveryTotal}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="Collection Total" rendered="{!if(qheader.Type__c != 'ZSLS',true,false)}" /> </b>
+                        </td>
+                        
+                        <td style="font-weight:bold"> </td> <!-- <center><apex:outputLabel value="{!quoteSum.delCount}" rendered="{!if(qheader.Type__c != 'ZSLS',true,false)}"/></center></td>  -->
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}" rendered="{!if(qheader.Type__c != 'ZSLS',true,false)}"/><apex:outputLabel value="{!quoteSum.collectionTotal}" rendered="{!if(qheader.Type__c != 'ZSLS',true,false)}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td colspan="2">
+                          <b><apex:outputText value="Total miscellaneous charges" rendered="{!if(quoteSum.totalLLWCharges != '0',true,false)}"/> </b>
+                        </td>
+                        
+                        
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}" rendered="{!if(quoteSum.totalLLWCharges != '0',true,false)}"/><apex:outputLabel value="{!quoteSum.totalLLWCharges}" rendered="{!if(quoteSum.totalLLWCharges != '0',true,false)}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="One Off costs" /> </b>
+                        </td>
+                        
+                        <td>&nbsp;</td> 
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.oneOffCosts}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>&nbsp; </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td colspan="2">
+                          <b>Overall cost of Proposal based on a start date of (<span style="padding-left: 2px; font-size: 10px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!quoteEnddate}"/>
+                                </apex:outputText>
+                            </span>) and end date of (<span style="padding-left: 2px; font-size: 10px;">
+                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                    <apex:param value="{!qHeader.How_long_do_you_need_your_unit_weeks__c}"/>
+                                </apex:outputText>
+                            </span>).</b>
+                        </td>
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.totalCosts}"/> 
+                        </td>
+                    </tr>
+                    <tr style="font-size: 8px;">
+                        <td colspan="3">
+                          Standard cleaning charges will apply at off-hire. Additional charges will apply should significant additional cleaning be required.
+                        </td>
+                    </tr>
+                    <!-- <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                        <tr style="font-size: 12px;"> 
+                            <td ></td>
+                            <td colspan="3" style="padding-left: 120px;">   
+                                <apex:outputLabel value="{!qsi.Description__c}" />    
+                             </td>
+                             <td  align="left" style="padding-left:20px" >
+                                {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                             </td>
+                        </tr>
+                    </apex:repeat> -->
+                    
+                    <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;">  </td>   
+                    </tr>
+                   <!-- <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;"> </td>   
+                    </tr> -->
+                    <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;font-weight: bold;"> Standard UK VAT rates apply </td>   
+                    </tr>
+                                        
+                </table>
+            </td>    
+        </tr>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!if(qheader.Type__c == 'ZSLS',true,false)}">
+        <tr style="page-break-inside:avoid;">
+           
+           <td width="100%" height="10%" style="border-bottom: 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;">
+                 <table width="100%" cellpadding="4">
+                    <tr> <td colspan="3" style="font-size:18px;font-weight:bold;text-align:center">Quote Summary</td> </tr>
+                    <tr style="background-color: #BDBDBD">
+                        <td style="font-size: 16px;border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="80%;">Product Description</td>   
+                        <!-- <td style="border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="20%;">MMI No.</td>
+                        <td style="white-space: nowrap ; border-bottom: font-size: 14px; 1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="500%;">Item</td> -->
+                        <td style="font-size: 16px; border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" >QTY</td>
+                        <td style="font-size: 12px;font-weight:bold; border-bottom:  1px solid black; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black;" width="100%;"><apex:outputLabel value="{!if(qheader.Type__c = 'ZSLS','Sale price (excl. VAT)','Price/Rate per week (excl. VAT)')}"></apex:outputLabel></td>
+                    </tr>
+                                        
+                    <apex:repeat value="{!quoteSum.productTots}" var="qsum" >
+                        <tr style="font-size: 12px;">
+                            <td>
+                                <apex:outputText value="{!qsum.productDesc}" />
+                            </td>
+                            <!-- <td><center><apex:outputText value="{!qsum.mmiNo}" />
+                               </center>
+                            </td>
+                            <td><center><apex:outputText value="{!qsum.item}" />
+                               </center>
+                            </td> -->
+                            <td><center><apex:outputLabel value="{!qsum.quantity}"/></center></td> 
+                            <td style="text-align:left;padding-left: 20px;"> 
+                               <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!qsum.ratePrice}"/> 
+                            </td>
+                            
+                        </tr>
+                    </apex:repeat>
+                                        
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="{!if(qheader.Type__c = 'ZSLS','Total Sale','Total Hire')}" /> </b>
+                        </td>
+                        
+                        <td style="font-weight:bold"><center><apex:outputLabel value="{!quoteSum.totalRentalUnits}"/></center></td> 
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.totalRentalCharges}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="Delivery Total" /> </b>
+                        </td>
+                        
+                        <td style="font-weight:bold"><center><apex:outputLabel value="{!quoteSum.delCount}"/></center></td> 
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.deliveryTotal}"/> 
+                        </td>
+                    </tr>
+                                        
+                    <tr style="font-size: 12px;">
+                        <td>
+                          <b>  <apex:outputText value="One Off costs" /> </b>
+                        </td>
+                        
+                        <td>&nbsp;</td> 
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.oneOffCosts}"/> 
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>&nbsp; </td>
+                    </tr>
+                    
+                    <tr style="font-size: 12px;">
+                        <td colspan="2">
+                          <b>Overall cost of Proposal.</b>
+                        </td>
+                        <td style="text-align:left;padding-left: 20px;font-weight:bold"> 
+                           <apex:outputLabel value="{!currencysymbol}"/><apex:outputLabel value="{!quoteSum.totalCosts}"/> 
+                        </td>
+                    </tr>
+                    <!-- <tr style="font-size: 8px;">
+                        <td colspan="3">
+                          Standard cleaning charges will apply at off-hire. Additional charges will apply should significant additional cleaning be required.
+                        </td>
+                    </tr> -->
+                    <!-- <apex:repeat value="{!quoteSubItems}" var="qsi" >
+                        <tr style="font-size: 12px;"> 
+                            <td ></td>
+                            <td colspan="3" style="padding-left: 120px;">   
+                                <apex:outputLabel value="{!qsi.Description__c}" />    
+                             </td>
+                             <td  align="left" style="padding-left:20px" >
+                                {!currencysymbol}<apex:outputLabel value="{!qsi.Actual_Amount__c}" />
+                             </td>
+                        </tr>
+                    </apex:repeat> -->
+                    
+                    <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;">  </td>   
+                    </tr>
+                   <!-- <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;"> </td>   
+                    </tr> -->
+                    <tr>
+                        <td colspan="3" align="center" style="font-size: 14px;font-weight: bold;"> Standard UK VAT rates apply </td>   
+                    </tr>
+                                        
+                </table>
+            </td>    
+        </tr>
+        </apex:outputPanel>
+        
+        
+    </table> 
+    </div>
+        
+</apex:page>

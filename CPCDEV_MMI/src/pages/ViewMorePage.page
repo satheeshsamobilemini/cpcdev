@@ -1,0 +1,209 @@
+<apex:page Controller="ViewMoreController">    
+      <apex:includeScript value="//code.jquery.com/jquery-1.11.3.min.js"/>
+      <apex:includeScript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"/>
+      <apex:stylesheet value="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+      <apex:includeScript value="{!$Resource.DataTableJsLib}"/>
+      
+   <!--    <apex:stylesheet value="{!$Resource.AccountDashboardCss}"/> -->
+    <style>
+      
+        table.dataTable thead .sorting{background:url('{!$Resource.DT_sort_both}') no-repeat center right}
+        table.dataTable thead .sorting_asc{background:url('{!$Resource.DT_sort_asc}') no-repeat center right}
+        table.dataTable thead .sorting_desc{background:url('{!$Resource.DT_sort_desc}') no-repeat center right}
+        table.dataTable thead .sorting_asc_disabled{background:url('{!$Resource.DT_sort_asc_disabled}') no-repeat center right}
+        table.dataTable thead .sorting_desc_disabled{background:url('{!$Resource.DT_sort_desc_disabled}') no-repeat center right}
+                  
+        </style>  
+        
+        <script>
+         $(document).ready(function() {
+          $('#CaseListTable').DataTable( {
+          "pagingType": "full_numbers"
+           });
+           $('#SORListTable').DataTable( {
+          "pagingType": "full_numbers"
+           });
+           $('#NPSListTable').DataTable( {
+          "pagingType": "full_numbers"
+           });
+         }); 
+          </script>   
+        <!-- <apex:variable var="counter" value="{!0}"/>
+        
+        
+        <c:  targetPbTableIds="table,table2" paginate="true" defaultPageSize="5" pageSizeOptions="5,10,20,30,40,50,100" />
+        
+        <apex:pageBlockTable id="table" var="cs" value="{!result}">
+              
+               <apex:repeat var="f" value="{!fieldsetMem}">
+                    <apex:column Headervalue="{!f.label}" >
+                                     
+                        <apex:outputLink value="/{!cs.id}" rendered="{!(if(counter==0,true,false))}" target="_blank">{!cs[f]}</apex:outputLink>
+                        <apex:outputField value="{!cs[f]}" rendered="{!(if(counter!=0,true,false))}" /> 
+                        <apex:variable var="counter" value="{!counter+1}"/>
+                        <apex:outputPanel rendered="{!if(counter == fieldsetMem.size, true, false)}">
+                            <apex:variable var="counter" value="{!0}"/>
+                        </apex:outputPanel> 
+                    </apex:column>                   
+              </apex:repeat>
+              
+             
+        </apex:pageBlockTable> -->
+        <apex:form >
+        <apex:PageBlock title="List of Records">
+             <apex:outputPanel id="caseTable" layout="block" rendered="{!(IF($CurrentPage.parameters.from=='CS',true,false))}">            
+                          <apex:outputPanel id="caseTableLabel" styleClass="quoteTableLabel" layout="block">
+                              <apex:outputText value="Cases" style="font-size:10pt;font-weight:bold!important;"/><br/><br/>
+                              
+                             <div>
+                              <table id="SORListTable" class="table" align="center" cellspacing="0" width="98%">
+                                <thead>
+                                    <tr>
+                                     <th>Case #</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Record Type</th>
+                                    <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                 <apex:repeat value="{!result}" var="cs">
+                                    <tr>
+                                        <td> 
+                                            <apex:outputLink target="_blank" value="/{!cs.id}">{!cs['Name']}</apex:outputLink>
+                                            &nbsp;
+                                            
+                                        </td>
+                                        <td>
+                                        <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!cs['Date__c']}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!cs['Date__c']}"/>
+                                           </apex:outputText>
+                                        </td>
+                                    <!--    <td>{!cs['Date__c']}</td> -->
+                                        <td>{!cs['Status__c']}</td>
+                                        
+                                           <td>{!cs['RecordType.name']}</td>
+                                        
+                                        
+                                        <td>{!cs['Customer_Contact__r.name']}</td>
+                                        
+                                    </tr>
+                                </apex:repeat> 
+                                </tbody>
+                              </table>
+                              </div>
+                                   
+                                
+                          </apex:outputPanel>
+                      </apex:outputPanel>
+                          <apex:outputPanel id="SORTable" layout="block" rendered="{!(IF($CurrentPage.parameters.from=='SOR',true,false))}">            
+                          <apex:outputPanel id="SORTableLabel" styleClass="quoteTableLabel" layout="block">
+                              <apex:outputText value="Service Order Requests" style="font-size:10pt;font-weight:bold!important;"/><br/><br/>
+
+                             <div>
+                              <table id="SORListTable" class="table" align="center" cellspacing="0" width="98%">
+                                <thead>
+                                    <tr>
+                                     <th>SOR #</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Service Issue</th>
+                                    <th>Branch ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                 <apex:repeat value="{!result}" var="cs">
+                                    <tr>
+                                        <td> 
+                                            <apex:outputLink target="_blank" value="/{!cs.id}">{!cs['Name']}</apex:outputLink>
+                                            &nbsp;
+                                            
+                                        </td>
+                                        <td>
+                                        <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!cs['createddate']}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!cs['createddate']}"/>
+                                           </apex:outputText>
+                                        </td>
+                                    <!--    <td>{!cs['Date__c']}</td> -->
+                                        <td>{!cs['Status__c']}</td>
+                                        
+                                           <td>{!cs['Service_Issue__c']}</td>
+                                        
+                                        
+                                        <td>{!cs['Branch_ID__c']}</td>
+                                        
+                                    </tr>
+                                </apex:repeat> 
+                                </tbody>
+                              </table>
+                              </div>
+                                   
+                                
+                          </apex:outputPanel>
+                      </apex:outputPanel>
+                    <apex:outputPanel id="NPSTable" layout="block" rendered="{!(IF($CurrentPage.parameters.from=='NPS',true,false))}">            
+                          <apex:outputPanel id="NPSTableLabel" styleClass="quoteTableLabel" layout="block">
+                              <apex:outputText value="NPS" style="font-size:10pt;font-weight:bold!important;"/><br/><br/>
+                              
+                             <div>
+                              <table id="NPSListTable" class="table" align="center" cellspacing="0" width="98%">
+                                <thead>
+                                    <tr>
+                                     <th>Net Promoter Score ID</th>
+                                    <th>Created Date</th>
+                                    <th>Likely To Recommend</th>
+                                    <th>Customer Effort Score</th>
+                                    <th>Hot Sheet Generated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                 <apex:repeat value="{!result}" var="cs">
+                                    <tr>
+                                        <td> 
+                                            <apex:outputLink target="_blank" value="/{!cs.id}">{!cs['Name']}</apex:outputLink>
+                                            &nbsp;
+                                            
+                                        </td>
+                                         <td>
+                                        <apex:outputText value="{0, date,d/MM/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',true,false)}">
+                                                <apex:param value="{!cs['CreatedDate']}"/>
+                                           </apex:outputText>
+                                           <apex:outputText value="{0, date,MM/d/yyyy}" rendered="{!IF(currentAccount.recordtype.name='Business Account - UK',false,true)}">
+                                                <apex:param value="{!cs['CreatedDate']}"/>
+                                           </apex:outputText>
+                                        </td>
+                                        <!-- <td>{!cs['CreatedDate']}</td> -->
+                                        <td>{!cs['UKLikely_to_Recommend__c']}</td>
+                                        
+                                           <td>{!cs['Customer_Effort_Score__c']}</td>
+                                        
+                                        
+                                        <td>{!cs['Hot_Sheet_Generated__c']}</td>
+                                        
+                                    </tr>
+                                </apex:repeat> 
+                                </tbody>
+                              </table>
+                              </div>
+                                   
+                                
+                          </apex:outputPanel>
+                      </apex:outputPanel>
+         <!--</apex:pageBlockTable>
+       
+        <apex:pageBlockTable id="table2" var="cs2" value="{!result}">
+              <apex:variable var="counter" value="{!0}"/>  
+               <apex:repeat var="f" value="{!listFiledSetFileds}">                  
+                    <apex:column value="{!cs2[f]}"/>
+              </apex:repeat>            
+        </apex:pageBlockTable> -->
+        
+    </apex:PageBlock>
+    </apex:form>
+</apex:page>

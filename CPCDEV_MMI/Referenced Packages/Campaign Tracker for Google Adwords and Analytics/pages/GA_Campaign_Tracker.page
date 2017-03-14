@@ -1,0 +1,36 @@
+<apex:page sidebar="false">
+    <apex:form >
+        <apex:pageBlock title="Campaign Tracker for Google Adwords and Analytics by CloudAmp">
+            <p>
+            CloudAmp'<!-- ' -->s <b>Campaign Tracker for Google Adwords and Analytics</b> lets you know exactly which campaigns and sources are producing your leads. It is designed to capture data from Google Adwords, Google Analytics Campaign URLs (e.g. utm_campaign, utm_source etc.), Organic and Referral traffic into Salesforce via Web-to-Lead forms, so you can know which leads resulted from which advertising campaigns or web site referrals.    
+            </p>
+            <p><a href="http://www.cloudamp.com/docs/google-analytics-campaign-tracker.pdf" target="_blank"><apex:image value="{!$Resource.cloudamp__PDF_Icon}" height="40"/>Complete Documentation</a></p>
+            <br />
+            <apex:pageBlockSection title="Technical Support" collapsible="false">
+                <p> Please read through the brief <a href="http://www.cloudamp.com/docs/google-analytics-campaign-tracker.pdf" target="_blank">documentation</a>, but if you have any questions or need assistance making sure you have the correct code in the correct place, don't hesitate to contact us at:</p>
+                <br />
+                <b><a href="mailto:trackersupport@cloudamp.com">trackersupport@cloudamp.com</a></b>
+                <br />
+                <p>
+                Campaign Tracker for Google Adwords and Analytics is a paid application for Salesforce, so we provide full support in getting it implemented and strive to answer any questions the same day we receive them.
+                </p>
+</apex:pageBlockSection>
+            <apex:pageBlockSection title="" collapsible="false">
+          <apex:outputText style="text-align: left;">
+          <br />
+                    <a href="http://www.cloudamp.com" target="_blank"><apex:image value="{!$Resource.cloudamp__CloudAmpLogo}" width="150" height="27"/></a><br />
+                    <p>
+                    Check out CloudAmp'<!-- ' -->s other <a href="http://www.cloudamp.com/products/" target="_blank">products</a> and <a href="http://www.cloudamp.com/services/" target="_blank">services</a> or <a href="http://cloudamp.com/contact/" target="_blank">contact us</a> today.
+                    </p>
+                    </apex:outputText>
+                    </apex:pageBlockSection>
+<apex:pageBlockSection title="" collapsible="false">
+                     <apex:outputText style="text-align: center">
+                    <p>
+                    &#169; 2011-2013. All Rights Reserved CloudAmp LLC. Salesforce, Salesforce.com, AppExchange, and others are trademarks of salesforce.com, inc. and are  used here with permission. Google, Google Analytics, and Google Adwords are trademarks of Google, Inc.
+                    </p>
+                </apex:outputText>
+</apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

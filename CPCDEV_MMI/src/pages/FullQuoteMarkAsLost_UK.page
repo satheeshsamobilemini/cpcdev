@@ -1,0 +1,41 @@
+<apex:page Controller="FullQuoteUKMainController">
+<apex:form >
+    <apex:pageBlock mode="edit" >
+    
+    <apex:pageBlockButtons >
+      <apex:commandbutton value="Save" action="{!markAsLostSave}"/>
+      <apex:commandbutton value="Cancel" action="{!cancel}" immediate="true"/>
+    </apex:pageBlockButtons>
+    
+      <apex:pageBlockSection title="Quote Information" collapsible="false" >
+        <apex:repeat value="{!MarkAsLostFields}" var="fset">
+          <apex:inputField value="{!fullQuote[fset.fieldPath]}" 
+                      required="{!OR(fset.required, fset.dbrequired)}" style="width: 173px;" rendered="{!if(fset.Label=='Status',false,true)}"/>
+          
+          <apex:outputField value="{!fullQuote[fset.fieldPath]}" 
+                       style="width: 173px;" rendered="{!if(fset.Label=='Status',true,false)}"/>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      
+       <apex:pageBlockSection title="Additional Information">
+         <apex:repeat value="{!MarkAsLostAddFields}" var="fset">
+          <apex:inputField value="{!fullQuote[fset.fieldPath]}" 
+                      required="{!OR(fset.required, fset.dbrequired)}" rendered="{!if(OR(fset.Label=='Fulfilling Depot',fset.Label=='Rental Length'),false,true)}" style="width: 173px;" />
+         
+         <apex:pageBlockSectionItem rendered="{!if(fset.Label=='Fulfilling Depot',true,false)}">
+           <apex:outputLabel value="Branch"> </apex:outputLabel>
+           <apex:inputField value="{!fullQuote[fset.fieldPath]}" required="{!OR(fset.required, fset.dbrequired)}"/>
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem rendered="{!if(fset.Label=='Rental Length',true,false)}">
+           <apex:outputLabel value="Length of Hire"> </apex:outputLabel>
+           <apex:inputField value="{!fullQuote[fset.fieldPath]}" required="{!OR(fset.required, fset.dbrequired)}"/>
+         </apex:pageBlockSectionItem>
+        
+        </apex:repeat>
+      </apex:pageBlockSection>
+       
+    </apex:pageBlock>
+ </apex:form>
+ 
+</apex:page>

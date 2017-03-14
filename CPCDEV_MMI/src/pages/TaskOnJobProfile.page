@@ -1,0 +1,94 @@
+<apex:page cache="false" expires="0" standardController="Job_Profile__c" extensions="TasksOnJobProfileController" 
+    showHeader="false" sidebar="false" standardStyleSheets="true" >
+    
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<script>
+function reloadfunc(href,TabName){
+if (sforce.console.isInConsole()) { 
+//alert('This is in console'); 
+sforce.console.getEnclosingPrimaryTabId(function responseTabID(result) 
+{ //alert('Tab Id :' + result.id); 
+sforce.console.openPrimaryTab(null,href,true,TabName); 
+} 
+); 
+} 
+
+else { 
+window.parent.location = href; 
+}
+}
+</script>
+    
+    
+  <apex:outputPanel id="taskPnl">
+    <apex:outputPanel layout="block" style="text-align:center;">
+      &nbsp;
+      <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+          id="statusMsg" />
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!taskList.size > 0}">
+      <table class="detailList" width="100%" >
+        <tr width="100%" style="font-weight:bold;text-decoration:underline;">
+          <td width="16%">
+            <label onclick="sortData('What.Name');" style="cursor:pointer;text-decoration:underline;">
+              Account/Oppty<img src="{!IF(orderBy = 'What.Name', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          <td width="16%">
+            <label onclick="sortData('Who.Name');" style="cursor:pointer;text-decoration:underline;">
+              Contact<img src="{!IF(orderBy = 'Who.Name', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          <td width="20%">
+            <label onclick="sortData('Subject');" style="cursor:pointer;text-decoration:underline;">
+              Subject<img src="{!IF(orderBy = 'Subject', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          <td width="16%">
+            <label onclick="sortData('ActivityDate');" style="cursor:pointer;text-decoration:underline;">
+              Date<img src="{!IF(orderBy = 'ActivityDate', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+           <td width="16%">
+            <label onclick="sortData('Owner.Name');" style="cursor:pointer;text-decoration:underline;">
+              Assigned To<img src="{!IF(orderBy = 'Owner.Name', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          
+          <td width="16%">
+            <label onclick="sortData('isClosed');" style="cursor:pointer;text-decoration:underline;">
+              Completed<img src="{!IF(orderBy = 'isClosed', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+        </tr>
+        <apex:repeat var="task" value="{!taskList}">
+          <tr width="100%"> 
+            <td colspan="3">&nbsp;</td>
+          </tr>
+          <tr width="100%">
+            <td width="16%" ><apex:Outputlink value="/{!task.What.id}" onclick="reloadfunc('/{!task.What.id}','Account');return false;"  >{!task.what.name}</apex:outputLink></td>   
+            <td width="16%" ><apex:Outputlink value="/{!task.who.id}" onclick="reloadfunc('/{!task.who.id}','Contact');return false;">{!task.who.name}</apex:outputLink></td>
+            <td width="20%" ><apex:OutputLink value="/{!task.Id}" onclick="reloadfunc('/{!task.Id}','Task');return false;">{!task.subject}</apex:OutputLink></td>
+            <td width="16%"  ><apex:outputField value="{!task.ActivityDate}" /></td>
+            <td width="16%" ><apex:Outputlink value="/{!task.OwnerId}" onclick="reloadfunc('/{!task.OwnerId}','User');return false;">{!task.owner.Name}</apex:outputLink></td>
+            <td width="16%" ><apex:outputField value="{!task.isClosed}" /></td>
+
+          </tr>
+          <tr width="100%">
+            <td colspan="5"><b>Comments:</b> <apex:outputField value="{!task.Description}" /></td>
+          </tr>
+        </apex:repeat>
+      </table>
+    </apex:outputPanel>
+    
+    <apex:outputLabel styleClass="labelCol" style="font-weight:bold" rendered="{!taskList.size = 0}"
+        value="No History Available"></apex:outputLabel>
+  </apex:outputPanel>
+   
+  <apex:form >
+    <apex:actionFunction name="sortData" action="{!sortData}" rerender="taskPnl" status="statusMsg">
+      <apex:param name="firstParam" value="first" assignTo="{!orderBy}" />
+    </apex:actionFunction> 
+  </apex:form>
+</apex:page>

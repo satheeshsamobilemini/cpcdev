@@ -1,0 +1,94 @@
+<apex:page controller="FileUploadController" sidebar="false" showHeader="false" id="pageId">
+   
+  <apex:form enctype="multipart/form-data" id="fromId" >
+  <apex:outputPanel rendered="{!istrue}">
+    <apex:outputPanel id="mainAttachFile">
+   		 <apex:pageMessages id="pgMsgId" />
+            <table  align="left" border="0" style="padding-left: 30px; border-width: 1px; border-color:#000000; border-style: solid;" width="100%">
+            	<tr style="border-bottom:  1px solid black;"  >
+            		<td width="50%" valign="top">
+            			<table width="100%">
+            				<tr >
+            					<td align="center" width="50%" colspan="2" style="font-size: 20px; border-bottom:  1px solid black;"><h1>Local System</h1></td>
+            				</tr>
+            				<tr>
+			                   <td >
+			                   		<apex:inputFile value="{!fileBody}" filename="{!strAttachFile}" contentType="{!strContentType}"  id="file1" />
+			                   </td>
+			               </tr>
+			             <tr>
+			                 <td>
+			                   <apex:inputFile value="{!fileBody1}" filename="{!strAttachFile1}" contentType="{!strContentType1}"  id="file2" />
+			                 </td> 
+			             </tr>
+			             <tr>
+			                 <td>
+			                    <apex:inputFile value="{!fileBody2}" filename="{!strAttachFile2}" contentType="{!strContentType2}"  id="file3" />
+			                 </td>
+			             </tr>
+			             
+			             <tr>
+			                 <td>
+			                    <apex:inputFile value="{!fileBody3}" filename="{!strAttachFile3}" contentType="{!strContentType3}"  id="file4" />
+			                 </td>
+			             </tr>
+			             <tr>
+			                 <td>
+			                    <apex:inputFile value="{!fileBody4}" filename="{!strAttachFile4}" contentType="{!strContentType4}"  id="file5" />
+			                 </td>
+			             </tr>
+            			</table>
+            		</td>
+            		<td width="50%" valign="top">
+            			<table width="100%" id="DocumentId">
+            				<tr>
+            					<td  align="center" width="100%" colspan="2" style="padding-left:5px; font-size: 20px; border-bottom:  1px solid black;"><h1>SFDC</h1></td>
+            				</tr>
+            				<tr>
+            					<td valign="top" width="100%">
+            						<div style="height: 300px; width:100%; overflow:auto;" > 
+            							<table>
+            								<apex:repeat value="{!wrapperList}" var="wrap" >
+            								<tr>
+            									<td>
+            										 <apex:inputCheckbox value="{!Wrap.isCheckdoc}"/>
+            									</td>
+            									<td>{!wrap.doc.Name}</td>
+            								</tr>
+            								</apex:repeat>
+            							</table>
+            						</div>
+            					</td>
+            				</tr>		
+            			</table>
+            		</td>
+            		
+            	</tr>
+        </table>
+    </apex:outputPanel>
+    <apex:outputPanel >
+    	<table align="center">
+    		<tr>
+               <td style="padding-top: 20px;">
+                     <apex:commandButton value="Save" action="{!save}" ></apex:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;
+                     <apex:commandButton value="Cancel" onclick="window.close()"></apex:commandButton>
+               </td>
+            </tr>
+    	</table>
+     </apex:outputPanel>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!iserror}">
+		<table align="center">
+			<tr>
+				<td style="color: red;">
+				One of the attachment is more then 5 MB.</td>
+			</tr>
+    		<tr>
+               <td style="padding-top: 20px;">
+                     <apex:commandButton value="Cancel" onclick="window.close()"></apex:commandButton>
+               </td>
+            </tr>
+    	</table>
+</apex:outputPanel>     		
+     </apex:form>
+</apex:page>

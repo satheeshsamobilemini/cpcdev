@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Use this template when notifying users of new leads that have arrived and their details.</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Campaign Tracker Lead Notification</name>
+    <style>none</style>
+    <subject>New {!Organization.Name} inquiry: {!Lead.Name} from {!Lead.Company}</subject>
+    <type>text</type>
+</EmailTemplate>

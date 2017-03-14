@@ -1,0 +1,54 @@
+<apex:page controller="openJobProfileAccounts" sidebar="false" showheader="false">
+<apex:form >
+ <apex:pageBlock title="Please select a Job Profile : " id="pbId">
+  <script>
+    var url = '{!url}';
+    if(url != 'null'){
+     //window.opener.location.href = url;
+     window.open(url);
+     window.close();
+     
+    }
+
+    function selectionRole(){
+     selSubConRole();
+    }
+    
+    
+</script>
+  
+   <apex:pageBlockButtons >
+     <apex:commandButton value="Next" action="{!Next}" />
+   </apex:pageBlockButtons>
+    
+  
+   <apex:selectRadio value="{!selectedJB}" layout="pageDirection" onclick="selectionRole();" >
+    <apex:selectOptions value="{!jobProfiles}"/>
+   </apex:selectRadio>
+    <br/> 
+  <apex:actionStatus id="actStatus" startText="Loading please wait...."  />  
+   <br/><br/>
+   <apex:outputPanel id="subRole1" layout="none">
+   <apex:outputPanel id="insubRole1" rendered="{!showSel1}">
+    <apex:outputText value="Please select a sub Contractor role : " />
+    <apex:selectList value="{!selSubRole}">
+     <apex:selectOptions value="{!subRoleListOptions}" />
+    </apex:selectList>
+    </apex:outputPanel>
+   </apex:outputPanel>
+  
+   <apex:outputPanel id="subRole2" layout="none">
+   <apex:outputPanel id="insubRole2" rendered="{!showSel2}">
+   <b><apex:outputText value="Sub Contractor Role : " /></b>
+   <apex:outputText value="{!subRoleList[0]}" />
+    </apex:outputPanel>
+   </apex:outputPanel>
+   
+   
+   
+ <apex:actionFunction name="selSubConRole" action="{!dispSubConRole}" reRender="subRole1,subRole2" status="actStatus"/>
+  
+ </apex:pageBlock> 
+</apex:form> 
+
+</apex:page>

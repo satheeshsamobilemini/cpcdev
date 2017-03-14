@@ -1,0 +1,53 @@
+<apex:page >
+
+<style>
+	.caption-logo
+	{
+		display: inline-block;
+		margin: 5px 10px 5px 5px;
+		vertical-align: middle;
+	}
+	
+	.section-title
+	{
+		margin: 5px 0px;
+		font-weight: bold;
+		font-size: 15px;
+		vertical-align: middle;
+	}
+	
+	.page-load-results, .page-load-error
+	{
+		padding: 25px 10px;
+		font-style: italic;
+		background-color: #F4F2F2;
+		border-radius: 7px;
+		border: 1px solid #9E9191;
+		margin: 10px 0px;
+		font-weight: bold;
+	}
+	
+	.page-load-error
+	{
+		color: red;
+		border: 1px solid red;
+	}
+</style>
+
+<div>
+	<span class="caption-logo smf-icon-logo-small"></span>
+	<span class="section-title">
+		Folderize Chatter Files Tag Management
+	</span>
+</div>
+
+<div class="page-load-error" layout="block">
+	This page is deprecated since Salesforce started to support tagging of Chatter Files.<br/>
+	You now can add/remove tags through Salesforce UI.
+</div>
+
+<div style="margin-top: 5px;">
+	Copyright © 2013-2015 ShareMethods LLC All rights reserved
+</div>
+
+</apex:page>

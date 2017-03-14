@@ -1,0 +1,40 @@
+<apex:page standardController="Opportunity" extensions="LostOppReasonClass">
+<apex:includeScript value="{!$Resource.jQueryLib19Compress}"/>
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<apex:form >
+    <apex:pageBlock title="Please provide Reason for Lost opportunity">
+        <apex:pageBlockSection title="Quote Information" collapsible="false">
+            <!-- <apex:inputfield value="{!currentOpportunity.Account.name}" required="true"/> -->
+            <apex:inputText value="{!currentOpportunity.Account.name}" required="true" disabled="true"/>
+            <apex:inputText value="{!currentQuote.Status__c}" required="true" disabled="true" />
+            <apex:inputText value="{!currentQuote.contact__r.MobilePhone}" />
+            <!-- <apex:inputfield value="{!currentOpportunity.contact__r.Salutation}" required="true"  /> -->
+            <apex:inputfield value="{!currentOpportunity.Opportunity_Lost_Category__c}" required="true"/>
+            <apex:inputText value="{!currentQuote.contact__r.firstname}" required="true"  />
+            <apex:inputfield value="{!currentOpportunity.Lost_Opportunity_Reason_New__c}" required="true"/>
+            <apex:inputText value="{!currentQuote.contact__r.lastname}" required="true"  />
+            <apex:inputfield value="{!currentOpportunity.Lost_Business_Additional_Comments__c}" required="true"/>
+            <!-- <apex:inputText value="{!currentQuote.contact__r.MobilePhone}" required="true"  /> -->
+            <apex:inputfield value="{!currentOpportunity.Lost_Business_ToUK__c}" required="true"/>  
+            
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Additional Information" collapsible="false">
+            <apex:inputfield value="{!currentOpportunity.of_Units__c}" required="true"/>
+            <apex:inputText label="Length of Hire(in days)" value="{!quoteNOofdates}" required="true"/>
+            <apex:inputfield value="{!currentQuote.Branch__c}" required="true"/>
+            <apex:inputfield value="{!currentQuote.Industry__c}" required="true"/>
+            <!--<div align="right" draggable="false" >
+            <apex:pageBlockSectionItem>-->
+            
+            <!--</apex:pageBlockSectionItem>
+            </div>-->
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+    <div align="center" draggable="false" >
+        <apex:commandButton action="{!Save}" title="Save" value="Save"/>
+        <apex:commandButton action="{!Cancel}" title="Cancel" value="Cancel"/>
+    </div >
+</apex:form> 
+</apex:page>

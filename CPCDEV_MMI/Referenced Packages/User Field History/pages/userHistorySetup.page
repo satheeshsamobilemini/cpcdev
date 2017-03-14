@@ -1,0 +1,42 @@
+<apex:page controller="USERHISTORY.userHistorySetupController" title="{!$Label.userhistory__User_Field_History_Setup}" >
+	<apex:pageMessage severity="info" strength="2" summary="{!$Label.userhistory__User_Field_History_Setup_Message}" id="pageMessageSetup"/>
+	<apex:form id="formMain">
+		<apex:pageBlock id="pageBlockMain">
+            <!-- page buttons and actionStatus to handle disable of buttons and image display when user clicks a button -->
+            <apex:actionStatus id="statusProcessing">
+            	<apex:facet name="stop">   		
+            		<apex:outputPanel >
+            			<apex:pageMessages id="pageMessages"/>
+            			<apex:commandButton id="buttonSave" action="{!saveFields}" value="{!$Label.userhistory__Save_Settings}" status="statusProcessing" rerender="formMain"/>&nbsp;&nbsp;
+            			<apex:commandButton id="buttonSelectAll" action="{!selectAll}" value="{!$Label.userhistory__Select_All}" status="statusProcessing" rerender="formMain"/>&nbsp;&nbsp;
+            			<apex:commandButton id="buttonUnselectAll" action="{!unselectAll}" value="{!$Label.userhistory__Unselect_All}" status="statusProcessing" rerender="formMain"/>
+            		</apex:outputPanel>
+            	</apex:facet>
+            	
+            	<apex:facet name="start">
+            		<apex:outputPanel >
+            			<apex:image id="imageProcessing" value="{!URLFOR($Resource.USERHISTORY__userHistory, 'images/processing.gif')}" />
+            			<apex:commandButton id="buttonSaveDisabled" value="{!$Label.userhistory__Processing}" status="statusProcessing" disabled="true"/>&nbsp;&nbsp;
+            			<apex:commandButton id="buttonSelectAllDisabled" value="{!$Label.userhistory__Processing}" status="statusProcessing" disabled="true"/>&nbsp;&nbsp;
+            			<apex:commandButton id="buttonUnselectAllDisabled" value="{!$Label.userhistory__Processing}" status="statusProcessing" disabled="true"/>
+            		</apex:outputPanel>
+            	</apex:facet>
+            </apex:actionStatus>
+			<br/><br/>
+			
+			<!-- table which displays the User fields selected and available for history tracking -->
+            <apex:pageBlockTable id="pageBlockTableUserFields" value="{!listUserFieldsWrapper}" var="userFields">
+            	<apex:column headerValue="{!$Label.userhistory__Track_History}">
+            		<apex:inputCheckbox value="{!userFields.bIsTracked}" />
+            	</apex:column>
+            	<!-- <apex:column headerValue="{!$Label.Field_Label}" value="{!userFields.sFieldLabel}"/> -->
+            	<apex:column headerValue="{!$ObjectType.USERHISTORY__User_History_Fields__c.Fields.USERHISTORY__Field_Label__c.Label}" value="{!userFields.sFieldLabel}"/>
+            	<apex:column headerValue="{!$ObjectType.USERHISTORY__User_History_Fields__c.Fields.USERHISTORY__API_Name__c.Label}" value="{!userFields.sFieldAPI}"/>
+            	<apex:column headerValue="{!$ObjectType.USERHISTORY__User_History_Fields__c.Fields.USERHISTORY__Field_Type__c.Label}" value="{!userFields.sFieldType}"/>
+            	<apex:column headerValue="{!$ObjectType.USERHISTORY__User_History_Fields__c.Fields.USERHISTORY__Custom_Field__c.Label}">
+            		<apex:inputCheckbox disabled="true" value="{!userFields.bIsCustom}" />
+            	</apex:column>
+            </apex:pageBlockTable>        
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

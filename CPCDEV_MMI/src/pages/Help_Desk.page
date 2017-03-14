@@ -1,0 +1,16 @@
+<apex:page >
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+
+<script>
+function openTabFunc(href,TabName){
+  if (sforce.console.isInConsole())  
+    { sforce.console.openPrimaryTab(null,href,true,TabName);  }
+}
+</script>
+
+<apex:form >
+   <br/><br/>
+   <apex:outputLink value="http://supportdesk.mobilemini.com/otrs/customer.pl" onclick="openTabFunc('http://supportdesk.mobilemini.com/otrs/customer.pl','Help Desk');return false;" >Help Desk</apex:outputLink>
+</apex:form>
+
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page controller="RemoveDodgeManagementController" tabstyle="Dodge_Project__c" >
+<apex:pageMessages id="mesg"></apex:pageMessages>
+<apex:form >
+       <apex:sectionHeader title="Dodge Management" subtitle="Remove" />
+       
+     <apex:pageBlock title="Remove Job Profile" mode="edit">
+     <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!updateDodgeProject}" rendered="{!NOT(isDisplay)}"/>
+          <apex:commandButton value="Cancel" action="{!cancel}" rendered="{!NOT(isDisplay)}"/>
+          <apex:commandButton value="Back" action="{!cancel}" rendered="{!isDisplay}" />
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection columns="1">
+          <apex:outputField value="{!dodgeProject.Removed_By__c}" id="rb"/>
+          <apex:inputField value="{!dodgeProject.Reason_Why_Project_Removed__c}" id="pr" style="width:65%"/>
+          <apex:inputField value="{!dodgeProject.Reason_Removed_Comments__c}" id="rc" style="width:65%"/>
+          <script>
+          document.getElementById('{!$Component.pr}').disabled={!disableInput};
+          document.getElementById('{!$Component.rc}').disabled={!disableInput};
+          </script>
+       </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

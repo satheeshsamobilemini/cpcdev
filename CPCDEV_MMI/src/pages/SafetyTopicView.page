@@ -1,0 +1,66 @@
+<apex:page standardController="Safety_Topic__c" extensions="SafetyTopicViewController">
+<style>
+    .aClass{
+         /* color: #015BA7;*/
+         font-weight: normal;
+         text-decoration: none;
+        }
+</style>
+<script>
+	function confirmDelete(attachId,safetyId){
+		var isConfirm = confirm('Are you sure?');
+		if(isConfirm){
+			window.location.href =  '/setup/own/deleteredirect.jsp?delID='+attachId+'&retURL='+safetyId;
+		}
+	}
+</script>
+<apex:detail subject="{!Safety_Topic__c.Id}" relatedList="false" />
+ <apex:form >
+ <apex:pageBlock title="Attachments" id="attachments">
+     <apex:pageBlockButtons location="top">
+         <apex:commandButton value="Attach File" action="{!attachFile}"/>
+     </apex:pageBlockButtons>
+     <apex:actionStatus startStyle="color:Red;font-weight:bold" startText="Loading...Please wait." stopText="" id="myStatus"/>
+     <apex:pageBlockTable value="{!safetyAttachments}" var="sa">
+         <apex:column headerValue="Action">
+             <a class="aClass" href="/{!sa.attachment.id}/e?retURL={!Safety_Topic__c.Id}"><font color="#015BA7" >Edit </font></a> <font color="grey" >|</font>
+             <a class="aClass" target="_blank" href="/servlet/servlet.FileDownload?file={!sa.attachment.id}"><font color="#015BA7" > View</font></a>  <font color="grey" >|</font>
+             <a class="aClass" href="javascript:confirmDelete('{!sa.attachment.id}','{!Safety_Topic__c.id}');"> <font color="#015BA7" >delete</font></a>
+         </apex:column>
+         <apex:column >
+         	<apex:facet name="header">
+         	<a href="javascript:void(0);" onclick="doSortedSearchJS('Name', '{!sortOrder}'); return false;">
+              Name<img src="{!IF(sortOn = 'Name',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+            </apex:facet>
+         	<a  href="/{!sa.attachment.id}">{!sa.attachment.Name}</a>
+         </apex:column>
+         <apex:column value="{!sa.safetyAttachmnt.Branch__c}" >
+         	<apex:facet name="header">
+         	<a href="javascript:void(0);" onclick="doSortedSearchJS('Branch__c', '{!sortOrder}'); return false;">
+              Branch<img src="{!IF(sortOn = 'Branch__c',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+            </apex:facet>
+         </apex:column>
+         <apex:column value="{!sa.attachment.LastModifiedDate}" >
+         	<apex:facet name="header">
+         	<a href="javascript:void(0);" onclick="doSortedSearchJS('CreatedDate', '{!sortOrder}'); return false;">
+              Uploaded Date<img src="{!IF(sortOn = 'CreatedDate',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+            </apex:facet>
+         </apex:column>
+         <apex:column >
+         <apex:facet name="header">
+         	<a href="javascript:void(0);" onclick="doSortedSearchJS('CreatedBy.Name', '{!sortOrder}'); return false;">
+              Who Uploaded<img src="{!IF(sortOn = 'CreatedBy.Name',IF(sortOrder = 'ASC', '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+            </a>
+         </apex:facet>
+         <a  href="/{!sa.attachment.CreatedById}">{!sa.attachment.CreatedBy.Name}</a></apex:column>
+     </apex:pageBlockTable>
+     <apex:actionFunction action="{!doSortedSearch}" name="doSortedSearchJS" reRender="attachments" status="myStatus">
+ 		<apex:param name="firstParam" assignTo="{!sortOn}" value="" />
+  		<apex:param name="secondParam" assignTo="{!sortOrder}" value="" />        
+     </apex:actionFunction> 
+ </apex:pageBlock>
+ </apex:form>
+</apex:page>

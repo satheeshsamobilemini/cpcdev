@@ -1,0 +1,26 @@
+Lead Name: {!Lead.Name} 
+Company: {!Lead.Company} 
+Email: {!Lead.Email} 
+Phone: {!Lead.Phone} 
+Descrip: {!Lead.Description} 
+
+Source: {!Lead.LeadSource} 
+
+GA Campaign: {!Lead.GA_Campaign__c} 
+GA Content: {!Lead.GA_Content__c} 
+GA Medium: {!Lead.GA_Medium__c} 
+GA Source: {!Lead.GA_Source__c} 
+GA Term: {!Lead.GA_Term__c}
+
+Keyword: {!Lead.Keyword__c}
+Paid Search: {!Lead.Paid_Search__c}
+Referrer: {!Lead.Referrer__c}
+Search Engine: {!Lead.Search_Engine__c}
+
+GAC Campaign: {!Lead.GAC_Campaign__c}
+GAC Keyword: {!Lead.GAC_Keyword__c}
+GAC Medium: {!Lead.GAC_Medium__c}
+GAC Source: {!Lead.GAC_Source__c}
+gclid: {!Lead.gclid__c}
+
+Cookie data: {!Lead.Campaign_Cookie__c}

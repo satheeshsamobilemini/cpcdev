@@ -1,0 +1,659 @@
+<apex:page standardController="Safety_Topic__c" renderAs="pdf"   standardStyleSheets="false">
+
+<head>
+    <style type="text/css">
+   .redColor {
+          color: red;
+          font-weight:bold;
+        }
+        
+        .underline_td{
+            border-bottom:solid 1px black;
+        }
+}
+</style>
+</head>
+
+<body>
+
+
+<!-------------------------------------------------  Page 1 ----------------------------------------------------------------------------------->
+
+    <apex:pageBlock >
+     <div id="MonthlyBranchInspectionPage1" style="font-family: Helvetica; font-size: 10pt; border: 1px solid black;">
+            <table border ="0" width="100%">
+            <tr>
+            <td colspan="4" align="center" >
+                <b>QUARTERLY BRANCH INSPECTION</b>
+            </td>
+            </tr>
+         
+            <tr>
+              <td align="left"  > <b> BRANCH____________</b></td>
+              <td align="left" colspan ="2"> <b> DATE_________ </b></td>
+            </tr>
+         
+            <tr>
+              <td align="left"> <b>GENERAL SAFETY </b></td>
+              <td align="left"><b> YES </b></td>
+              <td align="left"> <b>NO</b></td>
+              <td align="center"> <b>COMMENTS</b></td>
+            </tr>
+            
+          <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/> Eyewash stations flushed and marked off monthly 
+                    </td>
+                         <td align="left"> [ ] </td>
+                         <td align="left"> [ ] </td>
+                         <td align="center"  class="underline_td" ></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/> Fire extinguishers accessible and signed off monthly
+                    </td> 
+                     <td align="left"> [ ] </td>
+                     <td align="left"> [ ] </td>
+                     <td align="center"  class="underline_td" > </td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  PPE in use by all personnel where applicable 
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Respirators and face masked properly cleaned and stored 
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/> Gas and Oxygen cylinders chained and capped if not in use    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Gas and Oxygen cylinders separated by 20’     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <!--  New Row Set -->
+                    
+                    <tr>
+              <td align="left" colspan ="4"> <b> WALKING AND WORK SURFACES </b></td>
+            </tr>
+            
+          <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Floors clean and dry    
+                    </td>
+                         <td align="left"> [ ] </td>
+                         <td align="left"> [ ] </td>
+                         <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No protruding storage/clutter   
+                    </td>
+                     <td align="left"> [ ] </td>
+                     <td align="left"> [ ] </td>
+                     <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No tripping hazards, cords, hoses, lines etc  
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Trash and bins emptied on a regular basis 
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Exits and non exits clearly marked    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Walkways clear of debris, ice, water, etc.     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <!--  New Row Set -->
+                    
+                    <tr>
+              <td align="left" colspan ="4"> <b> TOOLS AND EQUIPMENT </b></td>
+            </tr>
+            
+         <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Ladders are free of crack and bend hardware         
+                    </td>
+                     <td align="left"> [ ] </td>
+                     <td align="left"> [ ] </td>
+                     <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  All power tools are properly guarded    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Grinder tool rest properly set at no more than 1/8” 
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No homemade tools present    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Lockout/Tagout in use where applicable     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  All tools properly stowed     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <!--  New Row Set -->
+                    
+                    <tr>
+              <td align="left" colspan ="4"> <b> ELECTRICAL </b></td>
+            </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  All cords are free of cuts, fray and exposed wiring (no tape)       
+                    </td>
+                     <td align="left"> [ ] </td>
+                     <td align="left"> [ ] </td>
+                     <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  All cords have ground prong in place        
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Electrical panels have clear access (3 feet)   
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No missing cover plates       
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Adequate lighting, inside and outside      
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Electrical circuits properly marked     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/> Proper disconnect in place for power testing    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No extension cords used in place of fixed wiring   
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No open slots in electrical panels             
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No missing knockouts in receptacles  
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <!--  New Row Set -->
+                    
+                    <tr>
+              <td align="left" colspan ="4"> <b> HAZARDOUS MATERIALS </b></td>
+            </tr>
+            
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Hazardous storage clearly marked        
+                    </td>
+                     <td align="left"> [ ] </td>
+                     <td align="left"> [ ] </td>
+                     <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No debris; rags, wood, cardboard, etc. in waste storage     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  MSDS available to all employees    
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Secondary containers are clearly marked       
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Any hazardous waste on site            
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Proper signage in place at storage sites           
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Flammable materials are stored when not in use     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+
+                <tr>
+                        <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Spill kits, tools and supplies are available     
+                    </td>
+                        <td align="left"> [ ] </td>
+                        <td align="left"> [ ] </td>
+                        <td align="center"  class="underline_td"></td>
+                    </tr>
+        </table>
+        
+        <table>
+            <tr>
+                <td>
+                    <b> Notes</b>
+                </td>
+                <td class="underline_td" width="100%">  
+                            <br/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class="underline_td" width="100%"> 
+                            <br/>   
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class="underline_td" width="100%"> 
+                            <br/>   
+                </td>
+            </tr>
+            <tr>
+                <td> <br/><br/>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </apex:pageBlock>
+    
+    <br/>
+    <br/>
+    
+<!-------------------------------------------------  Page 2 ----------------------------------------------------------------------------------->
+
+<apex:pageBlock >
+   <div id="MonthlyBranchInspectionPage2" style="font-family: Helvetica; font-size: 10pt; border: 1px solid black;">
+        <table border ="0" width="100%">
+        <tr>
+        <td colspan="4" align="center" >
+            <b>QUARTERLY INSPECTION pg 2</b>
+        </td>
+        </tr>
+     
+        <tr>
+       <td align="left"> <b>BUILDINGS </b></td>
+       <td align="left"><b> YES </b></td>
+       <td align="left"> <b>NO</b></td>
+       <td align="center"> <b>COMMENTS</b></td>
+        </tr>
+        
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Rooms are free of clutter 
+                </td>
+             <td align="left"> [ ] </td>
+             <td align="left"> [ ] </td>
+             <td align="center"  class="underline_td"></td>
+         </tr>
+
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Flooring free of tripping hazards  
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  No stray wires causing tripping  
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+
+            <tr>
+                    <td style="padding:0;margin:0"> 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Stairs are solid and free of debris  
+                    </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Refrigerators are clean and void of old food    
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+    
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Proper posting is in place    
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+            
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  First aid supplies are readily accessible   
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+    
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  All certifications are in employee’s files    
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+            
+            <!--  New Row Set -->
+            
+            <tr>
+            <td align="left" colspan ="4"> <b> GROUNDS </b></td>
+        </tr>
+                
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Perimeter has no openings  
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+            
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Grounds are free of holes and ruts          
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+            
+            <tr>
+                <td style="padding:0;margin:0"> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:image value="{!$Resource.formBullet}" width="10" height="10"/>  Areas free of debris and trash          
+                </td>
+                <td align="left"> [ ] </td>
+                <td align="left"> [ ] </td>
+                <td align="center"  class="underline_td"></td>
+            </tr>
+        </table>
+        
+            <table>
+            <tr>
+                <td>
+                    <b> Notes</b>
+                </td>
+                <td class="underline_td" width="100%">  
+                            <br/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class="underline_td" width="100%"> 
+                            <br/>   
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class="underline_td" width="100%"> 
+                            <br/>   
+                </td>
+            </tr>
+            <tr>
+                <td> <br/>
+                </td>
+            </tr>
+        </table>
+        
+        <br/>
+        
+        <table width="100%">
+            <tr>
+                <td colspan="4" align="Left" >
+                    <b> Safety Topic Description </b>
+                </td>
+            </tr>
+            
+            <tr>
+                <td> <apex:outputField value="{!Safety_Topic__c.Description__c}"/> 
+                    <br/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td  align="left" >____________________________________ <br/> Regional Manager’s Signature
+                </td>
+                <td  align="left"> ____________________________________<br/> Date
+                </td>
+            </tr>
+            
+            <tr>
+                <td  align="left"> <br/><br/>All others sign        <br/> ____________________________________ <br/>____________________________________
+                </td>
+                <td  align="left"><br/><br/>Date     <br/>____________________________________<br/>____________________________________
+                </td>
+            </tr>
+        </table>
+        <br/>   
+    </div>
+</apex:pageBlock>
+</body>
+</apex:page>

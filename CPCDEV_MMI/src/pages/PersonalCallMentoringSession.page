@@ -1,0 +1,150 @@
+<apex:page id="pg" standardController="Call_Mentoring_Session__c" extensions="PersonalCallMentoringSessionController">
+<apex:includeScript value="{!$Resource.JQueryScript1_4_2}"/>
+<style> 
+    .selectedRating{
+       height:16px;
+       width:16px;
+       background-image: url({!URLFOR($Resource.StarRating,'star.png')}) ;
+       float:left;
+    }
+    .unselectedRating{
+       height:16px;
+       width:16px;
+       background-image: url({!URLFOR($Resource.StarRating,'blankstar.png')}) ;
+       float:left;
+    }
+</style>
+<script>
+	
+</script>
+<apex:form id="frm" >
+<apex:sectionHeader title="Coaching Session Edit " subtitle="New Coaching Session"/>
+<!-- Action status -->
+
+<apex:actionstatus id="myStatus" startText="Requesting..." />
+       
+<apex:actionFunction name="enableEmployee" action="{!nullAction}" reRender="EmpPanel1,EmpPanel2" status="myStatus" immediate="true">
+	 <apex:param name="firstParam" assignTo="{!callMentoringSession.Employee_Type__c}" value="" />
+</apex:actionFunction>
+<apex:outputPanel id="editPanel">
+    <apex:pageBlock id="editBlock" title="Coaching Session Edit" mode="edit">
+    
+        <apex:pageBlockButtons >
+            <apex:commandButton id="saveBtn" value="Save"  action="{!saveData}"/>
+            <apex:commandButton id="saveNewBtn" value="Save & New"  action="{!saveDataNew}"/>
+            <apex:commandButton id="cancelBtn" value="Cancel"  action="{!cancelEdit}" immediate="true"/>
+        </apex:pageBlockButtons>
+        <apex:messages style="color:red;" />
+        <table width="100%" cellPadding="2" cellSpacing="2">
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Personal Coaching Session Name" /></td>
+            <td class="datacol" width="25%"><apex:inputField value="{!callMentoringSession.Name}" /></td>
+            <td width="20%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>
+                
+          </tr>
+          <tr>
+            <td  width="25%"><apex:outputLabel value="Employee Type" /></td>
+            <td class="datacol" width="25%">
+	             <apex:inputField value="{!callMentoringSession.Employee_Type__c}" onchange="enableEmployee(this.value);" />	
+            </td>
+            <td width="20%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>
+                
+          </tr>
+          
+          <tr>
+          	 <td width="20%"><apex:outputPanel id="EmpPanel1" ><apex:outputLabel value="Rep Name" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}"/><apex:outputLabel value="Employee Name" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',false,true)}"/></apex:outputPanel></td>
+    	     <td width= "30%" ><apex:outputPanel id="EmpPanel2" ><apex:inputField value="{!callMentoringSession.Rep_Name__c}" required="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}" rendered="{!IF(callMentoringSession.Employee_Type__c=='Rep',true,false)}"/><apex:inputField value="{!callMentoringSession.Employee_Name__c}" rendered="{!IF(callMentoringSession.Employee_Type__c =='Rep',false,true)}"/></apex:outputPanel></td>
+			 <td width="20%">&nbsp;</td>
+             <td width="30%">&nbsp;</td>
+          </tr>
+          
+          <tr>
+          
+            <td width="20%" ><apex:outputLabel value="Type of Training/Mentoring" /></td>
+            <td width= "30%"><apex:inputField value="{!callMentoringSession.Type_of_Training_Mentoring__c}" style="width:55%;" required="true"/></td>
+            
+          </tr>
+          
+          <tr>
+          
+            <td width="20%" ><apex:outputLabel value="Coached By" /></td>
+            <td width= "30%"><apex:inputField value="{!callMentoringSession.Mentor__c}" required="true"/></td>
+            
+          </tr>
+         
+          <tr>              
+            <td><apex:outputLabel value="Date" /></td>
+            <td class="datacol" ><apex:inputField value="{!callMentoringSession.Rep_Date__c}" required="true"/></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr> 
+          
+        </table>
+        <br/>
+        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#99CCFF">
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr> 
+            <tr>
+                <td width="50%" align="center"><b><apex:outputLabel value="Comments/Notes for Training & Mentoring" /></b></td>
+                <!--  <td colspan="2" align="center"><b>Salesperson Self Rating</b></td> -->
+            </tr>
+            <tr>
+                <td width="50%" >&nbsp;</td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            
+        </table>
+        <table width="100%" cellpadding="4" cellspacing="4">
+        	 
+        	<tr>
+        		<td width="25%">Comments </td>
+        		<td width="75%" ><apex:inputField value="{!callMentoringSession.Coach_Comments_1__c}" style="width:35%;"/></td>
+        	</tr>
+        	
+        	<!-- <tr>
+        		<td>Coached By</td>
+        		<td><apex:inputField value="{!callMentoringSession.Mentor__c}" /></td>
+        	</tr> -->
+        	<tr bgcolor="#DDDDDD">
+                	<td colspan="2" ><b>Employee</b> </td>
+            	</tr>
+        	<tr>
+        		<td width="25%">Employee Comments/Goal</td>
+        		<td width="75%"><apex:inputField value="{!callMentoringSession.Rep_Comments_Goal__c}" style="width:35%;"/></td>
+        	</tr>
+        	
+        </table>
+        <table width="100%" cellpadding="4" cellspacing="4">
+            	<tr bgcolor="#DDDDDD">
+                	<td colspan="3" ><b>Best of the Best</b> </td>
+            	</tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best!" /></td>
+                <td width= "25%" ><apex:inputField value="{!callMentoringSession.Best_of_the_Best__c}" /></td>
+                <td width="50%">&nbsp;</td>
+
+            </tr>
+           <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best Category" /></td>
+                <td width= "75%" colspan="2"><apex:inputText value="{!bestOfBestCategory}" /></td>
+                
+
+            </tr>
+            <tr>
+                <td width="25%" ><apex:outputLabel value="Best of the Best Comments" /></td>
+                <td width= "75%" colspan="2"><apex:inputField value="{!callMentoringSession.Best_of_the_Best_Comments__c}" style="width:36%;"/></td>
+                
+
+            </tr>
+            </table>
+            
+        
+    </apex:pageBlock>
+</apex:outputPanel>
+
+</apex:form>  
+</apex:page>

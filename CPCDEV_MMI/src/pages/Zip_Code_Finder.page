@@ -1,0 +1,16 @@
+<apex:page >
+
+    <!-- <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+    <!-- <apex:includeScript value="{!$Resource.jQueryLib19Compress}"/> -->
+    
+    <script>
+        function loadZipCodeFinder(){
+            var newwindow=window.open('/apex/ZipCodeFinder','name','width=800,height=550,top=50,toolbar=no,personalbar=no,location=no,directories=no,statusbar=no,menubar=no,status=no,re sizable=yes,left=60,screenX=60,top=100,screenY=100');
+        }
+    </script>
+    <apex:form >
+    
+    <input value="Zip Code Finder" class="btn" onclick="loadZipCodeFinder();return false;" type="button"/>
+    </apex:form>
+        
+</apex:page>

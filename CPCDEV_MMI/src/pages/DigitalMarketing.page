@@ -1,0 +1,336 @@
+<!-- ************************************************************************************************************
+* Name          : DigitalMarketing (controller = DigitalMarketingController)
+* Created Date  : 19 April 2013
+* Created By    : Appirio Offshore (Hemant)
+* Description   : [To display the Digital Lead Summary]
+* Related Story : S-111001  
+************************************************************************************************************** -->
+<apex:page controller="DigitalMarketingController" tabStyle="Digital_Marketing__tab" readOnly="true">
+
+    <style>
+    div.hideCurrDate span.dateInput span.dateFormat{
+       display:none;
+    }
+    
+        .btnPlusMinus {
+         repeat-x scroll 0 bottom #555656;
+         background-color : #1797C0
+         color: #A6D103;
+         display: block;
+         font-size: 13px;
+         font-weight: 100;
+         height:18px;
+         width:18px;
+         padding: 0px 2px;
+         text-align: center;
+         text-decoration: none;
+         border: #A6D103 solid 1px;
+         -webkit-border-radius: 0;
+         -moz-border-radius: 0;
+         -o-border-radius: 0;
+         border-radius: 0;
+          }
+          
+  </style>
+  <script>
+    function expandCollapse(btn) {
+      var childBtnId = btn.id.replace("button","child");
+      var prntDiv = document.getElementById(childBtnId);
+      if(btn.value == '-'){
+            prntDiv.style.display = "none"; 
+          btn.value = '+';
+      }else{
+        prntDiv.style.display = "block"; 
+        btn.value = '-';
+      }  
+    }
+   </script> 
+  
+  <apex:form >
+  
+  
+  <apex:sectionHeader title="Digital Marketing"/>
+  
+    <apex:pageMessages id="pgMessage"></apex:pageMessages>
+    <apex:pageBlock id="pgBlock">
+            
+        <apex:pageBlockSection columns="1" title="Time Search Criteria" collapsible="false">
+            <apex:pageBlockSectionItem >
+            <apex:outPutlabel >Time Frame<br/>Created Date</apex:outPutlabel>
+            <apex:outputpanel layout="block" id="timeFrame">
+                <apex:outPutlabel >Range</apex:outPutlabel>
+                <br/>
+                            <apex:selectList value="{!selectedDateFilter}" multiselect="false" size="1" onchange="setDateRange();">
+                    <apex:selectOptions value="{!dateFilterList}"/>
+                </apex:selectList>
+                <table>
+                    <tr>
+                        <td><apex:outPutlabel >From</apex:outPutlabel></td>
+                        <td><apex:outPutlabel >To</apex:outPutlabel></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><div class="hideCurrDate"><apex:inputField value="{!leadFrom.Date_Required__c}"/></div></td>
+                        <td><div class="hideCurrDate"><apex:inputField value="{!leadTo.Date_Required__c}"/></div></td>
+                    </tr>
+                
+                </table>
+            </apex:outputpanel>             
+          </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+       <apex:pageBlockSection columns="2" title="Campaign Search Criteria" collapsible="false">
+                
+          <apex:pageBlockSectionItem >
+              <apex:outPutlabel >Storage Category</apex:outPutlabel>
+              <apex:selectList value="{!selectedStorageCategory}" multiselect="true" size="3">
+                  <apex:selectOptions value="{!StorageCategoryList}"/>
+              </apex:selectList>              
+          </apex:pageBlockSectionItem>
+                    
+          <apex:pageBlockSectionItem >
+              <apex:outPutlabel >GA Content</apex:outPutlabel>
+              <apex:selectList value="{!selectedGAContent}" multiselect="true" size="3">
+                  <apex:selectOptions value="{!GAContentList}"/>
+              </apex:selectList>              
+          </apex:pageBlockSectionItem>
+                                
+          <apex:pageBlockSectionItem >
+              <apex:outPutlabel >GA Campaign</apex:outPutlabel>
+              <apex:selectList value="{!selectedGACampaign}" multiselect="false" size="1">
+                  <apex:selectOptions value="{!GACampaignList}"/>
+              </apex:selectList>              
+          </apex:pageBlockSectionItem>
+                    
+          <apex:pageBlockSectionItem >
+              <apex:outPutlabel >GA Medium</apex:outPutlabel>
+              <apex:selectList value="{!selectedGAMedium}" multiselect="false" size="1">
+                  <apex:selectOptions value="{!GAMediumList}"/>
+              </apex:selectList>              
+          </apex:pageBlockSectionItem>
+          
+            <apex:inputField value="{!leadFrom.City}"/>             
+            
+            <apex:inputField value="{!leadFrom.cloudamp__GA_Term__c}"/>
+          
+          <apex:outputPanel layout="block"> 
+            <apex:CommandButton action="{!retriveLeadData}"  value="Go" rerender="pgBlock,pgMessage" status="viewPageStatusGo"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:CommandButton action="{!exportCSV}" value="Export" status="viewPageStatusGo" rendered="{!IF(wrpGAContLst.size > 0, true,false)}"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:CommandButton action="{!showGraphData}" value="Show Graph" status="viewPageStatusGo" rerender="pgBlock,pgMessage" rendered="{!IF(wrpGAContLst.size > 0, true,false)}"/>
+            &nbsp;&nbsp;&nbsp;
+            <apex:actionStatus stopText="" id="viewPageStatusGo">
+              <apex:facet name="start">
+                  <font color="gray" >Please wait...</font>&nbsp;<img src="/img/loading.gif" />
+              </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+          
+          <apex:outPutlabel />
+                                
+        </apex:pageBlockSection>
+        <br/>
+        
+                <!-- Section for the Graph Start  -->
+        <apex:pageBlockSection columns="1" title="Trend Graph – Trend selection" collapsible="true" rendered="{!IF(graphDataLst.size > 0 && wrpGAContLst.size > 0, true,false)}">
+        
+            <apex:chart height="400" width="100%" data="{!graphDataLst}">
+                    <apex:legend position="right"/>
+                    
+                      <apex:axis type="Numeric" position="left" fields="totalLdCount" title="Lead Count" grid="true" minimum="0"/>
+                      <apex:axis type="Numeric" position="right" fields="convertedLdCount,wonLdCount" title="Percentage(%)" minimum="0"/>
+                      <apex:axis type="Category" position="bottom" fields="name" title="Created Date"/>
+                      
+                            <!--    Line for Total Leads  -->
+                      <apex:lineSeries title="Total Leads" axis="left" xField="name" yField="totalLdCount" markerType="cross" markerSize="4">
+                        <apex:chartTips height="20" width="120"/>
+                      </apex:lineSeries>
+                      
+                      <!--  Line for % Converted  -->
+                      <apex:lineSeries title="% Converted" axis="right" xField="name" yField="convertedLdCount" markerType="circle" markerSize="4">
+                        <apex:chartTips height="20" width="120"/>
+                      </apex:lineSeries>
+                      
+                      <!--  Line for % Won  -->
+                      <apex:lineSeries title="% Won" axis="right" xField="name" yField="wonLdCount" markerType="circle" markerSize="4">
+                        <apex:chartTips height="20" width="120"/>
+                      </apex:lineSeries>
+                </apex:chart>
+        
+        </apex:pageBlockSection>
+        <!-- Section for the Graph Start  -->
+        
+        <!-- Section for the Search Results Start  -->
+        <apex:pageBlockSection columns="1" title="Lead Info By GA Content" collapsible="true" rendered="{!showData}">
+            
+                    <!-- Output Panel If NO records exist   -->
+            <apex:outputPanel rendered="{!IF(wrpGAContLst.size > 0, false, true)}">
+                <apex:outPutlabel value="No records to display."/>
+            </apex:outputPanel>
+            
+            <!-- Show data If records exist     -->
+            <apex:repeat value="{!wrpGAContLst}" var="result" id="resultTbl" rendered="{!IF(wrpGAContLst.size > 0, true,false)}">
+                    
+                            <!-- Digital Lead Summary Info for GA Content Row Start -->
+                            <apex:pageBlockSection columns="1" title="Digital Lead Summary for GA Content: {!result.GAContent} ({!result.GAContentCount} {!IF(result.GAContentCount = 1, 'record' , 'records')})" collapsible="true">
+                                    
+                                    <apex:pageBlockTable value="{!result.GA_Cont_GATermLst[0]}" var="dls">
+                                        
+                                        <apex:column headerValue="Total Leads">
+                                            <apex:outputLabel value="{!dls.totalLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="% Residential">
+                                            <apex:outputLabel value="{!ROUND((dls.residentialLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Open">
+                                            <apex:outputLabel value="{!dls.openLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Converted">
+                                            <apex:outputLabel value="{!dls.convertedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Convert %">
+                                            <apex:outputLabel value="{!ROUND((dls.convertedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Dead">
+                                            <apex:outputLabel value="{!dls.deadLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Dead %">
+                                            <apex:outputLabel value="{!ROUND((dls.deadLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Opps Created">
+                                            <apex:outputLabel value="{!dls.oppsCreatedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="% Opps Created">
+                                            <apex:outputLabel value="{!ROUND((dls.oppsCreatedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Open">
+                                            <apex:outputLabel value="{!dls.openOppsCreatedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Won">
+                                            <apex:outputLabel value="{!dls.wonLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Won %">
+                                            <apex:outputLabel value="{!ROUND((dls.wonLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Lost">
+                                            <apex:outputLabel value="{!dls.lostLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Lost %">
+                                            <apex:outputLabel value="{!ROUND((dls.lostLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                    
+                                    </apex:pageBlockTable>
+                        <!-- Digital Lead Summary Info for GA Content Row End   -->
+    
+                    <apex:pageBlockTable value="{!result.GATermMap}" var="gaTermRes" id="GATermresultTbl">
+                        <apex:column >
+                            
+                            <table>
+                                <tr>
+                                    <td width="1%;">
+                            <input type="button" value="+" class="btnPlusMinus" id="button{!result.GAContent}_{!gaTermRes}" onClick="expandCollapse(this)"/>
+                                            </td>
+                                            <td>
+                                        <b> &nbsp;&nbsp;&nbsp;GA Term: </b> {!gaTermRes} <b>({!result.GATermMap[gaTermRes].totalLdCount} {!IF(result.GATermMap[gaTermRes].totalLdCount = 1, "record" , "records")})</b>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                                    <!--    Div for Digital Lead Summary Columns Data Start -->
+                            <div id="child{!result.GAContent}_{!gaTermRes}" style="display:none;padding-left: 0px;width:100%;">
+                                <apex:pageBlockSection columns="1" title="Digital Lead Summary for GA Term" collapsible="false">
+                                    
+                                    <apex:pageBlockTable value="{!result.GATermMap[gaTermRes]}" var="dls">
+                                        
+                                        <apex:column headerValue="Total Leads">
+                                            <apex:outputLabel value="{!dls.totalLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="% Residential">
+                                            <apex:outputLabel value="{!ROUND((dls.residentialLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Open">
+                                            <apex:outputLabel value="{!dls.openLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Converted">
+                                            <apex:outputLabel value="{!dls.convertedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Convert %">
+                                            <apex:outputLabel value="{!ROUND((dls.convertedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Dead">
+                                            <apex:outputLabel value="{!dls.deadLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Dead %">
+                                            <apex:outputLabel value="{!ROUND((dls.deadLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Opps Created">
+                                            <apex:outputLabel value="{!dls.oppsCreatedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="% Opps Created">
+                                            <apex:outputLabel value="{!ROUND((dls.oppsCreatedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Open">
+                                            <apex:outputLabel value="{!dls.openOppsCreatedLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Won">
+                                            <apex:outputLabel value="{!dls.wonLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Won %">
+                                            <apex:outputLabel value="{!ROUND((dls.wonLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Lost">
+                                            <apex:outputLabel value="{!dls.lostLdCount}"/>
+                                          </apex:column>
+                                          
+                                          <apex:column headerValue="Lost %">
+                                            <apex:outputLabel value="{!ROUND((dls.lostLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+                                          </apex:column>
+                                    
+                                    </apex:pageBlockTable>
+                                    
+                                </apex:pageBlockSection>
+                                
+                            </div>
+                            <!--    Div for Digital Lead Summary Columns Data End   -->
+                            
+                        </apex:column>      
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>    
+            </apex:repeat>
+        
+        </apex:pageBlockSection>
+        <!-- Section for the Search Results End  -->
+        
+        </apex:pageBlock>
+       
+       <apex:actionFunction action="{!setDateFilterRange}" name="setDateRange" reRender="timeFrame"/>
+       
+    </apex:form>
+
+</apex:page>

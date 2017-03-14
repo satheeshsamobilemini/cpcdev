@@ -1,0 +1,36 @@
+<apex:page controller="BRNSHRK.Authenticate_CADMIN_Controller" action="{!initPage}">
+
+<apex:sectionHeader title="Brainshark Setup" subtitle="Brainshark Access Token"/>
+
+<apex:form id="form">
+<apex:pageBlock id="settings">
+    <apex:pageBlockButtons location="bottom">
+        <apex:actionStatus id="updateStatus" rendered="true">
+            <apex:facet name="start">
+                <apex:commandButton value="Saving..." disabled="true"/>
+            </apex:facet>
+            <apex:facet name="stop">
+                <apex:commandButton value="Update" action="{!authenticate}" rerender="settings" status="updateStatus"/>
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:commandButton value="Cancel" action="{!cancel}" rerender="settings" rendered="true"/>
+    </apex:pageBlockButtons>
+<apex:pageMessages />
+    <apex:pageBlockSection columns="1">
+    <apex:pageBlockSectionItem >
+        <apex:outputLabel value="CADMIN Username"></apex:outputLabel>
+        <apex:outputPanel >
+            <apex:inputText value="{!username}" rendered="true" style="width: 200px;"></apex:inputText>
+        </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+        <apex:outputLabel value="CADMIN Password"></apex:outputLabel>
+        <apex:outputPanel >
+            <apex:inputSecret value="{!password}" rendered="true" style="width: 200px;"></apex:inputSecret>
+        </apex:outputPanel>
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form>
+
+</apex:page>

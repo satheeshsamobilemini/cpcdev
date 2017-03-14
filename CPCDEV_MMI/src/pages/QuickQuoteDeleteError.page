@@ -1,0 +1,11 @@
+<apex:page standardcontroller="MMI_Quotes__c" extensions="QuickQuoteDeleteError" action="{!deleteQuote}" >
+	<apex:form >
+		<apex:outputPanel rendered="{!isError}">
+			Quote is deleted successfully. 
+		</apex:outputPanel>
+		<apex:outputPanel rendered="{!isNoError}">
+			Quotation cannot be deleted.
+		</apex:outputPanel>
+		
+	</apex:form> 
+</apex:page>

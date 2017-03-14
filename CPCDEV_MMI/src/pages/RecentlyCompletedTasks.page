@@ -1,0 +1,54 @@
+<apex:page cache="false" expires="0" standardController="Account" extensions="RecentlyCompletedTasksController"
+    showHeader="false" sidebar="false" standardStyleSheets="true">
+  <apex:outputPanel id="taskPnl">
+    <apex:outputPanel layout="block" style="text-align:center;">
+      &nbsp;
+      <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+          id="statusMsg" />
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!relatedTask.size > 0}">
+      <table class="detailList" width=100%>
+        <tr width="100%" style="font-weight:bold;text-decoration:underline;">
+          <td width="33%">
+            <label onclick="sortData('Subject');" style="cursor:pointer;text-decoration:underline;">
+              Subject<img src="{!IF(orderBy = 'Subject', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          <td width="34%">
+            <label onclick="sortData('ActivityDate');" style="cursor:pointer;text-decoration:underline;">
+              Date<img src="{!IF(orderBy = 'ActivityDate', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+          <td width="33%">
+            <label onclick="sortData('Who.Name');" style="cursor:pointer;text-decoration:underline;">
+              Contact<img src="{!IF(orderBy = 'Who.Name', imgSrc, '/s.gif')}" />
+            </label>
+          </td>
+        </tr>
+        <apex:repeat var="task" value="{!relatedTask}">
+          <tr width="100%">
+            <td colspan="3">&nbsp;</td>
+          </tr>
+          <tr width="100%">
+            <td width="33%"><apex:outputField value="{!task.Subject}" /></td>
+            <td width="34%"><apex:outputField value="{!task.ActivityDate}" /></td>
+            <td width="33%"><apex:outputField value="{!task.Who.Name}" /></td>
+          </tr>
+          <tr width="100%">
+            <td colspan="3"><b>Comments:</b> <apex:outputField value="{!task.Description}" /></td>
+          </tr>
+        </apex:repeat>
+      </table>
+    </apex:outputPanel>
+    
+    <apex:outputLabel styleClass="labelCol" style="font-weight:bold" rendered="{!relatedTask.size = 0}"
+        value="No history available for {!$User.FirstName} {!$User.LastName}"></apex:outputLabel>
+  </apex:outputPanel>
+  
+  <apex:form >
+    <apex:actionFunction name="sortData" action="{!sortData}" rerender="taskPnl" status="statusMsg">
+      <apex:param name="a" value="a" assignTo="{!orderBy}" />
+    </apex:actionFunction>
+  </apex:form>
+</apex:page>

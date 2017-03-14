@@ -1,0 +1,32 @@
+<!--
+Name   : ManageSalesReps
+Usage  : Contains content of ManageSalesReps tab.
+Author : Aashish Mathur
+Date   : September 2, 2009
+-->
+
+<apex:page controller="ManageSalesRepsController">
+  <br />
+  <apex:form >
+    <apex:outputPanel layout="block" style="text-align:center;" id="btnPnl">
+      <apex:commandButton action="{!switchManage}" value="Manage Availability"
+          disabled="{!manageAvailability}" status="switchManageStatus" reRender="pagePnl, btnPnl" />
+      <apex:commandButton action="{!switchManage}" value="Manage Days Off"
+          disabled="{!manageDaysOff}" status="switchManageStatus" reRender="pagePnl, btnPnl" />
+    </apex:outputPanel>
+  </apex:form>
+  
+  <apex:outputPanel layout="block" style="text-align:center;">
+    &nbsp;
+    <apex:actionStatus startStyle="color:#cc0000;font-weight:bold;" startText="Please wait..."
+        id="switchManageStatus" />
+  </apex:outputPanel>
+  
+  <apex:outputPanel id="pagePnl">
+    <!-- Manage Availability -->
+    <apex:include pageName="SubordinateUsers" rendered="{!manageAvailability}" />
+    
+    <!-- Manage Days Off -->
+    <apex:include pageName="ManageDaysOff" rendered="{!manageDaysOff}" />
+  </apex:outputPanel>
+</apex:page>

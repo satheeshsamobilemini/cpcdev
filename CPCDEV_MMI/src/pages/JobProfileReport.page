@@ -1,0 +1,505 @@
+<apex:page controller="JobProfileReportController" tabStyle="Job_Profile_Report__tab" sidebar="false">
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<script>
+ function ReloadFunc(href,TabName){
+ if(sforce.console.isInConsole())
+        {  var url = href + '?isdtp=vw' ; 
+           sforce.console.openPrimaryTab(null,url,true,TabName);  
+        }    
+  }
+</script>
+<style type="text/css">
+        .red 
+        {
+         background-color:red; 
+         }
+        .blue 
+        { 
+        background-color:#06E0F9; 
+        }
+        .yellow 
+        { 
+        background-color:yellow; 
+        }
+        .green 
+        { 
+        background-color:#46EA6A; 
+        }
+    </style>
+
+    <apex:form id="frm">
+        <apex:actionFunction name="doSortJS" action="{!doSort}" reRender="resultBlock,NevigationPanel,resultBlockSub" status="myStatus" >
+            <apex:param value="" name="firstParam" assignTo="{!sortField}"/>
+            </apex:actionFunction>
+            <apex:actionFunction name="charFilter" id="charFilter" action="{!doSort}" reRender="resultBlock,NevigationPanel,resultBlockSub" status="myStatus" >
+                <apex:param value="" name="d" assignTo="{!currentChar}"/>
+            </apex:actionFunction>
+            
+     <apex:sectionHeader title="Job profiles"/>
+     <apex:pagemessages id="mesg" />
+     <br />        
+                
+      <apex:pageBlock title="Search Criteria">        
+        <apex:pageBlockSection Columns="3">
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >Branch</apex:outPutlabel>
+                <apex:outputpanel > <!-- MSM 36 -- <div class="requiredInput"><div class="requiredBlock"></div> -->
+                <apex:selectList value="{!selectedbranch}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!BranchList}"/>
+                </apex:selectList> <!-- MSM 36 -- </div> --> </apex:outputpanel>             
+            </apex:pageBlockSectionItem>   
+            
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >Selling Region</apex:outPutlabel>
+                <apex:outputpanel id="SellingRegionList">
+                <apex:selectList value="{!selectedSellingRegion}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!SellingRegionList}"/>
+                </apex:selectList>  
+                </apex:outputpanel>             
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >User</apex:outPutlabel>
+                <apex:outputpanel Id="userList">
+                <apex:selectList value="{!selectedUser}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!UserList}"/>
+                </apex:selectList>
+                </apex:outputpanel>             
+            </apex:pageBlockSectionItem>  
+            
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >MMI Action Stage</apex:outPutlabel>
+                <apex:selectList value="{!selectedActionStages}" multiselect="true" size="5">
+                    <apex:selectOptions value="{!actionStages}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>            
+            
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel ># Key Subs</apex:outPutlabel>
+                <apex:outputpanel id="keySubsList">
+                <apex:selectList value="{!selectedKeySub}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!keySubsList}"/>
+                </apex:selectList>
+                </apex:outputpanel>             
+            </apex:pageBlockSectionItem>  
+               <!--  Added by Akanksha for Story S-140421-->
+            <apex:pageBlockSectionItem >
+                <apex:outPutlabel >Bid date</apex:outPutlabel>
+                 <apex:selectList value="{!selectedBidDate}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!bidDates}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem> 
+            
+            <!--  End by Akanksha for Story S-140421-->  
+<!--            <apex:pageBlockSectionItem >-->
+<!--                <apex:outPutlabel >Open Activities</apex:outPutlabel>-->
+<!--                <apex:outputpanel id="openActivitiesPanel">-->
+<!--                    <apex:selectList value="{!selectedOpenAct}" multiselect="false" size="1">-->
+<!--                    <apex:selectOptions value="{!openActivitiesList}"/>-->
+<!--                    </apex:selectList>-->
+<!--                </apex:outputpanel>             -->
+<!--            </apex:pageBlockSectionItem>-->
+            <apex:pageBlockSectionItem rendered="{!showsubcontractor}" >
+            <apex:outPutlabel id="instructions">
+            <div align="right">Blue = Won Opportunity (Takes priority over all other opportunity) <br/>
+            Green = Open Opportunity <br/>
+            Yellow = No opportunity but working the sub (1 completed call and 1 pending call) <br/>
+            White = No Opportunity, no completed call or pending call <br/>
+            Red = Lost or Not using containers on this project</div>
+            </apex:outPutlabel>
+            </apex:pageBlockSectionItem>             
+        </apex:pageBlockSection>        
+         <apex:pageBlockButtons location="bottom">
+               <apex:commandButton value="View" reRender="frm" action="{!search}" status="myStatus"/>  
+               <apex:commandButton value="Export to Excel" action="{!exportToExcel}" status="myStatus"/>  
+               <apex:commandButton value="Sub Contractors" action="{!searchContractor}" status="myStatus"/>  
+               <apex:commandButton value="Back" action="{!back}" status="myStatus"/>             
+            </apex:pageBlockButtons>                
+        </apex:pageBlock>
+             
+      
+        <br/>
+        <apex:actionStatus startStyle="color:Red;font-weight:bold" startText="Loading...Please wait." stopText="" id="myStatus"/>
+        <br/><br/>   
+        <apex:pageBlock rendered="{!(!showsubcontractor)}" title="Search Result" id="resultBlock">
+            <apex:outputPanel id="charmap" rendered="{!sortField == 'Job_Site_City__c' || sortField == 'Name'}">
+                    <div align="center">
+                        <apex:repeat value="{!charList}" var="c">
+                            <span style="{!IF(c=currentChar,'background-color:#333;color:#FFF','color:#000;cursor:pointer;')}" onClick="charFilter('{!c}'); anyChecked = 0;">&nbsp;{!c}&nbsp;</span><b>|</b>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+                <br/>
+                    <apex:outputPanel id="resultPanel">
+            <apex:pageBlockTable id="pgb" value="{!jobProfiles}" var="jobProfile" rendered="{!jobProfiles.size > 0}">
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Name'); return false;">
+                        Job Profile Name
+                        <img src="{!IF(sortField = 'Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                    <!-- apex:outputLink value="/{!jobProfile.jobProfile.id}" target="_new">{!jobProfile.jobProfile.Name}</apex:outputLink><br/>  -->
+                    <apex:outputLink value="/{!jobProfile.jobProfile.id}" onclick="ReloadFunc('/{!jobProfile.jobProfile.id}','{!jobProfile.jobProfile.Name}')">{!jobProfile.jobProfile.Name}</apex:outputLink><br/>
+                </apex:column>
+                
+             <!-- MSM 36 starts ... -->
+               <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Branch_ID__c'); return false;">Branch 
+                        <img src="{!IF(sortField = 'Branch_ID__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Branch_ID__c}" />
+                </apex:column>
+             <!-- MSM 36 ends .. -->
+             
+             <!-- TFS-3726 starts ... -->
+               <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Territory__c'); return false;">Territory 
+                        <img src="{!IF(sortField = 'Territory__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Territory__c}" />
+                </apex:column>
+             <!-- TFS-3726 ends .. --> 
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Owner.Name'); return false;">
+                         Owner
+                        <img src="{!IF(sortField = 'Owner.Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <!--  apex:outputLink value="/{!jobProfile.jobProfile.OwnerId}" target="_new">{!jobProfile.jobProfile.Owner.Name}</apex:outputLink><br/>   -->
+                     <apex:outputLink value="/{!jobProfile.jobProfile.OwnerId}" onclick="ReloadFunc('/{!jobProfile.jobProfile.OwnerId}','{!jobProfile.jobProfile.Owner.Name}')">{!jobProfile.jobProfile.Owner.Name}</apex:outputLink><br/>
+                </apex:column>
+                
+                <!-- TFS 7548 starts ... -->
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Value_Quadrant__c'); return false;">Value Quadrant 
+                        <img src="{!IF(sortField = 'Value_Quadrant__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Value_Quadrant__c}" />
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Stage_Flag__c'); return false;">Prioritization 
+                        <img src="{!IF(sortField = 'Stage_Flag__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Stage_Flag__c}" />
+                </apex:column>
+                <!-- TFS 7548 ends ... -->
+                
+                <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Target_Start_Date__c'); return false;">
+                         Start Date
+                        <img src="{!IF(sortField = 'Target_Start_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+                        <apex:param value="{!jobProfile.jobProfile.Target_Start_Date__c}" />
+                      </apex:outputText>              
+                     
+                </apex:column>
+                
+                <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Project_Valuation_High__c'); return false;">
+                         Valuation
+                        <img src="{!IF(sortField = 'Project_Valuation_High__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!CEILING(jobProfile.jobProfile.Project_Valuation_High__c)}" escape="false" />
+                </apex:column>
+                 <!--  Added by Akanksha for Story S-140421-->
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Project_Stage_Status__c'); return false;">
+                         Mmi Stage Status
+                        <img src="{!IF(sortField = 'Project_Stage_Status__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!jobProfile.jobProfile.Project_Stage_Status__c}" escape="false" />
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Bid_Date__c'); return false;">Bid Date 
+                        <img src="{!IF(sortField = 'Bid_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Bid_Date__c}" />
+                </apex:column>
+                 <!--  End by Akanksha for Story S-140421-->
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Job_Site_City__c'); return false;">
+                         City
+                        <img src="{!IF(sortField = 'Job_Site_City__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!jobProfile.jobProfile.Job_Site_City__c}" escape="false" />
+                </apex:column>
+                
+                <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('General_Contractors__c'); return false;">
+                         #GC
+                        <img src="{!IF(sortField = 'General_Contractors__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!CEILING(jobProfile.jobProfile.General_Contractors__c)}" escape="false" />
+                </apex:column>
+                                                                
+                
+                <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Number_of_Key_Sub__c'); return false;">
+                         # Key Subs
+                        <img src="{!IF(sortField = 'Number_of_Key_Sub__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!CEILING(jobProfile.jobProfile.Number_of_Key_Sub__c)}" escape="false" />
+                </apex:column>
+                    
+               <apex:column style="text-align:right" >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Sub_Contractors_All__c'); return false;">
+                         # total Subs
+                        <img src="{!IF(sortField = 'Sub_Contractors_All__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!CEILING(jobProfile.jobProfile.Sub_Contractors_All__c)}" escape="false" />
+                </apex:column>
+                
+                <apex:column headerValue="LastActivityDate"  style="text-align:right">
+                    <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+                    <apex:param value="{!jobProfile.LastActivityDate}" />
+                  </apex:outputText>
+                </apex:column>
+                
+                <apex:column value="{!jobProfile.wonOpp}" headerValue="Opps Won"  style="text-align:right"/>
+                
+                 <apex:column headerValue="# of units"  style="text-align:right">{!CEILING(jobProfile.numOfUnits)}
+                </apex:column>
+                
+                 <apex:column value="{!jobProfile.lostOpp}" headerValue="Opps Lost" style="text-align:right"/>                
+                
+                 <apex:column value="{!jobProfile.openOpp}" headerValue="Open Opps" style="text-align:right"/>
+                 
+                
+                 <apex:column value="{!jobProfile.closedActivities}" headerValue="Completed Activities" style="text-align:right"/>
+                
+                 <apex:column value="{!jobProfile.openActivities}" headerValue="Open Activities" style="text-align:right"/>
+               
+            </apex:pageBlockTable>
+            </apex:outputPanel>
+            <apex:outputLabel rendered="{!jobProfiles.size == 0}">No Records Found</apex:outputLabel>
+        </apex:pageBlock>
+        <!-- Added By Akanksha (Start Sub contractor table -->
+           <apex:pageBlock rendered="{!showsubcontractor}" title="Search Result" id="resultBlockSub">
+            <apex:outputPanel id="charmap" rendered="{!sortField == 'Job_Site_City__c' || sortField == 'Name'}">
+                    <div align="center">
+                        <apex:repeat value="{!charList}" var="c">
+                            <span style="{!IF(c=currentChar,'background-color:#333;color:#FFF','color:#000;cursor:pointer;')}" onClick="charFilter('{!c}'); anyChecked = 0;">&nbsp;{!c}&nbsp;</span><b>|</b>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+                <br/>
+                    <apex:outputPanel id="resultPanel" >
+            <apex:pageBlockTable id="pgb" value="{!JPSubcontractor}" var="jobProfile" rendered="{!JPSubcontractor.size > 0}">
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Name'); return false;">
+                        Job Profile Name
+                        <img src="{!IF(sortField = 'Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                    <!--  apex:outputLink value="/{!jobProfile.jobProfile.id}" target="_new">{!jobProfile.jobProfile.Name}</apex:outputLink><br/> -->
+                    <apex:outputLink value="/{!jobProfile.jobProfile.id}" onclick="ReloadFunc('/{!jobProfile.jobProfile.id}','{!jobProfile.jobProfile.Name}')">{!jobProfile.jobProfile.Name}</apex:outputLink><br/>
+                </apex:column>
+                
+                <!-- MSM 36 starts ... -->
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Branch_ID__c'); return false;">Branch
+                        <img src="{!IF(sortField = 'Branch_ID__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Branch_ID__c}" />
+                </apex:column>                           
+             <!-- MSM 36 ends .. --> 
+             
+                 <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Owner.Name'); return false;">
+                         Job Profile Owner
+                        <img src="{!IF(sortField = 'Owner.Name',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <!-- apex:outputLink value="/{!jobProfile.jobProfile.OwnerId}" target="_new">{!jobProfile.jobProfile.Owner.Name}</apex:outputLink><br/>  -->
+                     <apex:outputLink value="/{!jobProfile.jobProfile.OwnerId}" onclick="ReloadFunc('/{!jobProfile.jobProfile.OwnerId}','{!jobProfile.jobProfile.Owner.Name}')">{!jobProfile.jobProfile.Owner.Name}</apex:outputLink><br/>
+                </apex:column>
+                
+                <!-- TFS 7548 starts ... -->
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Value_Quadrant__c'); return false;">Value Quadrant 
+                        <img src="{!IF(sortField = 'Value_Quadrant__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Value_Quadrant__c}" />
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Stage_Flag__c'); return false;">Prioritization 
+                        <img src="{!IF(sortField = 'Stage_Flag__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Stage_Flag__c}" />
+                </apex:column>
+                <!-- TFS 7548 ends ... -->
+                              
+                <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Project_Valuation_High__c'); return false;">
+                        <img src="{!IF(sortField = 'Project_Valuation_High__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!CEILING(jobProfile.jobProfile.Project_Valuation_High__c)}" escape="false"/>
+                </apex:column>
+                
+                 <apex:column style="text-align:right">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Target_Start_Date__c'); return false;">
+                         Start Date
+                        <img src="{!IF(sortField = 'Target_Start_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{0,date,MM/dd/yy}" escape="false">
+                        <apex:param value="{!jobProfile.jobProfile.Target_Start_Date__c}" />
+                      </apex:outputText>              
+                </apex:column>
+                 <!--  Added by Akanksha for Story S-140421-->
+                 <apex:column >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Bid_Date__c'); return false;">Bid Date 
+                        <img src="{!IF(sortField = 'Bid_Date__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" /></a></apex:facet>
+                    <apex:outputField value="{!jobProfile.jobProfile.Bid_Date__c}" />
+                </apex:column>
+                 <!--  End by Akanksha for Story S-140421-->
+                <apex:column style="text-align:right;" >
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Project_Stage_Status__c'); return false;">
+                         MMI Stage/Status
+                        <img src="{!IF(sortField = 'Project_Stage_Status__c',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>                        
+                     <apex:outputText value="{!jobProfile.jobProfile.Project_Stage_Status__c}" escape="false" />
+                </apex:column>
+                 
+                 <!-- GC Column -->
+                   <apex:column styleclass="{!jobProfile.General.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('GC'); return false;">
+                         GC
+                        <img src="{!IF(sortField = 'GC',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.General.name}" escape="false"/>
+                    </apex:column>   
+                    
+                    <apex:column styleclass="{!jobProfile.Electrical.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Electrical'); return false;">
+                         Electrical
+                        <img src="{!IF(sortField = 'Electrical',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.Electrical.name}" escape="false"/>
+                    </apex:column> 
+                      
+                <apex:column styleclass="{!jobProfile.Plumbing.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Plumbing'); return false;">
+                         Plumbing 
+                        <img src="{!IF(sortField = 'Plumbing',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.Plumbing.name}" escape="false"/>
+                    </apex:column>
+                    
+                    <apex:column styleclass="{!jobProfile.HVAC.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('HVAC'); return false;">
+                         HVAC
+                        <img src="{!IF(sortField = 'HVAC',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.HVAC.name}" escape="false"/>
+                    </apex:column>
+                    
+                    <apex:column styleclass="{!jobProfile.FireSprinkler.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('FireSprinkler'); return false;">
+                         Fire/Sprinkler
+                        <img src="{!IF(sortField = 'FireSprinkler',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.FireSprinkler.name}" escape="false"/>
+                    </apex:column>
+                    
+                    <apex:column styleclass="{!jobProfile.Drywall.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Drywall'); return false;">
+                         Drywall
+                        <img src="{!IF(sortField = 'Drywall',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.Drywall.name}" escape="false"/>
+                    </apex:column>
+                    
+                    <apex:column styleclass="{!jobProfile.Painting.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Painting'); return false;">
+                         Painting
+                        <img src="{!IF(sortField = 'Painting',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.Painting.name}" escape="false"/>
+                    </apex:column>
+                    
+                    <apex:column styleclass="{!jobProfile.Landscape.ColorCode}">
+                    <apex:facet name="header">
+                        <a href="javascript:void(0);" onclick="doSortJS('Landscape'); return false;">
+                         Landscape
+                        <img src="{!IF(sortField = 'Landscape',IF(isAsc, '/img/sort_asc_arrow.gif','/img/sort_desc_arrow.gif'),'/s.gif')}" />
+                        </a>
+                        </apex:facet>   
+                       <apex:outputText value="{!jobProfile.Landscape.name}" escape="false"/>
+                    </apex:column>
+                 
+               </apex:pageBlockTable>
+            </apex:outputPanel>
+            <apex:outputLabel rendered="{!jobProfiles.size == 0}">No Records Found</apex:outputLabel>
+        </apex:pageBlock>
+        <!-- End of SubcontractorTable -->
+        <apex:outputPanel id="NevigationPanel">
+        <apex:outputPanel rendered="{!jobProfiles.size != 0}">
+                            <table width="100%" >
+                     <tr><td align="left" width="33%">
+                       <div id="pagelinkblock" >
+                         <div id="curstate"><apex:outputText value="{!showingFrom} - {!showingTo} of {!totalResults}" escape="false" /> </div>
+                       </div>
+                     </td><td align="center" width="33%" style="vertical-align:middle;">
+                       <apex:commandLink rendered="{!IF(AND(totalPage>1 , hasPrevious),true,false)}" action="{!firstPage}" status="myStatus" reRender="frm" >
+                      <apex:outputLabel style="cursor:pointer" >&lt;&lt;First </apex:outputLabel>
+                      </apex:commandLink>&nbsp;
+                      <apex:commandLink rendered="{!hasPrevious}" action="{!previousPage}" status="myStatus" reRender="frm" >
+                      <apex:outputLabel style="cursor:pointer" escape="false" value="&lt;Previous"></apex:outputLabel></apex:commandLink>
+                      <span id="div_mid1" >&nbsp;<apex:outputLabel value="|" rendered="{!hasPrevious &&  hasNext}" />&nbsp;</span>
+                      <apex:commandLink action="{!nextPage}" rendered="{!hasNext}"  status="myStatus" reRender="frm" >Next&gt;</apex:commandLink>
+                      &nbsp;
+                      <apex:commandLink rendered="{!IF(AND(totalPage>1 , hasNext),true,false)}" action="{!lastPage}" status="myStatus" reRender="frm" >Last&gt;&gt;</apex:commandLink>
+                    </td><td align="right" width="33%" style="vertical-align:middle;">
+                      <div id="pagenumber"> <apex:outputText value="Page &nbsp; {!pageNumber} of {!totalPage}" escape="false" />
+                      </div>
+                    </td></tr> 
+                </table> 
+        </apex:outputPanel>    
+      </apex:outputPanel>   
+      
+    </apex:form>
+</apex:page>

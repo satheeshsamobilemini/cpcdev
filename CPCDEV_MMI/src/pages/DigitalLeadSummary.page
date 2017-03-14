@@ -1,0 +1,81 @@
+<!-- ************************************************************************************************************
+* Name          : DigitalLeadSummary(controller = DigitalMarketingController)
+* Created Date  : 7 May 2013
+* Created By    : Appirio Offshore (Hemant)
+* Description   : [To create the csv file of Digital Lead Summary]
+* Related Story : S-111001
+************************************************************************************************************** -->
+<apex:page controller="DigitalMarketingController" tabStyle="Digital_Marketing__tab" readOnly="true" cache="true" contentType="application/vnd.ms-excel#DigitalLeadSummary{!Today()}.xls" language="en-US">
+
+    <apex:pageBlock >
+    <apex:pageBlockSection title="Digital Lead Summary">
+        <apex:pageBlockTable value="{!wrpGATermLstForCSV}" var="dls" id="resultTbl" rendered="{!IF(wrpGATermLstForCSV.size > 0, true,false)}">
+                                    
+          <apex:column headerValue="Data Type">
+                <apex:outputLabel value="{!dls.GADataType}"/>
+              </apex:column>
+                                        
+                <apex:column headerValue="GA Data">
+                <apex:outputLabel value="{!dls.GATermName}"/>
+              </apex:column>
+              
+                <apex:column headerValue="Total Leads">
+                <apex:outputLabel value="{!dls.totalLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="% Residential">
+                <apex:outputLabel value="{!ROUND((dls.residentialLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Open">
+                <apex:outputLabel value="{!dls.openLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Converted">
+                <apex:outputLabel value="{!dls.convertedLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Convert %">
+                <apex:outputLabel value="{!ROUND((dls.convertedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Dead">
+                <apex:outputLabel value="{!dls.deadLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Dead %">
+                <apex:outputLabel value="{!ROUND((dls.deadLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Opps Created">
+                <apex:outputLabel value="{!dls.oppsCreatedLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="% Opps Created">
+                <apex:outputLabel value="{!ROUND((dls.oppsCreatedLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Open">
+                <apex:outputLabel value="{!dls.openOppsCreatedLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Won">
+                <apex:outputLabel value="{!dls.wonLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Won %">
+                <apex:outputLabel value="{!ROUND((dls.wonLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Lost">
+                <apex:outputLabel value="{!dls.lostLdCount}"/>
+              </apex:column>
+              
+              <apex:column headerValue="Lost %">
+                <apex:outputLabel value="{!ROUND((dls.lostLdCount/dls.totalLdCount) * 100.00, 2)}"/>
+              </apex:column>
+                    
+            </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>

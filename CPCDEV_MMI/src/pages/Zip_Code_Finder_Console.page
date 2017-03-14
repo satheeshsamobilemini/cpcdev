@@ -1,0 +1,112 @@
+<apex:page controller="ZipCodeFinderController" sidebar="false" showHeader="false" >
+<apex:includeScript value="/support/console/26.0/integration.js"/>
+<body class="lookupTab"> 
+<div class="lookup">
+  <div class="bPageTitle">
+    <div class="ptBody secondaryPalette">
+      <div class="content">
+        <img title="" class="pageTitleIcon" alt="" src="/s.gif" />
+          <h1>Zip Code Finder</h1>
+      </div>
+    </div>
+  </div>
+</div>
+<font size="2" color="red" id="errorTd"></font>
+</body>
+<br/>
+<apex:form >
+<apex:pageBlock title="Zip Code Finder" >
+    <table>
+        <tr>
+            <td><apex:outputLabel >Zip Code</apex:outputLabel></td>
+            <td><apex:inputText value="{!zipCode}" onkeypress="return checkKey(event);"/></td>
+            <td> <input id="searchBtn" value="Search" class="btn" type="button" onclick="searchAF();return false;" /></td> 
+        </tr>
+    </table>
+</apex:pageBlock>
+    <apex:actionStatus id="status1" >
+       <apex:facet name="start">                               
+         <img src="/img/loading.gif" /> Please wait...Searching....                        
+       </apex:facet>
+    </apex:actionStatus>
+<apex:outputPanel id="searchPanel" >
+<apex:pageBlock title="Search Result" rendered="{!isSearch}">
+    <apex:pageBlockTable value="{!branchCodeWrappers}" var="bcw" >
+        <apex:column headerValue="Branch Code">
+        <a href="javascript:void(0);" onclick="redirectToRecord('{!bcw.weeklyBranchReport.Id}','{!bcw.branchLookup.Id}', 'SnapShot');" >{!bcw.branchLookup.Branch_Code__c}</a>
+        </apex:column>
+        <apex:column headerValue="Branch Name" value="{!bcw.branchLookup.Branch_Name__c}"></apex:column>
+        <apex:column headerValue="Branch Title" value="{!bcw.branchLookup.Branch_Title__c}"></apex:column>
+        <apex:column headerValue="Country" value="{!bcw.branchLookup.Country__c}"></apex:column>
+        <apex:column headerValue="Zip" value="{!bcw.branchLookup.Zip__c}"></apex:column>
+        <apex:column headerValue="City" value="{!bcw.branchLookup.City__c}"></apex:column>
+        <apex:column headerValue="County" value="{!bcw.branchLookup.County__c}"></apex:column>
+        <apex:column headerValue="State" value="{!bcw.branchLookup.State__c}"></apex:column>
+        <apex:column headerValue="Time Zone" value="{!bcw.branchLookup.Time_Zone__c}"></apex:column>
+        <apex:column headerValue="Drop Yard" value="{!bcw.branchLookup.Drop_Yard__c}"></apex:column>
+        <apex:column headerValue="Selling Region" value="{!bcw.branchLookup.Selling_Region__c}"></apex:column>
+        
+        <!--  MSM 34 starts -->
+
+        <apex:column headerValue="Territory" value="{!bcw.branchLookup.Territory__c}"></apex:column>
+        
+        <apex:column headerValue="ISR">
+        <a href="javascript:void(0);" onclick="redirectToRecord('{!bcw.ISRuser.Id}','{!bcw.branchLookup.Id}','User');" >{!bcw.ISRuser.Name}</a>
+        </apex:column>
+ 
+ <!--  MSM 34 ends -->  
+     
+     
+     
+     
+    </apex:pageBlockTable>
+    <br/>
+    <apex:outputLabel value="No Record Found" rendered="{!branchCodeWrappers.size == 0}"/>
+    <apex:actionStatus id="status1" >
+       <apex:facet name="start">                               
+         <img src="/img/loading.gif" /> Please wait...loading....                        
+       </apex:facet>
+    </apex:actionStatus>
+    <br/>
+    <apex:outputPanel id="nextPanel" rendered="{!branchCodeWrappers.size > 10}">
+        <apex:commandLink action="{!branchLookupStdSetCntrl.previous}" reRender="searchPanel" value="Previous" id="npreviousLnk" status="status1" rendered="{!branchLookupStdSetCntrl.hasPrevious}"/>&nbsp;&nbsp;&nbsp;
+            <apex:outputLabel value="Previous" id="previousLabel" rendered="{!NOT(branchLookupStdSetCntrl.hasPrevious)}" style="color:#A2A2A2;"/>&nbsp;&nbsp;
+            <apex:commandLink action="{!branchLookupStdSetCntrl.Next}" reRender="searchPanel" value="Next" id="nextLnk" status="status1" rendered="{!branchLookupStdSetCntrl.hasNext}"/>
+            <apex:outputLabel value="Next" id="nextLabel" rendered="{!NOT(branchLookupStdSetCntrl.hasNext)}" style="color:#A2A2A2;"/>
+    </apex:outputPanel>
+    
+</apex:pageBlock>
+</apex:outputPanel>
+<apex:actionFunction action="{!searchZipCode}" name="searchAF" reRender="searchPanel" status="status1" />
+</apex:form>
+<script>
+    function checkKey(e){
+        var key;
+        if(window.event)
+            key = window.event.keyCode; //IE
+        else
+            key = e.which; //firefox
+        if(key != null && key == 13){
+            searchAF();
+            return false;
+        }
+        return true;
+    }
+    
+    function redirectToRecord(recordId,altRecordId,TabName){
+     var url = '/' + ((recordId != '')? recordId : altRecordId);
+     
+     if(sforce.console.isInConsole())
+        { 
+          sforce.console.getFocusedPrimaryTabId(function responseTabID(result) 
+              { 
+                sforce.console.openPrimaryTab(null,url,true,TabName); 
+              } 
+             );   
+        } 
+     else { window.opener.location.href = '/' + ((recordId != '')? recordId : altRecordId);
+            window.close(); }   
+     }
+</script>
+
+</apex:page>

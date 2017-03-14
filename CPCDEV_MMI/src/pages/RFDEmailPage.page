@@ -1,0 +1,62 @@
+<!--
+     (c) 2015 TEKsystems Global Services
+    
+     Name                : RFDEmailPage
+     controller          : FullQuoteUKMainController
+     Created Date        : 01 October 2015
+     Created By          : Jailabdin Shaik (TEK)
+     Purpose             : Sending RFDform to user of any choice .
+-->
+
+<apex:page controller="FullQuoteUKMainController"  id="pgId" showHeader="false" sidebar="false" >
+
+    
+    <style>
+        .mainHeader{
+          height: 35px;
+          background-color: #F2F2F2;
+          text-align: left;
+          padding: 10px 0px 0px 20px; 
+       }
+        
+        .mainHeaderLabel{
+              color: black;
+              font-size: 14px;
+              font-family: sans-serif;
+            <!--  font-weight: bolder; -->
+      }      
+         .paymentOpt{
+                
+                width: 25%;
+      }
+         
+    </style>
+    
+    <script>
+       function compltealert(){
+           alert('Mail send successfully');
+       }
+    </script>
+   
+    
+    <apex:pageMessages id="pageMessage" escape="false"/>
+   <apex:form >
+   
+       <div id="mainHeader" class="mainHeader" style="top:200px;">
+         <b> <Label id="mainHeaderLabel" class="mainHeaderLabel">RFD Email Request Form</Label> </b>
+        </div>   
+    
+      <apex:pageBlock id="pb" mode="detail">
+        
+        <font style="left:120px;position:relative;"><b>Email: </b> </font>
+        <apex:inputField value="{!fullQuote.Mail_RFD__c}" style="left:120px;position:relative;"/> <!--<apex:inputText style="left:120px;position:relative;" value="{!useremail}"/> -->
+        
+        <apex:pageBlockButtons location="bottom" id="pbb">
+            <apex:commandButton value="Send RFD" action="{!RFDsending}" style="left:20px;position:relative;"  reRender="pageMessage"/> 
+            <apex:commandButton value="Close"  style="left:20px;position:relative;" onclick="window.top.close();" /> 
+        </apex:pageBlockButtons> 
+      
+      </apex:pageBlock>
+      
+  </apex:form>
+</apex:page>

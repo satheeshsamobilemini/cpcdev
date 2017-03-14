@@ -1,0 +1,133 @@
+<apex:page controller="sharem.SMF_LicenseManagerController" tabStyle="Folderize__tab" title="Folderize Edition Manager">
+	
+<apex:stylesheet value="{!URLFOR($Resource.sharem__folderize_resources, 'css/styles.css')}"/>
+<script type="text/javascript" src="{!URLFOR($Resource.sm_jqgrid, '/js/jquery-1.9.0.min.js')}"></script>
+<script type="text/javascript" src="{!URLFOR($Resource.folderize_resources, 'js/scripts.js')}"></script>
+
+
+<script type="text/javascript">
+	//configure the "scripts.js" file
+	SMF_PAGE_OPTIONS.fixPageContainer = true;
+</script>
+
+
+<apex:form id="form">
+	<apex:actionStatus id="statusLoader" onstart="statusLoader.showLoader();" onstop="statusLoader.hideLoader();" />
+
+	<!-- REQUEST ACTIVATION -->
+	<apex:pageBlock title="Folderize Edition Manager" rendered="{!activationPhase == 1}">
+		Send an activation request to ShareMethods.
+		<hr/>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Organization Id</div>
+			<div class="form-cell-value">{!request.organizationId}</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Organization Name</div>
+			<div class="form-cell-value">{!request.organizationName}</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Organization Type</div>
+			<div class="form-cell-value">{!request.organizationType}</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Current Folderize Edition</div>
+			<div class="form-cell-value">{!currentLicenseTypeLabel}</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Requested Folderize Edition</div>
+			<div class="form-cell-value">
+				<apex:selectList size="1" required="true" value="{!request.requestedLicenseType}">
+					<apex:selectOptions value="{!availableLicenseTypes}" />
+				</apex:selectList>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">First Name</div>
+			<div class="form-cell-value">
+				<apex:inputField value="{!request.requestor.FirstName}" required="true" />
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Last Name</div>
+			<div class="form-cell-value">
+				<apex:inputField value="{!request.requestor.LastName}" required="true" />
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Email</div>
+			<div class="form-cell-value">
+				<apex:inputField value="{!request.requestor.Email}" required="true"/>
+				<span class="form-note">* an activation key will be sent to this address</span>
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Phone</div>
+			<div class="form-cell-value">
+				<apex:inputField value="{!request.requestor.Phone}" />
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Mobile Phone</div>
+			<div class="form-cell-value">
+				<apex:inputField value="{!request.requestor.MobilePhone}" />
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Message (optional)</div>
+			<div class="form-cell-value">
+				<apex:inputTextarea value="{!request.optionalMessage}" style="width: 400px;">
+				</apex:inputTextarea>
+				<span class="form-note">* up to 1500 characters</span>
+			</div>
+		</div>
+		
+		
+		<apex:outputPanel layout="block" rendered="{!status_SendRequest != null}" styleClass="sfc-messages">
+			{!status_SendRequest}
+		</apex:outputPanel>
+		
+		<div class="form-buttons">
+			<apex:commandButton action="{!sendActivationRequest}" reRender="form" status="statusLoader" value="Send activation request"/>
+			<apex:commandButton action="{!goToEnterActivationKeyPhase}" immediate="true" reRender="form" status="statusLoader"
+				value="Enter activation key" style="margin-left: 20px;"/>
+		</div>
+	</apex:pageBlock>
+	
+	
+	<!-- ENTER ACTIVATION KEY -->
+	<apex:pageBlock title="Folderize Edition Manager" rendered="{!activationPhase == 2}">
+		Complete the activation process following instructions in the email sent from ShareMethods.
+		<hr/>
+		
+		<div class="form-row">
+			<div class="form-cell-label">Activation key</div>
+			<div class="form-cell-value">
+				<apex:inputFile value="{!activationKeyFile}" required="true" disabled="{!activationResults.isOperationSuccessful}" style="width: 300px;"/>
+			</div>
+		</div>
+		
+		
+		<apex:outputPanel layout="block" rendered="{!status_ActivateLicense != null}" styleClass="sfc-messages">
+			{!status_ActivateLicense}
+		</apex:outputPanel>
+		
+		<div class="form-buttons">
+			<apex:commandButton action="{!activateLicense}" value="Activate Edition" disabled="{!activationResults.isOperationSuccessful}"/>
+		</div>
+	</apex:pageBlock>
+	
+</apex:form>
+
+</apex:page>

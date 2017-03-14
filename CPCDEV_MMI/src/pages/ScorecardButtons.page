@@ -1,0 +1,60 @@
+<!--
+Name   : ScorecardButtons
+Usage  : Used to display Buttons for Scorecards
+Author : Kirtesh Jain
+Date   : September 17, 2009
+-->
+
+
+
+<apex:page standardcontroller="Account">
+<script>
+   function callSummaryScorecard(){
+     window.open('/apex/SummaryScorecard?id={!Account.Id}' );
+   }
+   
+   function callRentalScorecard(){
+      window.open('/apex/RentalScorecard?id={!Account.Id}' );
+   }
+   
+   function callUOR(){
+     window.open('/apex/UORScorecard?id={!Account.Id}');
+   }
+   
+   function rentalPros(){
+      window.open('/apex/RentalProspectingScorecard?id={!Account.Id}');
+   }
+   
+   function callSalesScorecard(){
+       window.open('/apex/SalesScorecard?id={!Account.Id}');
+   }
+   
+   function callPickups(){
+      window.open('/apex/PickupsScorecard?id={!Account.Id}');
+   }
+</script>
+<apex:form >
+  <apex:pageblock >
+    <table  cellpadding="5" cellspacing = "5"  width="100%" height="100%">
+     <tr>
+     <!--     <td width="33%">
+      <input type="button" class="btn"  onclick="callSummaryScorecard()" value="Summary Scorecard"/>
+       </td>   -->
+       <td width="34%">
+         <input type = "button" class ="btn" onclick="callRentalScorecard()" value="Rental Scorecard" />
+       </td>
+       <!--    <td width="33%">
+         <input type = "button" class ="btn" onclick="callUOR()" value="UOR Scorecard" />
+       </td>
+     </tr>
+     <tr>
+       <td> <input type="button" class="btn"  onclick="rentalPros()" value="Rental Prospecting Scorecard"/></td>
+       <td> <input type="button" class="btn"  onclick="callSalesScorecard()" value="Sales Scorecard"/></td>
+       <td><input type="button" class="btn"  onclick="callPickups()" value="Pickups Scorecard"/></td>   -->
+     </tr>
+    </table>
+    
+
+   </apex:pageblock>
+</apex:form>
+</apex:page>

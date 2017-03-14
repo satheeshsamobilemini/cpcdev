@@ -1,0 +1,112 @@
+<!--
+Name   : PickupsScorecard
+Usage  : Used to display Pickups Scorecard of Account currently being viewed.
+Author : Kirtesh Jain
+Date   : September 19, 2009
+-->
+
+<apex:page ></apex:page>
+<!-- TFS 2291 start 1
+<apex:page standardController="Account" extensions="PickupsScorecardController" title="Pickups Scorecard: {!Account.Name}" sidebar="false">
+    <apex:sectionHeader title="Pickups Scorecard" subtitle="{!Account.Name}" />
+    
+    <apex:form >
+        <apex:pageMessages />
+        
+        The hierarchy is created by associating accounts with parent accounts.
+        
+        <apex:pageBlock rendered="{!NOT(hasError)}">                   TFS 2291 end 1 >
+            <!-- Table listing Account Hierarchy -->              <!-- TFS 2291 start 2
+            <apex:pageBlockTable value="{!nodesList}" var="node" id="nodeTable">
+                <apex:column headervalue="Account Name"
+                        style="white-space:pre;"> TFS 2291 end 2 --><!-- White space to indent Hierarchy --><!-- TFS 2291 start3<span
+                        style="padding-right:{!node.spanPadding}px;" />
+                   <apex:outputLink value="/{!node.account.Id}">{!node.account.Name}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">
+                     Branch Id
+                   </apex:facet>
+                    <apex:outputText value="{!node.account.Branch__c}" escape="false" />
+                </apex:Column>
+                
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">
+                     Servicing Branch Id
+                   </apex:facet>
+                    <apex:outputText value="{!node.account.Servicing_Branch_Id__c}" escape="false" />
+                </apex:Column>
+                  
+                <apex:column style="text-align:center">
+                  <apex:facet name="header">
+                     Current Units <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     &nbsp;on Rent
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.Total_Units_on_Rent__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center" >
+                   <apex:facet name="header"> 
+                     Off Rent Not Picked up<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total
+                  </apex:facet>
+                   <apex:outputText value="{!node.Total}" escape="false"/>
+                 
+                </apex:column>
+               
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">
+                     Off Rent Not Picked up<br/>
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 to 14 days old<br/>
+                   </apex:facet>
+                   <apex:outputfield value="{!node.account.ORNPU_Num_Units_Less_Than_15_Days__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">
+                    Off Rent Not Picked up<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15 to 29 days old<br/>
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.ORNPU_Num_Units_15_to_30_Days__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                    <apex:facet name="header">
+                      Off Rent Not Picked up<br/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30+ Days or Older<br/>
+                  </apex:facet>
+                    <apex:outputfield value="{!node.account.ORNPU_Num_Units_Over_30_Days__c}" />
+                </apex:column>
+               
+                <apex:column style="text-align:center">
+                   <apex:facet name="header">
+                     Pending Pickups<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Over Term
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.Pending_P_U_s_that_will_be_Overages__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center">
+                    <apex:facet name="header">
+                       Pending Pickups<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Under Term
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.Pending_P_U_s_that_will_be_Charge_Backs__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center" >
+                    <apex:facet name="header">
+                      Credit Status
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.Credit_Status__c}" />
+                </apex:column>
+                
+                <apex:column style="text-align:center" >
+                  <apex:facet name="header">
+                     P/U NPS Score
+                  </apex:facet>
+                  <apex:outputfield value="{!node.account.NPS_Status__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>  TFS 2291 end 3 -->

@@ -1,0 +1,718 @@
+<apex:page controller="InvoiceSearchController" title="Customer Request - Credits" docType="html-5.0" sidebar="false" id="invPgId"  showQuickActionVfHeader="false" showChat="false" applyBodyTag="false" >
+<apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+<apex:includeScript value="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"/>
+<apex:stylesheet value="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>   
+ <style>
+ .errorMsg{
+ color : red;
+ }
+ div.parent{ min-height:400px;  }
+     td.childTableClass{
+              //display: none;
+              display: visible;
+              border : 1;
+      }
+     table {
+    border-collapse: collapse;
+    }
+
+    table.lineItemtable,th.lineItemtableth,td.lineItemtabletd{
+    border: 1px solid black;
+    }
+    .saveBtn{
+    margin-left : 50%;
+    }
+    .hidden{
+        display : none;
+    }
+ .creditAreaForeground{
+       position: absolute;
+       width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+    }
+    .popupForeground{
+        background-color: #F2EDF3;
+        border-width: 2px;
+        z-index: 9999;
+        left: 35%;
+        padding: 10px;
+        position: absolute;
+        border: 1px solid #E20A98;
+        width: 700Px;
+        margin-left: -145px;
+        top: 2px;
+        border-top-style: outset;
+        border-top-color: #E413D4;   
+       -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+       border-radius: 5px;
+       -moz-border-radius:10px;
+       -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+       border-radius: 15px;
+    }
+    .popupForegroundContact{
+      background-color: #F2EDF3;
+        border-width: 2px;
+        z-index: 9999;
+        left: 22%;
+        
+        position: absolute;
+        border: 1px solid #E20A98;
+        width: 1032Px;
+        margin-left: -145px;
+        top: 2px;
+        border-top-style: outset;
+        border-top-color: #E413D4;   
+       -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+       border-radius: 5px;
+       -moz-border-radius:10px;
+       -moz-box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+       border-radius: 15px;
+    }
+    .popupBackground{
+        background-color:black;
+        opacity: 0.20;
+        filter: alpha(opacity = 20);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+    }
+
+ </style>
+ <script>
+   
+
+   
+    function toggleChildRow(recordID){
+          var findClass = '.'+recordID;
+          recordID = '#'+recordID;
+          $( recordID ).toggle(function(){
+             var $varText = $(this).closest("tbody").find(findClass);
+             if($varText.text().indexOf("+") > -1){
+                 $varText.html("-");
+             }
+             else{
+                 $varText.html("+");                
+             }
+          });    
+      }
+      
+      
+      
+      function validate(val,err){
+       
+
+          var condVal = document.getElementById(val).value;
+        
+          var condValId = document.getElementById(val);
+          document.getElementById(err).style.display = "none";
+         
+                    var valid = (condVal.match(/^\d*(?:\.\d+)?$/));
+                    
+        
+        if(valid == null){            
+           document.getElementById(err).style.display = "block";          
+           document.getElementById(val).value = '';           
+            return false;
+        }     
+        
+     }
+     
+     function validateMail(coEmail,err){
+         //var mailVal = document.getElementById(coEmail).value;
+       // document.getElementById(err).style.display = "none";
+       //  var valid = (mailVal .match(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/));
+        // if(valid == null){            
+         //  document.getElementById(err).style.display = "block";          
+         //  document.getElementById(mailVal).style.color = "red";           
+         //   return false;
+       // }    
+     
+     }
+    
+   
+   function AllowNumeric(e)
+{
+    
+    var a = e.charCode; 
+    return ((a >= 48 && a <= 57));
+}
+   
+ </script>
+    
+ <script>
+ 
+  
+    $(document).ready(function() {
+         //$('#pgId:frmId:conPb:conTbl').dataTable();
+      //alert('ready...');
+          // $('#ContactListTable2').DataTable();
+         //$('#ContactListTable').DataTable();
+       
+    } ); 
+    
+    
+    function showNext(conRowId)
+    {      
+        //alert(conRowId);
+        //document.getElementById('hiddenContact').value = '';
+        document.getElementById('hiddenContact').value = conRowId;
+        callSetContact(conRowId);        
+    }   
+    
+    
+             
+ </script>
+ <script>
+   function alertDateMessg(){
+     //if({!alertMsg} == true)
+      //alert('All invoices from past year will be displayed !!');
+   }
+ </script>
+ <!-- <h1>Invoice/Contract Search </h1> -->
+<body >
+<div class="parent" style="margin-top: 80px;">
+<h1 style="left:10px;font-size:20px;">New Customer Request  </h1>
+  <apex:pageBlock id="pgBlckId" >
+  <apex:form id="gcformId"> 
+  
+   <!-- <div style="display:none"> <apex:inputField styleClass="hidden" id="gcacc" value="{!SORVar.Account_ID__c}" /> </div> -->
+   
+   
+<apex:outputPanel rendered="{!displayGeneralCredit}"> 
+  
+  <h2 style="font-size:14px;">Customer Request Edit</h2>
+  <apex:pageBlockSection id="gcpgSectionId" columns="2"> 
+    <apex:pageMessages id="gcnullErrorMessage" escape="false" />
+    
+        <br/><br/>
+        <apex:outputText label="Owner" id="caseOwner" value="{!caseOwner }" /> 
+        <apex:outputText label="Account" id="Account" value="{!AccName}"  />
+        <apex:pageBlockSectionItem id="custCntctId">
+                    <apex:outputLabel value="Customer Contact" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                <apex:inputField label="Customer Contact" id="custCon" value="{!SORVar.Customer_Contact__c}"  />
+                        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+         <apex:inputText value="{!SORVar.Document__c}"  label="Contract Number"  onkeypress="return AllowNumeric(event)" />     
+                 <apex:selectList multiselect="false" size="1" value="{!SORVar.Branch_ID__c}" label="Branch ID" required="true">
+                      <apex:selectOptions value="{!branchIDPickList}" />
+                 </apex:selectList> 
+                 <apex:outputText label="Record Type" value="General Credits (MMI) 1000"/>
+                 <apex:pageBlockSectionItem id="rsnItemId">
+                    <apex:outputLabel value="Reason for Credit" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                 <apex:selectList id="reasonCreditId" multiselect="false" value="{!SORVar.Reason_for_Credit__c}" size="1" label="Reason for Credit">
+                                      <apex:selectOptions value="{!reasonForCreditPickList}" />
+                                 </apex:selectList>&nbsp;<label id="rcError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Reason for Credit</label>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="descID">
+                    <apex:outputLabel value="Description" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                 <apex:inputTextarea label="Description" value="{!SORVar.Description__c}"/>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="gcCreditAmountSection">
+                    <apex:outputLabel value="Credit Amount" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                <apex:inputText id="gcCreditAmount"  label="Credit Amount" value="{!gcCreditAmount}" onblur="validate('{!$Component.gcCreditAmount}','{!$Component.amtError}')"/>
+                              &nbsp;<apex:outputlabel id="amtError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide appropriate Credit amount</apex:outputlabel>
+                              </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <br/><apex:commandButton style="margin-left:95%"  value="Save" action="{!saveGeneralCreditCase}" id="saveGCbutton"  />
+                <apex:commandButton value="Cancel"  action="{!NavigateBack}"  id="cancelGCButton"  immediate="true"/>
+        </apex:pageBlockSection>
+   </apex:outputPanel>
+  
+  <!-- <apex:outputPanel rendered="{!displayCreditMMI}">  -->
+   <apex:outputPanel rendered="{!OR(displayCreditMMI,displayCreditETS,displayCreditWMI)}">
+    
+  <apex:outputPanel id="invoiceSearch" style="">
+  <apex:outputPanel rendered="{!displayinvoiceSearch}">
+ 
+   <h2 style="font-size:14px;">Customer Request Edit</h2>
+  <apex:pageBlockSection id="pgSectionId" columns="2"> 
+    <apex:pageMessages id="nullErrorMessage" escape="false" />
+    
+        
+       <!-- <h1 style="left:10px;font-size:20px;">New Customer Request  </h1>-->
+        <br/><br/>
+        
+                 
+                 <apex:outputText label="Owner" id="caseOwner" value="{!caseOwner }" /> 
+                <apex:outputText label="Account" id="Account" value="{!AccName}"  />
+                <apex:pageBlockSectionItem id="custCntctId">
+                    <apex:outputLabel value="Customer Contact" />
+                        <apex:actionRegion >
+                        <apex:outputPanel id="convalue" layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                <apex:inputText label="Customer Contact" disabled="true" id="custCon" value="{!selectedContactName}"  title="Select a contact"/>
+                                <apex:commandButton value="Select Contact" id="searchButton1" action="{!showContactPopup}" rerender="contactPopup"/>    
+                        </apex:outputPanel>
+                        </apex:actionRegion>
+                </apex:pageBlockSectionItem>                
+                
+                <apex:pageBlockSectionItem id="rsnItemId">
+                    <apex:outputLabel value="Reason for Credit" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                 <apex:selectList id="reasonCreditId" multiselect="false" value="{!SORVar.Reason_for_Credit__c}" size="1" label="Reason for Credit">
+                                      <apex:selectOptions value="{!reasonForCreditPickList}" />
+                                 </apex:selectList>&nbsp;<label id="rcError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Reason for Credit</label>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+                 <!-- <apex:outputText label="Record Type" value="Credits (MMI) 1000"/> -->
+                 <!-- <apex:outputText label="Record Type" value="SAP Credits (MMI) 1000"/> -->
+                 <apex:outputText label="Record Type" value="SAP Credits (MMI) 1000" rendered="{!displayCreditMMI}"/>
+                 <apex:outputText label="Record Type" value="SAP Credits (ETS) 1500" rendered="{!displayCreditETS}"/>
+                 <apex:outputText label="Record Type" value="SAP Credits (WMI) 1501" rendered="{!displayCreditWMI}"/>                 
+                                
+                <apex:pageBlockSectionItem id="invNumItemId">
+                        <apex:outputLabel value="Invoice Number" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div> 
+                            <apex:actionRegion > 
+                             <apex:outputPanel id="invPnlId">
+                                <apex:outputPanel id="invoiceTextPnlId" rendered="{!displayInvText}" >
+                                  <apex:inputText id="invoiceNum" value="{!invoiceText}" onkeypress="return AllowNumeric(event)"/>
+                                  </apex:outputPanel>
+                                   <apex:outputPanel id="invoiceListPnlId" rendered="{!displayInvList}" >
+                                  <apex:selectList id="invoiceListId" multiselect="false" value="{!selectedInvoice}" size="1" label="Invoice Number" >
+                                         <apex:selectOptions value="{!invNumbersPickList}" />
+                                  </apex:selectList>&nbsp;<label id="inError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Invoice Number</label>
+                                  </apex:outputPanel>
+                                  <apex:commandButton value="Search" id="searchButton" action="{!showsearchPopup}" rerender="nullErrorMessage,tstpopup"/>
+                                    
+                                 </apex:outputPanel>
+                             </apex:actionRegion>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="descID">
+                    <apex:outputLabel value="Description" />
+                        <apex:outputPanel layout="block" styleClass="requiredInput">
+                            <div class="requiredBlock"></div>
+                                 <apex:inputTextarea label="Description" value="{!SORVar.Description__c}"/>
+                        </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+               <apex:pageBlockSectionItem >
+                <apex:selectList multiselect="false" size="1" value="{!SORVar.Branch_ID__c}" label="Branch ID" required="true" rendered="false">
+                      <apex:selectOptions value="{!branchIDPickList}" />
+                 </apex:selectList>
+               </apex:pageBlockSectionItem>   
+                                    
+               <apex:commandButton style="margin-left:90%" action="{!redirect}"  value="Continue" id="redirectButton" reRender="nullErrorMessage,creditArea,invoiceSearch" />
+              <apex:commandButton value="Cancel" style="margin-right:10%"  action="{!NavigateBack}"  id="cancelButton"  immediate="true"/>
+        </apex:pageBlockSection>
+   </apex:outputPanel>
+   </apex:outputPanel>
+   
+ 
+   
+     
+  
+  <apex:outputPanel id="tstpopup">
+       
+                        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+                            <apex:outputPanel styleClass="popupForeground" layout="block" rendered="{!displayPopUp}" >
+                                 <apex:commandLink action="{!closePopup}" rerender="tstpopup,nullErrorMessage" immediate="true">
+                                                <apex:image style="position:relative;left:670px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                                 </apex:commandLink>
+
+                            <apex:pageMessages id="popErrorMsg" escape="false" />
+                                <apex:pageBlock title="Invoice Search Criteria">
+                                    <apex:pageBlockSection columns="2">
+                                       <apex:input id="billFromDate" value="{!billFromDate}" label="Bill From Date :" type="date"/> 
+                                       <apex:input value="{!billToDate}" label="Bill To Date :" type="date"/>  
+                                    <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Invoice Status" />
+                                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                                <div class="requiredBlock"></div>
+                                                    <apex:selectList multiselect="false" id="credStatusId" size="1" value="{!selectedInvoiceStatus}" label="Invoice Status" >
+                                                        <apex:selectOptions value="{!invoiceStatusPickList}" />
+                                                    </apex:selectList>
+                                                    &nbsp;<apex:outputlabel id="statusError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Credit Status</apex:outputlabel>
+                                             </apex:outputPanel>
+                                     </apex:pageBlockSectionItem>
+                                                                                                         
+                                     <apex:inputText label="Contract Number" id="ContractNumber" value="{!ContactNumber}" maxlength="10" onkeypress="return AllowNumeric(event)"/> 
+                                  <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Number of Invoices" />
+                                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                                <div class="requiredBlock"></div>
+                                                    <apex:selectList multiselect="false" id="credStatusId" size="1" value="{!selectedNumOfRecords}" label="Invoice Status" >
+                                                        <apex:selectOptions value="{!invoiceNumberPickList}" />
+                                                    </apex:selectList>
+                                                    &nbsp;<apex:outputlabel id="statusError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide Credit Status</apex:outputlabel>
+                                             </apex:outputPanel>
+                                     </apex:pageBlockSectionItem>     
+                                 </apex:pageBlockSection> 
+                                 <apex:commandButton value="Get Invoices" action="{!retrieveInvoiceList}"  style="margin-left:43%" rerender="popErrorMsg,invPnlId,tstpopup,serviceError" oncomplete="alertDateMessg();"/>
+                             </apex:pageBlock>
+                              
+                       </apex:outputPanel>
+  </apex:outputPanel>
+  
+<apex:actionFunction name="callSetContact" action="{!setSORContact}" status="setContactStatus" reRender="convalue"> 
+ <apex:param id="conID" name="con" value="" />
+</apex:actionFunction> 
+    <apex:actionstatus id="setContactStatus">
+        <apex:facet name="start">
+        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="top: 100px; width: 91px;">
+            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+            <span class="waitingDescription">Loading....</span>
+            </div>
+        </div>
+        </apex:facet>
+</apex:actionstatus>
+   
+ 
+  <apex:outputPanel id="contactPopup">
+       
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayContactPopUp}"/>  
+            <apex:outputPanel styleClass="popupForegroundContact" layout="block" rendered="{!displayContactPopUp}" >
+                
+                <apex:commandLink action="{!closeContactPopup}" rerender="contactPopup" immediate="true">
+                                <apex:image style="position:relative;left:990px;" value="{!$Resource.WindowCloseLogo}" width="30" height="30"/>
+                </apex:commandLink>
+                
+                 <br/>
+                 
+                 <apex:pageMessages id="popErrorMsgCon" escape="false" />
+                <input type="hidden"  name="hiddenContact" id="hiddenContact" />
+                
+                <!-- Create Contact -->
+             <apex:outputPanel id="opCreateCon" rendered="{!displayContactPopUp}">
+             
+                    <div id="CreateNewContact"  style="float:left; width:300px; margin : 7px;">
+                      <input type="button" value="Create New Contact" onclick="showcreateArea()"/>
+                    </div>
+               
+                    <div id="createContactDiv" style="display:none;">
+                        <apex:pageBlock id="createConId" title="Create Contact" >
+                            <apex:pageBlockSection id="pbsFn" columns="2">
+                                <apex:pageBlockSectionItem id="pbsiFn">
+                                    <apex:outputLabel value="First Name" />
+                                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                                     <div class="requiredBlock"></div>
+                                        <apex:inputText id="fn" value="{!conFn}" />
+                                        &nbsp;<label id="fnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide first name</label>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            
+                                <apex:pageBlockSectionItem id="pbsiLn">
+                                    <apex:outputLabel value="Last Name" />
+                                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                                    <div class="requiredBlock"></div>
+                                        <apex:inputText id="ln" value="{!conLn}" />
+                                        &nbsp;<label id="lnError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide last name</label>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>                                
+                            
+                                <apex:pageBlockSectionItem id="pbsiPh">
+                                    <apex:outputLabel value="Phone" />
+                                    <apex:outputPanel layout="block" styleClass="requiredInput">
+                                     <div class="requiredBlock"></div> 
+                                        <apex:inputText id="ph" value="{!conPh}" onkeypress="return AllowNumeric(event)"/>
+                                        <!--&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('Phone');" name="SelectPc" id="phoneNumber" checked="true" />&nbsp;Primary contact-->
+                                        &nbsp;<label id="phError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide phone number</label>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>                                
+                            
+                                <apex:pageBlockSectionItem id="pbsiMob">
+                                    <apex:outputLabel value="Mobile" />
+                                    <apex:outputPanel >
+                                        <apex:inputText id="mob" value="{!conMob}" onkeypress="return AllowNumeric(event)" />
+                                        <!--&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('MobilePhone');"  name="SelectPc" id="mobileNumber"/>&nbsp;Primary contact-->
+                                     </apex:outputPanel>
+                                </apex:pageBlockSectionItem>  
+                                                             
+                           
+                                <apex:pageBlockSectionItem >
+                                 <apex:outputLabel value="Email" />
+                                    <apex:outputPanel >
+                                       <apex:inputText id="coEmail" value="{!conEmail}" onblur="validateMail('{!$Component.coEmail}','{!$Component.mailError}')" />
+                                        
+                                        </apex:outputPanel>
+                                </apex:pageBlockSectionItem> 
+                                 <apex:pageBlockSectionItem id="pbsiFax">
+                                    <apex:outputLabel value="Fax" />
+                                    <apex:outputPanel >
+                                        <apex:inputText id="fax" value="{!conFax}" onkeypress="return AllowNumeric(event)" />
+                                        <!--&nbsp;<input type="radio" onclick="getSelectedPrimaryContact('MobilePhone');"  name="SelectPc" id="mobileNumber"/>&nbsp;Primary contact-->
+                                     </apex:outputPanel>
+                                </apex:pageBlockSectionItem>                                 
+                                                       
+                                <apex:pageBlockSectionItem >                                 
+                                    <input type="button" value="Create Contact" style="margin-left:90%" onclick="validateData();"/>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </div>
+                  
+                </apex:outputPanel>
+                
+   <apex:actionFunction name="callCreateContact" action="{!CreateContact}" oncomplete="reloadContact()" status="contactStatus" reRender="contactPopup"/>                
+    <apex:actionstatus id="contactStatus">
+        <apex:facet name="start">
+        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="top: 100px; width: 91px;">
+            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+            <span class="waitingDescription" style="color:black">Creating contact...</span>
+            </div>
+        </div>
+        </apex:facet>
+    </apex:actionstatus>
+   
+   <br/><br/>              
+  <!-- Create Contact -->
+                
+                <apex:pageBlock title="Select Contact">
+                     <table id="ContactListTable" class="display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th >Select</th>
+                                <th>Name</th>
+                                <th>Phone #</th>
+                                <th>Mobile #</th>
+                                <th>Email</th>
+                                <th>Fax</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstContact}" var="item">
+                                <tr>
+                                    <td >
+                                      <input type="radio" onclick="showNext('{!item.id}');" name="test"/>
+                                    </td>
+                                    
+                                    <td>
+                                        {!item.Name}
+                                    </td>
+                                    <td>
+                                       {!item.Phone}
+                                    </td>
+                                    <td>
+                                        {!item.MobilePhone}
+                                    </td>
+                                    <td>
+                                        {!item.Email}
+                                    </td>
+                                    <td>
+                                        {!item.Fax}
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                       </tbody>
+                     </table>
+                     <apex:commandButton value="Done" action="{!selectedContact}"  style="margin-left:43%" rerender="convalue,contactPopup"/>
+                </apex:pageBlock>
+       </apex:outputPanel>
+       <script>
+         
+            $('#ContactListTable').DataTable({
+                "bInfo" : false ,
+                "bLengthChange" : false 
+            });
+            
+            function showcreateArea(){
+                document.getElementById('createContactDiv').style.display = "block";
+            }
+         
+         function validateData()
+                {
+                    var fn = document.getElementById('invPgId:pgBlckId:gcformId:createConId:pbsFn:pbsiFn:fn');
+                    var ln = document.getElementById('invPgId:pgBlckId:gcformId:createConId:pbsFn:pbsiLn:ln');
+                    var ph = document.getElementById('invPgId:pgBlckId:gcformId:createConId:pbsFn:pbsiPh:ph');
+                  
+                    document.getElementById('fnError').style.display = "none";
+                    document.getElementById('lnError').style.display = "none";
+                    document.getElementById('phError').style.display = "none";
+                    var isError = false;
+                  
+                    if(fn.value == ''){
+                        fn.focus();
+                        document.getElementById('fnError').style.display = "block";
+                        isError = true;
+                         return false;
+                    }
+                    if(ln.value == ''){
+                        ln.focus();
+                        document.getElementById('lnError').style.display = "block";
+                       isError = true;
+                        return false;
+                    }
+                    
+                    
+                        if(ph.value == ''){
+                            ph.focus();
+                            document.getElementById('phError').style.display = "block";
+                            isError = true;
+                             return false;
+                        }
+                   //alert('isError ..'+isError );
+                   // if(isError == ture){
+                    //   return false;
+                  //  }
+                    
+                    callCreateContact();
+                    
+               }
+       </script>
+  </apex:outputPanel>                
+          
+          
+               
+      <apex:outputPanel id="creditArea">
+                       <apex:outputPanel styleClass="creditAreaForeground" layout="block" rendered="{!displayCreditArea}" >
+                          <div style="margin-left:10px;margin-right:10px;">
+                          <br/>                          <h1 style="font-size :15px;">Credit Memo Request</h1><br/><br/><br/>
+                          <apex:pageBlock >
+                          <apex:pageMessages id="selectLineItmMsg" escape="false"/>
+                          <br/>
+                          
+                        <apex:outputPanel id="fullOpPnl">
+                          
+                             
+                              <h2 style="font-size:13px;">Invoice Details</h2><br/><br/>
+                              <apex:pageBlockSection columns="2">
+                                
+                                  <!--<apex:outputLabel value="Invoice Number" for="INVOICE_NUMBER"/>-->
+                                  <apex:outputText id="INVOICE_NUMBER" label="Invoice  Number" value="{!INVOICE_NUMBER}"/>
+                                  <apex:outputText id="INVOICE_DATE" label="Invoice Date" value="{!INVOICE_DATE}"/>
+                                  <apex:outputText id="INVOICE_AMOUNT" label="Invoice Amount" value="{!INVOICE_AMOUNT}"/>
+                                  <apex:outputText id="CURRENCY_x" label="Currency" value="{!CURRENCY_x}"/>
+                                  <apex:outputText id="SALES_ORG" label="Sales Org" value="{!SALES_ORG}"/>
+                                  <apex:outputText id="DISTR_CHAN" label="Distribution Channel" value="{!DISTR_CHAN}"/>
+                                  <apex:outputText id="PAYING_CUSTOMER" label="Paying Customer Number" value="{!PAYING_CUSTOMER}"/>
+                                  <apex:outputText id="SOLD_TO_CUSTOMER" label="Sold-to Customer Number" value="{!SOLD_TO_CUSTOMER}"/>
+                                  <apex:outputText id="SHIP2_CUSTOMER" label="Ship-to Customer" value="{!SHIP2_CUSTOMER}"/>
+                                  <apex:outputText id="CONTRACT_NUMBER" label="Contract Number" value="{!CONTRACT}"/>  
+                                  <apex:outputText id="TERMS_CODE" label="Terms Code" value="{!TERMS_CODE}"/> 
+                                  <apex:outputText id="DOC_CATEG" label="Document Category" value="{!DOC_CATEG}"/>       
+                              </apex:pageBlockSection>
+                              <br/>
+                              
+                               <apex:outputPanel id="lineItemTable" styleClass="lineItemTable" layout="block">
+                               <h2 style="font-size:13px;"> Line Item Details </h2> 
+                               <br/><br/>
+                               
+                                  <table id="lineItemDetail" class="lineItemtable" align="center" cellspacing="0" width="100%" style="height : 100%">
+                                      <thead>
+                                          <tr style="background-color:#b3b3b3">
+                                              <th class="lineItemtableth"></th>
+                                              <th class="lineItemtableth">Item Number</th>
+                                              <th class="lineItemtableth">Material</th>
+                                              <th class="lineItemtableth">Description</th>
+                                              <th class="lineItemtableth">Quantity</th>
+                                              <th class="lineItemtableth">Unit Of Measure</th>
+                                              <th class="lineItemtableth">Amount</th>
+                                              <th class="lineItemtableth">Contract Number</th>
+                                              <!--<th class="lineItemtableth">Line number</th>-->
+                                              <th class="lineItemtableth">Plant</th>
+                                              <th class="lineItemtableth">Item Category</th>
+                                              <th class="lineItemtableth">Item Tax</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                         <apex:repeat id="lineItemLoop" value="{!lineItemsList}" var="lineItemVar">
+                                              <tr>
+                                               <td class="lineItemtabletd">
+                                                      &nbsp;
+                                                      <apex:outputLink id="expandCollapse" value="javascript:void(0)" styleClass="lineItemTable{!lineItemVar.ITM_NUMBER}" onclick="toggleChildRow('lineItemTable{!lineItemVar.ITM_NUMBER}')">
+                                                      + 
+                                                      </apex:outputLink>&nbsp; 
+                                                </td>
+                                                <td class="lineItemtabletd">{!lineItemVar.ITM_NUMBER}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.MATERIAL}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.DESCRIPTION}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.QUANTITY}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.UNIT_OF_MEASURE}</td>
+                                                <td class="lineItemtabletd" >{!lineItemVar.AMOUNT}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.CONTRACT}</td>
+                                                <!--<td class="lineItemtabletd">{!lineItemVar.CONTRACT_LINE}</td>-->
+                                                <td class="lineItemtabletd">{!lineItemVar.PLANT}</td>
+                                                <td class="lineItemtabletd">{!lineItemVar.ITEM_CATEG}</td>
+                                                <td class="lineItemtabletd" >{!lineItemVar.ITEM_TAX}</td>
+                                              </tr>
+                                              <tr>
+                                                <td colspan="11" id="lineItemTable{!lineItemVar.ITM_NUMBER}" class="childTableClass">
+                                                  <table class="table-bordered" id="linePriceTable" align="center" cellspacing="0" style="margin-left:17px;margin-right:15px;margin-top:4px;margin-bottom:4px;" width="97%">
+                                                       <thead>
+                                                          <tr  style="background-color:#ccffe6">
+                                                              <th>Item Number</th>
+                                                              <th>Step Number</th>
+                                                              <th>Counter</th>
+                                                              <th>Condition Type</th>
+                                                              <th>Condition Description</th>
+                                                              <th>Rate</th>
+                                                              <th>Currency</th>
+                                                              <th>Amount</th>
+                                                              <th>Credit Amount</th>
+                                                              <!-- <th>Credit Amount</th> -->
+                                                             
+                                                         </tr>
+                                                      </thead>    
+                                                       
+                                                      <tbody>
+                                                         <apex:repeat id="linePricingLoop" value="{!lineItemVar.linePricingList}" var="linePricingVar">
+                                                              <tr style="background-color:#ffffe6" >
+                                                                <td>{!linePricingVar.ITM_NUMBER}</td>
+                                                                <td>{!linePricingVar.STEP_NUMBER}</td>
+                                                                <td>{!linePricingVar.COUNTER}</td>
+                                                                <td>{!linePricingVar.COND_TYPE}</td>
+                                                                <td>{!linePricingVar.VTEXT}</td>
+                                                                <td>{!linePricingVar.RATE}</td>
+                                                                <td>{!linePricingVar.CURRENCY_x}</td>
+                                                                <td id="amt">{!linePricingVar.AMOUNT} </td>
+                                                                <td><apex:inputText id="condVal" value="{!linePricingVar.CONDITIONAL_VALUE}" onblur="validate('{!$Component.condVal}','{!$Component.amtError}')" />&nbsp;<apex:outputlabel id="amtError" Style="color:#FF0000;font-weight:bold;display:none;">Please provide appropriate Credit amount</apex:outputlabel> </td>
+                                                                
+                                                                <!--<td><apex:inputText value="{!linePricingVar.CREDIT_AMOUNT}" /></td> onkeypress="return AllowNumeric(event) -->
+                                                              </tr>
+                                                         </apex:repeat>
+                                                      </tbody>
+                                                   </table>
+                                                 </td>
+                                              </tr>
+                                           </apex:repeat>     
+                                      </tbody>
+                                  </table>
+                              </apex:outputPanel><br/>
+                               
+                              <apex:commandButton style="margin-left : 45%" value="Back" action="{!navigateToPrev}" reRender="creditArea,invoiceSearch"/>
+                              <apex:commandButton value="Save" action="{!saveCreditCase}" reRender="selectLineItmMsg"/>   
+                              <apex:commandButton value="Cancel" action="{!NavigateBack}"/>
+                              
+                             &nbsp;&nbsp;&nbsp;&nbsp;      
+                          
+                         </apex:outputPanel>
+                           
+                          </apex:pageBlock>
+                          </div>       
+                       </apex:outputPanel>
+                   </apex:outputPanel>
+                  </apex:outputPanel> 
+                   
+               </apex:form>      
+      
+   </apex:pageBlock>              
+             
+   </div>
+
+ </body>
+ 
+</apex:page>

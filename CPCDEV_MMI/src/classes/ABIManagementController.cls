@@ -6,7 +6,7 @@ purpose : Controller class of ABIManagementView VF page.
 
 ********************************************************************************************/
 public class ABIManagementController {
-	
+	//Delare a string
 	public static String abiQuery = 'Select a.Value__c,a.Name,a.Pttitle__c, a.Ptsite4__c, a.Ptsite3__c, a.Ptsite2__c,'
 	                                +'a.Ptsite1__c,a.Stage__c, a.Ptno__c,a.Job_Profile_Status__c,a.Devtype__c,a.Ptpcode__c,a.Id, a.GC_Awarded__c From ABI_Project__c a where a.Job_Profile_Status__c not in (\'Removed\', \'Created\')';
 	    
